@@ -2,34 +2,49 @@ package cmds
 
 import (
 	"flag"
+	"log"
+	"strings"
 
-	"github.com/golang/glog"
-	"github.com/kube-vault/unsealer/pkg/worker"
+	v "github.com/appscode/go/version"
+	"github.com/appscode/kutil/tools/analytics"
+	"github.com/jpillora/go-ogle-analytics"
 	"github.com/spf13/cobra"
+	"github.com/spf13/pflag"
+)
+
+const (
+	gaTrackingCode = "UA-62096468-20"
+)
+
+var (
+	enableAnalytics = true
 )
 
 func NewRootCmd() *cobra.Command {
-	opts := worker.NewWorkerOptions()
-
-	cmd := &cobra.Command{
-		Use:   "vault-unsealer",
-		Short: "Automates initialisation and unsealing of Hashicorp Vault.",
-
-		Run: func(cmd *cobra.Command, args []string) {
-			if errs := opts.Validate(); errs != nil {
-				glog.Fatal(errs)
-			}
-			if err := opts.Run(); err != nil {
-				glog.Fatal(err)
+	var rootCmd = &cobra.Command{
+		Use:               "vault-unsealer",
+		Short:             `Automates initialisation and unsealing of Hashicorp Vault`,
+		DisableAutoGenTag: true,
+		PersistentPreRun: func(c *cobra.Command, args []string) {
+			c.Flags().VisitAll(func(flag *pflag.Flag) {
+				log.Printf("FLAG: --%s=%q", flag.Name, flag.Value)
+			})
+			if enableAnalytics && gaTrackingCode != "" {
+				if client, err := ga.NewClient(gaTrackingCode); err == nil {
+					client.ClientID(analytics.ClientID())
+					parts := strings.Split(c.CommandPath(), " ")
+					client.Send(ga.NewEvent(parts[0], strings.Join(parts[1:], "/")).Label(v.Version.Version))
+				}
 			}
 		},
 	}
-
-	cmd.PersistentFlags().AddGoFlagSet(flag.CommandLine)
+	rootCmd.PersistentFlags().AddGoFlagSet(flag.CommandLine)
 	// ref: https://github.com/kubernetes/kubernetes/issues/17162#issuecomment-225596212
 	flag.CommandLine.Parse([]string{})
+	rootCmd.PersistentFlags().BoolVar(&enableAnalytics, "enable-analytics", enableAnalytics, "Send analytical events to Google Analytics")
 
-	opts.AddFlags(cmd.Flags())
+	rootCmd.AddCommand(v.NewCmdVersion())
+	rootCmd.AddCommand(NewCmdRun())
 
-	return cmd
+	return rootCmd
 }
