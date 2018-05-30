@@ -34,14 +34,8 @@ func (c *Sys) Capabilities(token, path string) ([]string, error) {
 		return nil, err
 	}
 
-	if result["capabilities"] == nil {
-		return nil, nil
-	}
 	var capabilities []string
-	capabilitiesRaw, ok := result["capabilities"].([]interface{})
-	if !ok {
-		return nil, fmt.Errorf("error interpreting returned capabilities")
-	}
+	capabilitiesRaw := result["capabilities"].([]interface{})
 	for _, capability := range capabilitiesRaw {
 		capabilities = append(capabilities, capability.(string))
 	}

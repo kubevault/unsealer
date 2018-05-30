@@ -9,7 +9,7 @@ import (
 
 	"encoding/base64"
 
-	"github.com/soter/vault-unsealer/pkg/kv"
+	"github.com/kube-vault/unsealer/pkg/kv"
 )
 
 // googleKms is an implementation of the kv.Service interface, that encrypts

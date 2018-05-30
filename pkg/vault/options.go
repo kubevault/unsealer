@@ -1,9 +1,9 @@
 package vault
 
 import (
+	aws "github.com/kube-vault/unsealer/pkg/kv/aws_kms"
+	google "github.com/kube-vault/unsealer/pkg/kv/cloudkms"
 	"github.com/pkg/errors"
-	aws "github.com/soter/vault-unsealer/pkg/kv/aws_kms"
-	google "github.com/soter/vault-unsealer/pkg/kv/cloudkms"
 	"github.com/spf13/pflag"
 )
 

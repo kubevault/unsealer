@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"fmt"
 	"io"
+	"net/http"
 	"os"
 
 	"github.com/hashicorp/errwrap"
@@ -187,38 +188,31 @@ func (c *Logical) Unwrap(wrappingToken string) (*Secret, error) {
 	if resp != nil {
 		defer resp.Body.Close()
 	}
-	if resp == nil || resp.StatusCode != 404 {
-		if err != nil {
-			return nil, err
-		}
-		if resp == nil {
-			return nil, nil
-		}
-		return ParseSecret(resp.Body)
-	}
 
-	// In the 404 case this may actually be a wrapped 404 error
-	secret, parseErr := ParseSecret(resp.Body)
-	switch parseErr {
-	case nil:
-	case io.EOF:
-		return nil, nil
-	default:
+	// Return all errors except those that are from a 404 as we handle the not
+	// found error as a special case.
+	if err != nil && (resp == nil || resp.StatusCode != 404) {
 		return nil, err
 	}
-	if secret != nil && (len(secret.Warnings) > 0 || len(secret.Data) > 0) {
-		return secret, nil
+	if resp == nil {
+		return nil, nil
 	}
 
-	// Otherwise this might be an old-style wrapping token so attempt the old
-	// method
+	switch resp.StatusCode {
+	case http.StatusOK: // New method is supported
+		return ParseSecret(resp.Body)
+	case http.StatusNotFound: // Fall back to old method
+	default:
+		return nil, nil
+	}
+
 	if wrappingToken != "" {
 		origToken := c.c.Token()
 		defer c.c.SetToken(origToken)
 		c.c.SetToken(wrappingToken)
 	}
 
-	secret, err = c.Read(wrappedResponseLocation)
+	secret, err := c.Read(wrappedResponseLocation)
 	if err != nil {
 		return nil, errwrap.Wrapf(fmt.Sprintf("error reading %q: {{err}}", wrappedResponseLocation), err)
 	}

@@ -6,13 +6,13 @@ import (
 
 	"github.com/golang/glog"
 	vaultapi "github.com/hashicorp/vault/api"
+	"github.com/kube-vault/unsealer/pkg/kv"
+	"github.com/kube-vault/unsealer/pkg/kv/aws_kms"
+	"github.com/kube-vault/unsealer/pkg/kv/aws_ssm"
+	"github.com/kube-vault/unsealer/pkg/kv/cloudkms"
+	"github.com/kube-vault/unsealer/pkg/kv/gcs"
+	"github.com/kube-vault/unsealer/pkg/vault"
 	"github.com/pkg/errors"
-	"github.com/soter/vault-unsealer/pkg/kv"
-	"github.com/soter/vault-unsealer/pkg/kv/aws_kms"
-	"github.com/soter/vault-unsealer/pkg/kv/aws_ssm"
-	"github.com/soter/vault-unsealer/pkg/kv/cloudkms"
-	"github.com/soter/vault-unsealer/pkg/kv/gcs"
-	"github.com/soter/vault-unsealer/pkg/vault"
 )
 
 func (o *WorkerOptions) Run() error {

@@ -6,7 +6,7 @@ import (
 	"github.com/hashicorp/vault/api"
 	"github.com/sirupsen/logrus"
 
-	"github.com/soter/vault-unsealer/pkg/kv"
+	"github.com/kube-vault/unsealer/pkg/kv"
 )
 
 // vault is an implementation of the Vault interface that will perform actions

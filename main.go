@@ -4,14 +4,14 @@ import (
 	"os"
 
 	logs "github.com/appscode/go/log/golog"
-	"github.com/soter/vault-unsealer/commands"
+	"github.com/kube-vault/unsealer/pkg/cmds"
 )
 
 func main() {
 	logs.InitLogs()
 	defer logs.FlushLogs()
 
-	if err := commands.NewRootCmd().Execute(); err != nil {
+	if err := cmds.NewRootCmd().Execute(); err != nil {
 		os.Exit(1)
 	}
 	os.Exit(0)

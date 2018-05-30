@@ -3,10 +3,10 @@ package worker
 import (
 	"time"
 
+	aws "github.com/kube-vault/unsealer/pkg/kv/aws_kms"
+	google "github.com/kube-vault/unsealer/pkg/kv/cloudkms"
+	"github.com/kube-vault/unsealer/pkg/vault"
 	"github.com/pkg/errors"
-	aws "github.com/soter/vault-unsealer/pkg/kv/aws_kms"
-	google "github.com/soter/vault-unsealer/pkg/kv/cloudkms"
-	"github.com/soter/vault-unsealer/pkg/vault"
 	"github.com/spf13/pflag"
 )
 
