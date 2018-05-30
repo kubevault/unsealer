@@ -4,9 +4,8 @@ import (
 	"fmt"
 
 	"github.com/hashicorp/vault/api"
-	"github.com/sirupsen/logrus"
-
 	"github.com/kube-vault/unsealer/pkg/kv"
+	"github.com/sirupsen/logrus"
 )
 
 // vault is an implementation of the Vault interface that will perform actions

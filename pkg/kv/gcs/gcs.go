@@ -6,7 +6,6 @@ import (
 	"io/ioutil"
 
 	"cloud.google.com/go/storage"
-
 	"github.com/kube-vault/unsealer/pkg/kv"
 )
 
