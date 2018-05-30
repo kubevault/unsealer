@@ -1,21 +1,18 @@
 package main
 
 import (
-	"flag"
+	"os"
 
-	"github.com/jetstack/vault-unsealer/cmd"
-)
-
-var (
-	version string = "dev"
-	commit  string = "unknown"
-	date    string = "unknown"
+	logs "github.com/appscode/go/log/golog"
+	"github.com/kube-vault/unsealer/pkg/cmds"
 )
 
 func main() {
-	flag.Parse()
-	cmd.Version.Version = version
-	cmd.Version.Commit = commit
-	cmd.Version.BuildDate = date
-	cmd.Execute()
+	logs.InitLogs()
+	defer logs.FlushLogs()
+
+	if err := cmds.NewRootCmd().Execute(); err != nil {
+		os.Exit(1)
+	}
+	os.Exit(0)
 }

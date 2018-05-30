@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/jetstack/vault-unsealer/pkg/kv"
+	"github.com/kube-vault/unsealer/pkg/kv"
 )
 
 type fakeKV struct {
