@@ -37,8 +37,6 @@ var (
 
 // RegisterExporter adds to the list of Exporters that will receive sampled
 // trace spans.
-//
-// Binaries can register exporters, libraries shouldn't register exporters.
 func RegisterExporter(e Exporter) {
 	exportersMu.Lock()
 	if exporters == nil {
