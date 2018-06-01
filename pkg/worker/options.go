@@ -39,7 +39,7 @@ type WorkerOptions struct {
 	Vault      *vault.VaultOptions
 	Google     *google.Options
 	Aws        *aws.Options
-	Azure  *azure.Options
+	Azure      *azure.Options
 	Kubernetes *kubernetes.Options
 }
 

@@ -1,5 +1,5 @@
 hash: 14a4922a87de12807fbb44a809d59747a811d21070e9cfdc73f8f73148f9cdd7
-updated: 2018-06-01T02:26:22.680496542-07:00
+updated: 2018-06-01T16:01:29.79434461+06:00
 imports:
 - name: cloud.google.com/go
   version: 0fd7230b2a7505833d5f69b75cbd6c9582401479
@@ -76,7 +76,7 @@ imports:
   - autorest/to
   - autorest/validation
 - name: github.com/cenkalti/backoff
-  version: 2ea60e5f094469f9e65adb9cd103795b73ae743e
+  version: 61153c768f31ee5f130071d08fc82b85208528de
 - name: github.com/cpuguy83/go-md2man
   version: 71acacd42f85e5e82f70a55327789582a5200a90
   subpackages:
@@ -90,7 +90,7 @@ imports:
 - name: github.com/evanphx/json-patch
   version: 944e07253867aacae43c04b2e6a239005443f33a
 - name: github.com/ghodss/yaml
-  version: 0ca9ea5df5451ffdf184b4428c902747c2c11cd7
+  version: 73d445a93680fa1a78ae23a5839bad48f32ba1ee
 - name: github.com/go-ini/ini
   version: 300e940a926eb277d3901b20bdfcc54928ad3642
 - name: github.com/gogo/protobuf
@@ -206,7 +206,7 @@ imports:
   version: d1c525dea8ce39ea9a783d33cf08932305373f2c
   repo: https://github.com/yudai/golcs
 - name: go.opencensus.io
-  version: 1b1dcef61d739190527eb01380a75e6f91dea7a9
+  version: 10cec2c05ea2cfb8b0d856711daedc49d8a45c56
   subpackages:
   - exporter/stackdriver/propagation
   - internal
