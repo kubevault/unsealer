@@ -143,7 +143,9 @@ func (w *worker) start() {
 	for {
 		select {
 		case cmd := <-w.c:
-			cmd.handleCommand(w)
+			if cmd != nil {
+				cmd.handleCommand(w)
+			}
 		case <-w.timer.C:
 			w.reportUsage(time.Now())
 		case <-w.quit:

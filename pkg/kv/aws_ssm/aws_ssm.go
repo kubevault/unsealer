@@ -7,7 +7,9 @@ import (
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/ssm"
+	"github.com/golang/glog"
 	"github.com/kube-vault/unsealer/pkg/kv"
+	"github.com/kube-vault/unsealer/pkg/kv/util"
 )
 
 type awsSSM struct {
@@ -19,8 +21,15 @@ type awsSSM struct {
 var _ kv.Service = &awsSSM{}
 
 func NewWithSession(sess *session.Session, keyPrefix string) (*awsSSM, error) {
+	region := util.GetAWSRegion()
+	if region == "" {
+		return nil, fmt.Errorf("failed to detcet region")
+	}
+
+	glog.Infoln("Detected aws region is: ", region)
+
 	return &awsSSM{
-		ssmService: ssm.New(sess),
+		ssmService: ssm.New(sess, aws.NewConfig().WithRegion(region)),
 		keyPrefix:  keyPrefix,
 	}, nil
 }
