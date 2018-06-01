@@ -27,7 +27,7 @@ func NewWithSession(sess *session.Session, store kv.Service, kmsID string) (kv.S
 
 	region := util.GetAWSRegion()
 	if region == "" {
-		return nil, fmt.Errorf("failed to detcet region")
+		return nil, fmt.Errorf("failed to detect region")
 	}
 
 	glog.Infoln("Detected aws region is: ", region)
