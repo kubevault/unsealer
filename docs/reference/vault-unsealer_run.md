@@ -24,23 +24,32 @@ vault-unsealer run [flags]
 ### Options
 
 ```
-      --aws.kms-key-id string          The ID or ARN of the AWS KMS key to encrypt values
-      --aws.ssm-key-prefix string      The Key Prefix for SSM Parameter store
-      --ca-cert-file string            Path to the ca cert file that will be used to verify self signed vault server certificate
-      --google.kms-crypto-key string   The name of the Google Cloud KMS crypto key to use
-      --google.kms-key-ring string     The name of the Google Cloud KMS key ring to use
-      --google.kms-location string     The Google Cloud KMS location to use (eg. 'global', 'europe-west1')
-      --google.kms-project string      The Google Cloud KMS project to use
-      --google.storage-bucket string   The name of the Google Cloud Storage bucket to store values in
-      --google.storage-prefix string   The prefix to use for values store in Google Cloud Storage
-  -h, --help                           help for run
-      --insecure-tls                   To skip tls verification when communicating with vault server
-      --mode string                    Select the mode to use 'google-cloud-kms-gcs' => Google Cloud Storage with encryption using Google KMS; 'aws-kms-ssm' => AWS SSM parameter store using AWS KMS
-      --overwrite-existing             overwrite existing unseal keys and root tokens, possibly dangerous!
-      --retry-period duration          How often to attempt to unseal the vault instance (default 10s)
-      --secret-shares int              Total count of secret shares that exist (default 5)
-      --secret-threshold int           Minimum required secret shares to unseal (default 3)
-      --store-root-token               should the root token be stored in the key store (default true)
+      --aws.kms-key-id string               The ID or ARN of the AWS KMS key to encrypt values
+      --aws.ssm-key-prefix string           The Key Prefix for SSM Parameter store
+      --azure.client-cert-password string   The password of the client certificate for an AAD application
+      --azure.client-cert-path string       The path of a client certificate for an AAD application
+      --azure.client-id string              The ClientID for an AAD application.
+      --azure.client-secret string          The ClientSecret for an AAD application
+      --azure.cloud string                  The cloud environment identifier (default "AZUREPUBLICCLOUD")
+      --azure.secret-prefix string          Prefix to use in secret name for azure key vault
+      --azure.tenant-id string              The AAD Tenant ID
+      --azure.use-managed-identity          Use managed service identity for the virtual machine
+      --azure.vault-base-url string         Azure key vault url, for example https://myvault.vault.azure.net
+      --ca-cert-file string                 Path to the ca cert file that will be used to verify self signed vault server certificate
+      --google.kms-crypto-key string        The name of the Google Cloud KMS crypto key to use
+      --google.kms-key-ring string          The name of the Google Cloud KMS key ring to use
+      --google.kms-location string          The Google Cloud KMS location to use (eg. 'global', 'europe-west1')
+      --google.kms-project string           The Google Cloud KMS project to use
+      --google.storage-bucket string        The name of the Google Cloud Storage bucket to store values in
+      --google.storage-prefix string        The prefix to use for values store in Google Cloud Storage
+  -h, --help                                help for run
+      --insecure-tls                        To skip tls verification when communicating with vault server
+      --mode string                         Select the mode to use 'google-cloud-kms-gcs' => Google Cloud Storage with encryption using Google KMS; 'aws-kms-ssm' => AWS SSM parameter store using AWS KMS; 'azure-key-vault' => Azure Key Vault Secret store
+      --overwrite-existing                  overwrite existing unseal keys and root tokens, possibly dangerous!
+      --retry-period duration               How often to attempt to unseal the vault instance (default 10s)
+      --secret-shares int                   Total count of secret shares that exist (default 5)
+      --secret-threshold int                Minimum required secret shares to unseal (default 3)
+      --store-root-token                    should the root token be stored in the key store (default true)
 ```
 
 ### Options inherited from parent commands

@@ -9,6 +9,7 @@ import (
 	"github.com/kube-vault/unsealer/pkg/kv"
 	"github.com/kube-vault/unsealer/pkg/kv/aws_kms"
 	"github.com/kube-vault/unsealer/pkg/kv/aws_ssm"
+	"github.com/kube-vault/unsealer/pkg/kv/azure"
 	"github.com/kube-vault/unsealer/pkg/kv/cloudkms"
 	"github.com/kube-vault/unsealer/pkg/kv/gcs"
 	"github.com/kube-vault/unsealer/pkg/vault"
@@ -43,6 +44,7 @@ func (o *WorkerOptions) Run() error {
 		return errors.Wrap(err, "failed create vault helper")
 	}
 
+	//initialize
 	for {
 		glog.Infoln("checking if vault is initialized...")
 
@@ -66,6 +68,7 @@ func (o *WorkerOptions) Run() error {
 		time.Sleep(o.ReTryPeriod)
 	}
 
+	// unseal
 	for {
 		glog.Infoln("checking if vault is sealed...")
 
@@ -113,6 +116,14 @@ func (o *WorkerOptions) getKVService() (kv.Service, error) {
 		kvService, err := cloudkms.New(gcsService, o.Google.KmsProject, o.Google.KmsLocation, o.Google.KmsKeyRing, o.Google.KmsCryptoKey)
 		if err != nil {
 			return nil, errors.Wrap(err, "failed to create kv service for aws")
+		}
+
+		return kvService, nil
+	}
+	if o.Mode == ModeAzureKeyVault {
+		kvService, err := azure.NewKVService(o.Azure)
+		if err != nil {
+			return nil, errors.Wrap(err, "failed to create azure kv service")
 		}
 
 		return kvService, nil

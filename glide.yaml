@@ -5,7 +5,7 @@ import:
 - package: github.com/appscode/go
   version: master
 - package: github.com/aws/aws-sdk-go
-  version: v1.13.57
+  version: v1.12.7
 - package: github.com/golang/glog
 - package: github.com/hashicorp/vault
   version: v0.10.1
@@ -33,6 +33,10 @@ import:
   version: v7.0.0
 - package: github.com/appscode/kutil
   version: release-7.0
+- package: github.com/Azure/azure-sdk-for-go
+  version: v12.4.0-beta
+- package: github.com/Azure/go-autorest
+  version: v9.9.0
 testImport:
 - package: github.com/stretchr/testify
   version: v1.2.1
