@@ -2,10 +2,17 @@ package: github.com/kube-vault/unsealer
 import:
 - package: cloud.google.com/go
   version: v0.23.0
+- package: github.com/Azure/azure-sdk-for-go
+  version: v12.4.0-beta
+- package: github.com/Azure/go-autorest
+  version: v9.9.0
 - package: github.com/appscode/go
-  version: master
+- package: github.com/appscode/kutil
+  version: release-7.0
 - package: github.com/aws/aws-sdk-go
   version: v1.12.7
+- package: github.com/ghodss/yaml
+  version: v1.0.0
 - package: github.com/golang/glog
 - package: github.com/hashicorp/vault
   version: v0.10.1
@@ -18,6 +25,7 @@ import:
   version: master
 - package: github.com/spf13/pflag
   version: v1.0.1
+- package: golang.org/x/crypto
 - package: golang.org/x/oauth2
   version: ec22f46f877b4505e0117eeaab541714644fdd28
 - package: google.golang.org/api
@@ -31,12 +39,6 @@ import:
   version: kubernetes-1.10.0
 - package: k8s.io/client-go
   version: v7.0.0
-- package: github.com/appscode/kutil
-  version: release-7.0
-- package: github.com/Azure/azure-sdk-for-go
-  version: v12.4.0-beta
-- package: github.com/Azure/go-autorest
-  version: v9.9.0
 testImport:
 - package: github.com/stretchr/testify
   version: v1.2.1

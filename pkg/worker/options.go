@@ -6,6 +6,7 @@ import (
 	aws "github.com/kube-vault/unsealer/pkg/kv/aws_kms"
 	"github.com/kube-vault/unsealer/pkg/kv/azure"
 	google "github.com/kube-vault/unsealer/pkg/kv/cloudkms"
+	"github.com/kube-vault/unsealer/pkg/kv/kubernetes"
 	"github.com/kube-vault/unsealer/pkg/vault"
 	"github.com/pkg/errors"
 	"github.com/spf13/pflag"
@@ -15,6 +16,7 @@ const (
 	ModeGoogleCloudKmsGCS = "google-cloud-kms-gcs"
 	ModeAwsKmsSsm         = "aws-kms-ssm"
 	ModeAzureKeyVault     = "azure-key-vault"
+	ModeKubernetesSecret  = "kubernetes-secret"
 )
 
 type WorkerOptions struct {
@@ -25,6 +27,7 @@ type WorkerOptions struct {
 	// 	- 'google-cloud-kms-gcs' => Google Cloud Storage with encryption using Google KMS
 	// 	- 'aws-kms-ssm' => AWS SSM parameter store using AWS KMS encryption
 	//  - 'azure-key-vault' => Azure Key Vault Secret store
+	//  - 'kubernetes-secret' => Kubernetes secret to store unseal keys
 	Mode string
 
 	// ca cert file for vault api client, if vault used a self signed certificate
@@ -33,10 +36,11 @@ type WorkerOptions struct {
 	// If InSecureTLS true, then it will skip tls verification when communicating with vault server
 	InSecureTLS bool
 
-	Vault  *vault.VaultOptions
-	Google *google.Options
-	Aws    *aws.Options
-	Azure  *azure.Options
+	Vault      *vault.VaultOptions
+	Google     *google.Options
+	Aws        *aws.Options
+	Azure      *azure.Options
+	Kubernetes *kubernetes.Options
 }
 
 func NewWorkerOptions() *WorkerOptions {
@@ -46,11 +50,12 @@ func NewWorkerOptions() *WorkerOptions {
 		Google:      google.NewOptions(),
 		Aws:         aws.NewOptions(),
 		Azure:       azure.NewOptions(),
+		Kubernetes:  kubernetes.NewOptions(),
 	}
 }
 
 func (o *WorkerOptions) AddFlags(fs *pflag.FlagSet) {
-	fs.StringVar(&o.Mode, "mode", o.Mode, "Select the mode to use 'google-cloud-kms-gcs' => Google Cloud Storage with encryption using Google KMS; 'aws-kms-ssm' => AWS SSM parameter store using AWS KMS; 'azure-key-vault' => Azure Key Vault Secret store")
+	fs.StringVar(&o.Mode, "mode", o.Mode, "Select the mode to use 'google-cloud-kms-gcs' => Google Cloud Storage with encryption using Google KMS; 'aws-kms-ssm' => AWS SSM parameter store using AWS KMS; 'azure-key-vault' => Azure Key Vault Secret store; 'kubernetes-secret' => Kubernetes secret to store unseal keys")
 	fs.DurationVar(&o.ReTryPeriod, "retry-period", o.ReTryPeriod, "How often to attempt to unseal the vault instance")
 	fs.StringVar(&o.CaCertFile, "ca-cert-file", o.Mode, "Path to the ca cert file that will be used to verify self signed vault server certificate")
 	fs.BoolVar(&o.InSecureTLS, "insecure-tls", o.InSecureTLS, "To skip tls verification when communicating with vault server")
@@ -59,11 +64,15 @@ func (o *WorkerOptions) AddFlags(fs *pflag.FlagSet) {
 	o.Google.AddFlags(fs)
 	o.Aws.AddFlags(fs)
 	o.Azure.AddFlags(fs)
+	o.Kubernetes.AddFlags(fs)
 }
 
 func (o *WorkerOptions) Validate() []error {
 	var errs []error
-	if o.Mode != ModeGoogleCloudKmsGCS && o.Mode != ModeAwsKmsSsm && o.Mode != ModeAzureKeyVault {
+	if o.Mode != ModeGoogleCloudKmsGCS &&
+		o.Mode != ModeAwsKmsSsm &&
+		o.Mode != ModeKubernetesSecret &&
+		o.Mode != ModeAzureKeyVault {
 		errs = append(errs, errors.New("invalid mode"))
 	}
 
@@ -77,6 +86,9 @@ func (o *WorkerOptions) Validate() []error {
 	}
 	if o.Mode == ModeAzureKeyVault {
 		errs = append(errs, o.Azure.Validate()...)
+	}
+	if o.Mode == ModeKubernetesSecret {
+		errs = append(errs, o.Kubernetes.Validate()...)
 	}
 
 	return errs

@@ -1,5 +1,5 @@
-hash: 14a4922a87de12807fbb44a809d59747a811d21070e9cfdc73f8f73148f9cdd7
-updated: 2018-06-01T02:26:22.680496542-07:00
+hash: 9f9ca8bf468a832c4adaf9c35fcd9067ead99da915c30703fb7ca7c79e23deeb
+updated: 2018-06-01T03:24:07.495105684-07:00
 imports:
 - name: cloud.google.com/go
   version: 0fd7230b2a7505833d5f69b75cbd6c9582401479
@@ -19,6 +19,7 @@ imports:
   - log/golog
   - net/httpclient
   - runtime
+  - types
   - util/errors
   - version
 - name: github.com/appscode/jsonpatch
@@ -26,8 +27,11 @@ imports:
 - name: github.com/appscode/kutil
   version: 5fbfa91a3f029faeda0520507a7bfe07df3eedbd
   subpackages:
+  - core/v1
   - meta
   - tools/analytics
+- name: github.com/appscode/mergo
+  version: e3000cb3d28c72b837601cac94debd91032d19fe
 - name: github.com/aws/aws-sdk-go
   version: 760741802ad40f49ae9fc4a69ef6706d2527d62e
   subpackages:
@@ -215,9 +219,7 @@ imports:
   - trace/internal
   - trace/propagation
 - name: golang.org/x/crypto
-  version: 5ba7f63082460102a45837dbd1827e10f9479ac0
-  repo: https://github.com/golang/crypto.git
-  vcs: git
+  version: 81e90905daefcd6fd217b62423c0908922eadb30
   subpackages:
   - pkcs12
   - pkcs12/internal/rc2

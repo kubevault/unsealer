@@ -12,6 +12,7 @@ import (
 	"github.com/kube-vault/unsealer/pkg/kv/azure"
 	"github.com/kube-vault/unsealer/pkg/kv/cloudkms"
 	"github.com/kube-vault/unsealer/pkg/kv/gcs"
+	"github.com/kube-vault/unsealer/pkg/kv/kubernetes"
 	"github.com/kube-vault/unsealer/pkg/vault"
 	"github.com/pkg/errors"
 )
@@ -124,6 +125,14 @@ func (o *WorkerOptions) getKVService() (kv.Service, error) {
 		kvService, err := azure.NewKVService(o.Azure)
 		if err != nil {
 			return nil, errors.Wrap(err, "failed to create azure kv service")
+		}
+
+		return kvService, nil
+	}
+	if o.Mode == ModeKubernetesSecret {
+		kvService, err := kubernetes.NewKVService(o.Kubernetes)
+		if err != nil {
+			return nil, errors.Wrap(err, "failed to create kv service for kubernetes")
 		}
 
 		return kvService, nil
