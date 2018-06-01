@@ -27,6 +27,5 @@ func startExecutionTracerTask(ctx context.Context, name string) (context.Context
 		// runtime/trace is not enabled.
 		return ctx, func() {}
 	}
-	nctx, task := t.NewTask(ctx, name)
-	return nctx, task.End
+	return t.NewContext(ctx, name)
 }
