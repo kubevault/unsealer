@@ -4,7 +4,7 @@ import (
 	"fmt"
 
 	"github.com/hashicorp/vault/api"
-	"github.com/kube-vault/unsealer/pkg/kv"
+	"github.com/kubevault/unsealer/pkg/kv"
 	"github.com/sirupsen/logrus"
 )
 

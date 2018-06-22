@@ -4,7 +4,7 @@ import (
 	"os"
 	"testing"
 
-	"github.com/kube-vault/unsealer/pkg/kv"
+	"github.com/kubevault/unsealer/pkg/kv"
 )
 
 func TestAWSIntegration(t *testing.T) {

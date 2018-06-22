@@ -1,8 +1,8 @@
 package vault
 
 import (
-	aws "github.com/kube-vault/unsealer/pkg/kv/aws_kms"
-	google "github.com/kube-vault/unsealer/pkg/kv/cloudkms"
+	aws "github.com/kubevault/unsealer/pkg/kv/aws_kms"
+	google "github.com/kubevault/unsealer/pkg/kv/cloudkms"
 	"github.com/pkg/errors"
 	"github.com/spf13/pflag"
 )

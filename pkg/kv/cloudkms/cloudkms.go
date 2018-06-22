@@ -5,7 +5,7 @@ import (
 	"encoding/base64"
 	"fmt"
 
-	"github.com/kube-vault/unsealer/pkg/kv"
+	"github.com/kubevault/unsealer/pkg/kv"
 	"golang.org/x/oauth2/google"
 	cloudkms "google.golang.org/api/cloudkms/v1"
 )

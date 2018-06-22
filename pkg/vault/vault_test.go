@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/kube-vault/unsealer/pkg/kv"
+	"github.com/kubevault/unsealer/pkg/kv"
 )
 
 type fakeKV struct {
