@@ -1,4 +1,4 @@
-package: github.com/kube-vault/unsealer
+package: github.com/kubevault/unsealer
 import:
 - package: cloud.google.com/go
   version: v0.23.0

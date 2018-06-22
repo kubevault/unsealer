@@ -35,7 +35,7 @@ import subprocess
 import sys
 from os.path import expandvars, join, dirname
 
-libbuild.REPO_ROOT = libbuild.GOPATH + '/src/github.com/kube-vault/unsealer'
+libbuild.REPO_ROOT = libbuild.GOPATH + '/src/github.com/kubevault/unsealer'
 BUILD_METADATA = libbuild.metadata(libbuild.REPO_ROOT)
 libbuild.BIN_MATRIX = {
     'vault-unsealer': {

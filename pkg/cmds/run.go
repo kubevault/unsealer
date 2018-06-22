@@ -4,7 +4,7 @@ import (
 	utilerrors "github.com/appscode/go/util/errors"
 	v "github.com/appscode/go/version"
 	"github.com/golang/glog"
-	"github.com/kube-vault/unsealer/pkg/worker"
+	"github.com/kubevault/unsealer/pkg/worker"
 	"github.com/spf13/cobra"
 )
 

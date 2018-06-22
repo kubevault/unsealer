@@ -6,14 +6,14 @@ import (
 
 	"github.com/golang/glog"
 	vaultapi "github.com/hashicorp/vault/api"
-	"github.com/kube-vault/unsealer/pkg/kv"
-	"github.com/kube-vault/unsealer/pkg/kv/aws_kms"
-	"github.com/kube-vault/unsealer/pkg/kv/aws_ssm"
-	"github.com/kube-vault/unsealer/pkg/kv/azure"
-	"github.com/kube-vault/unsealer/pkg/kv/cloudkms"
-	"github.com/kube-vault/unsealer/pkg/kv/gcs"
-	"github.com/kube-vault/unsealer/pkg/kv/kubernetes"
-	"github.com/kube-vault/unsealer/pkg/vault"
+	"github.com/kubevault/unsealer/pkg/kv"
+	"github.com/kubevault/unsealer/pkg/kv/aws_kms"
+	"github.com/kubevault/unsealer/pkg/kv/aws_ssm"
+	"github.com/kubevault/unsealer/pkg/kv/azure"
+	"github.com/kubevault/unsealer/pkg/kv/cloudkms"
+	"github.com/kubevault/unsealer/pkg/kv/gcs"
+	"github.com/kubevault/unsealer/pkg/kv/kubernetes"
+	"github.com/kubevault/unsealer/pkg/vault"
 	"github.com/pkg/errors"
 )
 

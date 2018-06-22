@@ -8,8 +8,8 @@ import (
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/ssm"
 	"github.com/golang/glog"
-	"github.com/kube-vault/unsealer/pkg/kv"
-	"github.com/kube-vault/unsealer/pkg/kv/util"
+	"github.com/kubevault/unsealer/pkg/kv"
+	"github.com/kubevault/unsealer/pkg/kv/util"
 )
 
 type awsSSM struct {

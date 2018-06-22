@@ -3,7 +3,7 @@ package kubernetes
 import (
 	kutilpatch "github.com/appscode/kutil/core/v1"
 	kutilmeta "github.com/appscode/kutil/meta"
-	"github.com/kube-vault/unsealer/pkg/kv"
+	"github.com/kubevault/unsealer/pkg/kv"
 	"github.com/pkg/errors"
 	corev1 "k8s.io/api/core/v1"
 	kerror "k8s.io/apimachinery/pkg/api/errors"
