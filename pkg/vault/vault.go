@@ -3,6 +3,7 @@ package vault
 import (
 	"fmt"
 
+	"github.com/golang/glog"
 	"github.com/hashicorp/vault/api"
 	"github.com/kubevault/unsealer/pkg/kv"
 	"github.com/sirupsen/logrus"
@@ -80,6 +81,9 @@ func (u *vault) Unseal() error {
 
 func (u *vault) keyStoreNotFound(key string) bool {
 	_, err := u.keyStore.Get(key)
+	if err != nil {
+		glog.Errorf("error response when checking whether key(%s) exists or not: %v", key, err)
+	}
 	if _, ok := err.(*kv.NotFoundError); ok {
 		return true
 	}
@@ -88,7 +92,7 @@ func (u *vault) keyStoreNotFound(key string) bool {
 
 func (u *vault) keyStoreSet(key string, val []byte) error {
 	if !u.config.OverwriteExisting && !u.keyStoreNotFound(key) {
-		return fmt.Errorf("error setting key '%s': it already exists", key)
+		return fmt.Errorf("error setting key '%s': it already exists or encounter error when getting key", key)
 	}
 	return u.keyStore.Set(key, val)
 }
@@ -114,7 +118,7 @@ func (u *vault) Init() error {
 		// test every key
 		for _, key := range keys {
 			if !u.keyStoreNotFound(key) {
-				return fmt.Errorf("error before init: keystore value for '%s' already exists", key)
+				return fmt.Errorf("error before init: keystore value for '%s' already exists or encounter error when getting key", key)
 			}
 		}
 	}

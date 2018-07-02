@@ -1,6 +1,8 @@
 package kubernetes
 
 import (
+	"fmt"
+
 	kutilpatch "github.com/appscode/kutil/core/v1"
 	kutilmeta "github.com/appscode/kutil/meta"
 	"github.com/kubevault/unsealer/pkg/kv"
@@ -10,7 +12,6 @@ import (
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/client-go/kubernetes"
 	"k8s.io/client-go/rest"
-	"fmt"
 )
 
 type KVService struct {
@@ -63,11 +64,11 @@ func (k *KVService) Get(key string) ([]byte, error) {
 	if kerror.IsNotFound(err) {
 		return nil, kv.NewNotFoundError(fmt.Sprintf("secret not found. reason: %v", err))
 	} else if err != nil {
-		return nil, kv.NewNotFoundError(fmt.Sprintf("failed to get secret. reason: %v", err))
+		return nil, fmt.Errorf("failed to get secret. reason: %v", err)
 	}
 
 	if sr.Data == nil {
-		return nil, kv.NewNotFoundError(fmt.Sprintf("key not found in secret data. reason: %v",err))
+		return nil, kv.NewNotFoundError(fmt.Sprintf("key not found in secret data. reason: %v", err))
 	}
 
 	if value, ok := sr.Data[key]; ok {
