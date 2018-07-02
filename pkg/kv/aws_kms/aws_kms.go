@@ -6,7 +6,6 @@ import (
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/kms"
-	"github.com/golang/glog"
 	"github.com/kubevault/unsealer/pkg/kv"
 	"github.com/kubevault/unsealer/pkg/kv/util"
 )
@@ -25,16 +24,18 @@ func NewWithSession(sess *session.Session, store kv.Service, kmsID string) (kv.S
 		return nil, fmt.Errorf("invalid kmsID specified: '%s'", kmsID)
 	}
 
-	region := util.GetAWSRegion()
-	if region == "" {
-		return nil, fmt.Errorf("failed to detect region")
-	}
+	var ksmService *kms.KMS
 
-	glog.Infoln("Detected aws region is: ", region)
+	region := util.GetAWSRegion()
+	if region != "" {
+		ksmService = kms.New(sess, aws.NewConfig().WithRegion(region))
+	} else {
+		ksmService = kms.New(sess)
+	}
 
 	return &awsKMS{
 		store:      store,
-		kmsService: kms.New(sess, aws.NewConfig().WithRegion(region)),
+		kmsService: ksmService,
 		kmsID:      kmsID,
 	}, nil
 }
