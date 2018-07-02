@@ -6,6 +6,7 @@ import (
 	"github.com/golang/glog"
 	"github.com/hashicorp/vault/api"
 	"github.com/kubevault/unsealer/pkg/kv"
+	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
 )
 
@@ -25,6 +26,7 @@ type Vault interface {
 	Sealed() (bool, error)
 	Unseal() error
 	Init() error
+	CheckReadWriteAccess() error
 }
 
 // New returns a new vault Vault, or an error.
@@ -155,6 +157,31 @@ func (u *vault) Init() error {
 
 	return nil
 
+}
+
+// CheckReadWriteAccess will do:
+// 	- write data in the key store
+// 	- read data from the key store
+//
+// Key: mock-test-vault-unsealer
+// Data: test
+func (u *vault) CheckReadWriteAccess() error {
+	glog.Infoln("Testing the read/write access...")
+	key := "mock-test-vault-unsealer"
+	data := []byte("test")
+
+	err := u.keyStore.Set(key, data)
+	if err != nil {
+		return errors.Wrapf(err, "failed to write data for key(%s)", key)
+	}
+
+	_, err = u.keyStore.Get(key)
+	if err != nil {
+		return errors.Wrapf(err, "failed to get data for key(%s)", key)
+	}
+
+	glog.Infoln("Testing the read/write access is successful")
+	return nil
 }
 
 func (u *vault) unsealKeyForID(i int) string {
