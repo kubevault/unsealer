@@ -8,9 +8,15 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func getValidationError() []error {
+func getValidationErrorForFlagsNotProvided() []error {
 	var errs []error
-	errs = append(errs, errors.New("aws kms key id must be non-empty"))
+	errs = append(errs, errors.New("--aws.kms-key-id or --aws.use-secure-string must be defined"))
+	return errs
+}
+
+func getValidationErrorForBothFlagProvided() []error {
+	var errs []error
+	errs = append(errs, errors.New("--aws.kms-key-id and --aws.use-secure-string both are defined, but only one of them is needed"))
 	return errs
 }
 
@@ -21,20 +27,40 @@ func TestOptions_Validate(t *testing.T) {
 		expectedErr error
 	}{
 		{
-			"aws key id provided, validation successful",
+			"aws key id is provided, validation successful",
 			&Options{
 				"test-key",
+				false,
 				"",
 			},
 			nil,
 		},
 		{
-			"aws key id not provided, validation failed",
+			"aws key and useSecureString is provided, error expected",
 			&Options{
-				"",
+				"test-key",
+				true,
 				"",
 			},
-			aggregator.NewAggregate(getValidationError()),
+			aggregator.NewAggregate(getValidationErrorForBothFlagProvided()),
+		},
+		{
+			"useSecureString is provided",
+			&Options{
+				"",
+				true,
+				"",
+			},
+			nil,
+		},
+		{
+			"aws key id and use secure string not provided, validation failed",
+			&Options{
+				"",
+				false,
+				"",
+			},
+			aggregator.NewAggregate(getValidationErrorForFlagsNotProvided()),
 		},
 	}
 

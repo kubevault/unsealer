@@ -47,7 +47,7 @@ func (k *KVService) Set(key string, value []byte) error {
 func (k *KVService) Get(key string) ([]byte, error) {
 	data, err := k.GetSecret(k.getKeyName(key))
 	if err != nil {
-		return nil, kv.NewNotFoundError(fmt.Sprintf("unable to get secret(%s) from key vault. reason: %v", key,err))
+		return nil, kv.NewNotFoundError(fmt.Sprintf("unable to get secret(%s) from key vault. reason: %v", key, err))
 	}
 
 	value, err := base64.StdEncoding.DecodeString(to.String(data))

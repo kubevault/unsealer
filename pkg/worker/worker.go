@@ -96,14 +96,20 @@ func (o *WorkerOptions) Run() error {
 
 func (o *WorkerOptions) getKVService() (kv.Service, error) {
 	if o.Mode == ModeAwsKmsSsm {
-		ssmService, err := aws_ssm.New(o.Aws.SsmKeyPrefix)
+		ssmService, err := aws_ssm.New(o.Aws.UseSecureString, o.Aws.SsmKeyPrefix)
 		if err != nil {
 			return nil, errors.Wrap(err, "failed to create aws ssm service")
 		}
 
-		kvService, err := aws_kms.New(ssmService, o.Aws.KmsKeyID)
-		if err != nil {
-			return nil, errors.Wrap(err, "failed to create kv service for aws")
+		var kvService kv.Service
+
+		if o.Aws.UseSecureString {
+			kvService = ssmService
+		} else {
+			kvService, err = aws_kms.New(ssmService, o.Aws.KmsKeyID)
+			if err != nil {
+				return nil, errors.Wrap(err, "failed to create kv service for aws")
+			}
 		}
 
 		return kvService, nil

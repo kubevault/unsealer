@@ -14,12 +14,13 @@ import (
 type awsSSM struct {
 	ssmService *ssm.SSM
 
-	keyPrefix string
+	useSecureString bool
+	keyPrefix       string
 }
 
 var _ kv.Service = &awsSSM{}
 
-func NewWithSession(sess *session.Session, keyPrefix string) (*awsSSM, error) {
+func NewWithSession(sess *session.Session, useSecureString bool, keyPrefix string) (*awsSSM, error) {
 	var ssmService *ssm.SSM
 
 	region := util.GetAWSRegion()
@@ -30,26 +31,30 @@ func NewWithSession(sess *session.Session, keyPrefix string) (*awsSSM, error) {
 	}
 
 	return &awsSSM{
-		ssmService: ssmService,
-		keyPrefix:  keyPrefix,
+		ssmService:      ssmService,
+		keyPrefix:       keyPrefix,
+		useSecureString: useSecureString,
 	}, nil
 }
 
-func New(keyPrefix string) (*awsSSM, error) {
+func New(useSecureString bool, keyPrefix string) (*awsSSM, error) {
 	sess, err := session.NewSession()
 	if err != nil {
 		return nil, err
 	}
 
-	return NewWithSession(sess, keyPrefix)
+	return NewWithSession(sess, useSecureString, keyPrefix)
 }
 
 func (a *awsSSM) Get(key string) ([]byte, error) {
-	out, err := a.ssmService.GetParameters(&ssm.GetParametersInput{
+	req := &ssm.GetParametersInput{
 		Names: []*string{
 			aws.String(a.name(key)),
 		},
-	})
+		WithDecryption: aws.Bool(a.useSecureString),
+	}
+
+	out, err := a.ssmService.GetParameters(req)
 	if err != nil {
 		return []byte{}, err
 	}
@@ -66,13 +71,20 @@ func (a *awsSSM) name(key string) string {
 }
 
 func (a *awsSSM) Set(key string, val []byte) error {
-	_, err := a.ssmService.PutParameter(&ssm.PutParameterInput{
+	req := &ssm.PutParameterInput{
 		Description: aws.String("vault-unsealer"),
 		Name:        aws.String(a.name(key)),
 		Overwrite:   aws.Bool(true),
 		Value:       aws.String(base64.StdEncoding.EncodeToString(val)),
-		Type:        aws.String("String"),
-	})
+	}
+
+	if a.useSecureString {
+		req.Type = aws.String("SecureString")
+	} else {
+		req.Type = aws.String("String")
+	}
+
+	_, err := a.ssmService.PutParameter(req)
 	return err
 }
 
