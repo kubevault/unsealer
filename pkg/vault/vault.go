@@ -180,6 +180,11 @@ func (u *vault) CheckReadWriteAccess() error {
 		return errors.Wrapf(err, "failed to get data for key(%s)", key)
 	}
 
+	err = u.keyStore.Delete(key)
+	if err != nil {
+		return errors.Wrapf(err, "failed to delete data for key(%s)", key)
+	}
+
 	glog.Infoln("Testing the read/write access is successful")
 	return nil
 }

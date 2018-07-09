@@ -92,6 +92,10 @@ func (a *awsKMS) Set(key string, val []byte) error {
 	return a.store.Set(key, cipherText)
 }
 
+func (a *awsKMS) Delete(key string) error {
+	return a.store.Delete(key)
+}
+
 func (g *awsKMS) Test(key string) error {
 	inputString := "test"
 

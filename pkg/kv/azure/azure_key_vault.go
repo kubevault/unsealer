@@ -58,6 +58,11 @@ func (k *KVService) Get(key string) ([]byte, error) {
 	return value, nil
 }
 
+func (k *KVService) Delete(key string) error {
+	_, err := k.KeyClient.DeleteSecret(k.Ctx, k.VaultBaseUrl, key)
+	return err
+}
+
 func (k *KVService) Test(key string) error {
 	return nil
 }

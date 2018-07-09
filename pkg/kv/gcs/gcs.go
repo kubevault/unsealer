@@ -58,6 +58,13 @@ func (g *gcsStorage) Get(key string) ([]byte, error) {
 	return b, nil
 }
 
+func (g *gcsStorage) Delete(key string) error {
+	ctx := context.Background()
+	key = objectNameWithPrefix(g.prefix, key)
+
+	return g.cl.Bucket(g.bucket).Object(key).Delete(ctx)
+}
+
 func objectNameWithPrefix(prefix, key string) string {
 	return fmt.Sprintf("%s%s", prefix, key)
 }

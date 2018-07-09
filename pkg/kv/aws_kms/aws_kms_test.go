@@ -21,6 +21,10 @@ func (f *fakeKV) Test(key string) error {
 	return nil
 }
 
+func (f *fakeKV) Delete(key string) error {
+	return nil
+}
+
 func (f *fakeKV) Set(key string, data []byte) error {
 	f.Values[key] = &data
 	return nil

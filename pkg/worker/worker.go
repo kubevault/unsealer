@@ -56,7 +56,7 @@ func (o *WorkerOptions) Run() error {
 			if !initialized {
 				if !o.SkipReadWriteAccessCheck {
 					if err = v.CheckReadWriteAccess(); err != nil {
-						glog.Errorf("Failed to check read/write access to key store. reason: %v\n",err)
+						glog.Errorf("Failed to check read/write access to key store. reason: %v\n", err)
 						continue
 					}
 				}
