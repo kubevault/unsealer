@@ -59,7 +59,7 @@ func (g *gcsStorage) Get(key string) ([]byte, error) {
 	return b, nil
 }
 
-func (g *gcsStorage) CheckReadWriteAccess() error {
+func (g *gcsStorage) CheckWriteAccess() error {
 	key := "vault-read-write-access-test-1234"
 	val := "read write access check"
 

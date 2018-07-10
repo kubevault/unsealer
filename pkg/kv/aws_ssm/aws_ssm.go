@@ -77,7 +77,7 @@ func (a *awsSSM) Set(key string, val []byte) error {
 	return err
 }
 
-func (a *awsSSM) CheckReadWriteAccess() error {
+func (a *awsSSM) CheckWriteAccess() error {
 	key := "vault-read-write-access-test-1234"
 	val := "read write access check"
 

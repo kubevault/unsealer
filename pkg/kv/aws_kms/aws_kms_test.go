@@ -21,7 +21,7 @@ func (f *fakeKV) Test(key string) error {
 	return nil
 }
 
-func (f *fakeKV) CheckReadWriteAccess() error {
+func (f *fakeKV) CheckWriteAccess() error {
 	return nil
 }
 

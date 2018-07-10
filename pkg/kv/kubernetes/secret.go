@@ -78,7 +78,7 @@ func (k *KVService) Get(key string) ([]byte, error) {
 	}
 }
 
-func (k *KVService) CheckReadWriteAccess() error {
+func (k *KVService) CheckWriteAccess() error {
 	key := "vault-read-write-access-test-1234"
 	val := "read write access check"
 

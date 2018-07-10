@@ -163,7 +163,7 @@ func (u *vault) Init() error {
 func (u *vault) CheckReadWriteAccess() error {
 	glog.Infoln("Testing the read/write access...")
 
-	err := u.keyStore.CheckReadWriteAccess()
+	err := u.keyStore.CheckWriteAccess()
 	if err != nil {
 		return errors.Wrap(err, "read/write access test failed")
 	}
