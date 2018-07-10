@@ -3,8 +3,10 @@ package vault
 import (
 	"fmt"
 
+	"github.com/golang/glog"
 	"github.com/hashicorp/vault/api"
 	"github.com/kubevault/unsealer/pkg/kv"
+	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
 )
 
@@ -24,6 +26,7 @@ type Vault interface {
 	Sealed() (bool, error)
 	Unseal() error
 	Init() error
+	CheckReadWriteAccess() error
 }
 
 // New returns a new vault Vault, or an error.
@@ -80,6 +83,9 @@ func (u *vault) Unseal() error {
 
 func (u *vault) keyStoreNotFound(key string) bool {
 	_, err := u.keyStore.Get(key)
+	if err != nil {
+		glog.Errorf("error response when checking whether key(%s) exists or not: %v", key, err)
+	}
 	if _, ok := err.(*kv.NotFoundError); ok {
 		return true
 	}
@@ -88,7 +94,7 @@ func (u *vault) keyStoreNotFound(key string) bool {
 
 func (u *vault) keyStoreSet(key string, val []byte) error {
 	if !u.config.OverwriteExisting && !u.keyStoreNotFound(key) {
-		return fmt.Errorf("error setting key '%s': it already exists", key)
+		return fmt.Errorf("error setting key '%s': it already exists or encounter error when getting key", key)
 	}
 	return u.keyStore.Set(key, val)
 }
@@ -114,7 +120,7 @@ func (u *vault) Init() error {
 		// test every key
 		for _, key := range keys {
 			if !u.keyStoreNotFound(key) {
-				return fmt.Errorf("error before init: keystore value for '%s' already exists", key)
+				return fmt.Errorf("error before init: keystore value for '%s' already exists or encounter error when getting key", key)
 			}
 		}
 	}
@@ -151,6 +157,19 @@ func (u *vault) Init() error {
 
 	return nil
 
+}
+
+// CheckReadWriteAccess will test read write access
+func (u *vault) CheckReadWriteAccess() error {
+	glog.Infoln("Testing the read/write access...")
+
+	err := u.keyStore.CheckWriteAccess()
+	if err != nil {
+		return errors.Wrap(err, "read/write access test failed")
+	}
+
+	glog.Infoln("Testing the read/write access is successful")
+	return nil
 }
 
 func (u *vault) unsealKeyForID(i int) string {

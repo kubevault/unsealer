@@ -9,6 +9,7 @@ import (
 	"github.com/aws/aws-sdk-go/service/ssm"
 	"github.com/kubevault/unsealer/pkg/kv"
 	"github.com/kubevault/unsealer/pkg/kv/util"
+	"github.com/pkg/errors"
 )
 
 type awsSSM struct {
@@ -88,11 +89,28 @@ func (a *awsSSM) Set(key string, val []byte) error {
 	return err
 }
 
-func (a *awsSSM) Delete(key string) error {
-	_, err := a.ssmService.DeleteParameter(&ssm.DeleteParameterInput{
+func (a *awsSSM) CheckWriteAccess() error {
+	key := "vault-unsealer-dummy-file"
+	val := "read write access check"
+
+	err := a.Set(key, []byte(val))
+	if err != nil {
+		return errors.Wrap(err, "failed to write test file")
+	}
+
+	_, err = a.Get(key)
+	if err != nil {
+		return errors.Wrap(err, "failed to get test file")
+	}
+
+	_, err = a.ssmService.DeleteParameter(&ssm.DeleteParameterInput{
 		Name: aws.String(a.name(key)),
 	})
-	return err
+	if err != nil {
+		return errors.Wrap(err, "failed to delete test file")
+	}
+
+	return nil
 }
 
 func (g *awsSSM) Test(key string) error {

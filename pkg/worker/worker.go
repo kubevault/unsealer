@@ -54,6 +54,11 @@ func (o *WorkerOptions) Run() error {
 			glog.Error("failed to get initialized status. reason :", err)
 		} else {
 			if !initialized {
+				if err = v.CheckReadWriteAccess(); err != nil {
+					glog.Errorf("Failed to check read/write access to key store. reason: %v\n", err)
+					continue
+				}
+
 				if err = v.Init(); err != nil {
 					glog.Error("error initializing vault: ", err)
 				} else {

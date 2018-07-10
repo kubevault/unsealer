@@ -33,7 +33,7 @@ type WorkerOptions struct {
 	// ca cert file for vault api client, if vault used a self signed certificate
 	CaCertFile string
 
-	// If InSecureTLS true, then it will skip tls verification when communicating with vault server
+	// If InSecureTLS is true, then it will skip tls verification when communicating with vault server
 	InSecureTLS bool
 
 	Vault      *vault.VaultOptions
