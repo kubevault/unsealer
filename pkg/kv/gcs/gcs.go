@@ -7,6 +7,7 @@ import (
 
 	"cloud.google.com/go/storage"
 	"github.com/kubevault/unsealer/pkg/kv"
+	"github.com/pkg/errors"
 )
 
 type gcsStorage struct {
@@ -58,11 +59,27 @@ func (g *gcsStorage) Get(key string) ([]byte, error) {
 	return b, nil
 }
 
-func (g *gcsStorage) Delete(key string) error {
-	ctx := context.Background()
-	key = objectNameWithPrefix(g.prefix, key)
+func (g *gcsStorage) CheckReadWriteAccess() error {
+	key := "vault-read-write-access-test-1234"
+	val := "read write access check"
 
-	return g.cl.Bucket(g.bucket).Object(key).Delete(ctx)
+	err := g.Set(key, []byte(val))
+	if err != nil {
+		return errors.Wrap(err, "failed to write test file")
+	}
+
+	_, err = g.Get(key)
+	if err != nil {
+		return errors.Wrap(err, "failed to get test file")
+	}
+
+	ctx := context.Background()
+
+	err = g.cl.Bucket(g.bucket).Object(key).Delete(ctx)
+	if err != nil {
+		return errors.Wrap(err, "failed to delete test file")
+	}
+	return nil
 }
 
 func objectNameWithPrefix(prefix, key string) string {

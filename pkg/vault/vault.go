@@ -159,30 +159,13 @@ func (u *vault) Init() error {
 
 }
 
-// CheckReadWriteAccess will do:
-// 	- write data in the key store
-// 	- read data from the key store
-//
-// Key: mock-test-vault-unsealer
-// Data: test
+// CheckReadWriteAccess will test read write access
 func (u *vault) CheckReadWriteAccess() error {
 	glog.Infoln("Testing the read/write access...")
-	key := "mock-test-vault-unsealer"
-	data := []byte("test")
 
-	err := u.keyStore.Set(key, data)
+	err := u.keyStore.CheckReadWriteAccess()
 	if err != nil {
-		return errors.Wrapf(err, "failed to write data for key(%s)", key)
-	}
-
-	_, err = u.keyStore.Get(key)
-	if err != nil {
-		return errors.Wrapf(err, "failed to get data for key(%s)", key)
-	}
-
-	err = u.keyStore.Delete(key)
-	if err != nil {
-		return errors.Wrapf(err, "failed to delete data for key(%s)", key)
+		return errors.Wrap(err, "read/write access test failed")
 	}
 
 	glog.Infoln("Testing the read/write access is successful")

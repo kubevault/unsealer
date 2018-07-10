@@ -78,7 +78,20 @@ func (k *KVService) Get(key string) ([]byte, error) {
 	}
 }
 
-func (k *KVService) Delete(key string) error {
+func (k *KVService) CheckReadWriteAccess() error {
+	key := "vault-read-write-access-test-1234"
+	val := "read write access check"
+
+	err := k.Set(key, []byte(val))
+	if err != nil {
+		return errors.Wrap(err, "failed to write test data")
+	}
+
+	_, err = k.Get(key)
+	if err != nil {
+		return errors.Wrap(err, "failed to get test data")
+	}
+
 	sr, err := k.KubeClient.CoreV1().Secrets(k.Namespace).Get(k.SecretName, metav1.GetOptions{})
 	if kerror.IsNotFound(err) {
 		return kv.NewNotFoundError(fmt.Sprintf("secret not found. reason: %v", err))

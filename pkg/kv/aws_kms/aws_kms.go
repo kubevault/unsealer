@@ -92,8 +92,8 @@ func (a *awsKMS) Set(key string, val []byte) error {
 	return a.store.Set(key, cipherText)
 }
 
-func (a *awsKMS) Delete(key string) error {
-	return a.store.Delete(key)
+func (a *awsKMS) CheckReadWriteAccess() error {
+	return a.store.CheckReadWriteAccess()
 }
 
 func (g *awsKMS) Test(key string) error {

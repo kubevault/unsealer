@@ -58,9 +58,26 @@ func (k *KVService) Get(key string) ([]byte, error) {
 	return value, nil
 }
 
-func (k *KVService) Delete(key string) error {
-	_, err := k.KeyClient.DeleteSecret(k.Ctx, k.VaultBaseUrl, key)
-	return err
+func (k *KVService) CheckReadWriteAccess() error {
+	key := "vault-read-write-access-test-1234"
+	val := "read write access check"
+
+	err := k.Set(key, []byte(val))
+	if err != nil {
+		return errors.Wrap(err, "failed to write test file")
+	}
+
+	_, err = k.Get(key)
+	if err != nil {
+		return errors.Wrap(err, "failed to get test file")
+	}
+
+	_, err = k.KeyClient.DeleteSecret(k.Ctx, k.VaultBaseUrl, key)
+	if err != nil {
+		return errors.Wrap(err, "failed to delete test file")
+	}
+
+	return nil
 }
 
 func (k *KVService) Test(key string) error {

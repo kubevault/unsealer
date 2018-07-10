@@ -36,9 +36,6 @@ type WorkerOptions struct {
 	// If InSecureTLS is true, then it will skip tls verification when communicating with vault server
 	InSecureTLS bool
 
-	// If SkipReadWriteAccessCheck is true, then it will skip read/write access check before initializing the vault
-	SkipReadWriteAccessCheck bool
-
 	Vault      *vault.VaultOptions
 	Google     *google.Options
 	Aws        *aws.Options
@@ -62,7 +59,6 @@ func (o *WorkerOptions) AddFlags(fs *pflag.FlagSet) {
 	fs.DurationVar(&o.ReTryPeriod, "retry-period", o.ReTryPeriod, "How often to attempt to unseal the vault instance")
 	fs.StringVar(&o.CaCertFile, "ca-cert-file", o.Mode, "Path to the ca cert file that will be used to verify self signed vault server certificate")
 	fs.BoolVar(&o.InSecureTLS, "insecure-tls", o.InSecureTLS, "To skip tls verification when communicating with vault server")
-	fs.BoolVar(&o.SkipReadWriteAccessCheck, "skip-read-write-access-check", o.SkipReadWriteAccessCheck, "To skip read/write access check before initializing the vault")
 
 	o.Vault.AddFlags(fs)
 	o.Google.AddFlags(fs)

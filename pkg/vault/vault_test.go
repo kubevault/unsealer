@@ -21,7 +21,7 @@ func (f *fakeKV) Test(key string) error {
 	return fmt.Errorf("not-implemented")
 }
 
-func (f *fakeKV) Delete(key string) error {
+func (f *fakeKV) CheckReadWriteAccess() error {
 	return fmt.Errorf("not-implemented")
 }
 

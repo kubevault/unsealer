@@ -86,8 +86,8 @@ func (g *googleKms) Set(key string, val []byte) error {
 	return g.store.Set(key, cipherText)
 }
 
-func (g *googleKms) Delete(key string) error {
-	return g.store.Delete(key)
+func (g *googleKms) CheckReadWriteAccess() error {
+	return g.store.CheckReadWriteAccess()
 }
 
 func (g *googleKms) Test(key string) error {

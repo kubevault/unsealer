@@ -19,6 +19,6 @@ func NewNotFoundError(msg string, args ...interface{}) *NotFoundError {
 type Service interface {
 	Set(key string, value []byte) error
 	Get(key string) ([]byte, error)
-	Delete(key string) error
+	CheckReadWriteAccess() error
 	Test(key string) error
 }
