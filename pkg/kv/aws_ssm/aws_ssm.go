@@ -78,7 +78,7 @@ func (a *awsSSM) Set(key string, val []byte) error {
 }
 
 func (a *awsSSM) CheckWriteAccess() error {
-	key := "vault-read-write-access-test-1234"
+	key := "vault-unsealer-dummy-file"
 	val := "read write access check"
 
 	err := a.Set(key, []byte(val))

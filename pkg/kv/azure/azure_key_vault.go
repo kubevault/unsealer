@@ -59,7 +59,7 @@ func (k *KVService) Get(key string) ([]byte, error) {
 }
 
 func (k *KVService) CheckWriteAccess() error {
-	key := "vault-read-write-access-test-1234"
+	key := "vault-unsealer-dummy-file"
 	val := "read write access check"
 
 	err := k.Set(key, []byte(val))

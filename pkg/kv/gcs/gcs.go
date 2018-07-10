@@ -60,7 +60,7 @@ func (g *gcsStorage) Get(key string) ([]byte, error) {
 }
 
 func (g *gcsStorage) CheckWriteAccess() error {
-	key := "vault-read-write-access-test-1234"
+	key := "vault-unsealer-dummy-file"
 	val := "read write access check"
 
 	err := g.Set(key, []byte(val))
