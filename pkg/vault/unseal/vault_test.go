@@ -1,4 +1,4 @@
-package vault
+package unseal
 
 import (
 	"fmt"
@@ -42,7 +42,7 @@ func (f *fakeKV) Get(key string) ([]byte, error) {
 
 func TestKeyStoreNotFound(t *testing.T) {
 	fakeKV := NewFakeKV()
-	v := &vault{
+	v := &unseal{
 		keyStore: fakeKV,
 	}
 

@@ -1,7 +1,6 @@
 package worker
 
 import (
-	"fmt"
 	"time"
 
 	"github.com/golang/glog"
@@ -14,6 +13,7 @@ import (
 	"github.com/kubevault/unsealer/pkg/kv/gcs"
 	"github.com/kubevault/unsealer/pkg/kv/kubernetes"
 	"github.com/kubevault/unsealer/pkg/vault"
+	"github.com/kubevault/unsealer/pkg/vault/unseal"
 	"github.com/pkg/errors"
 )
 
@@ -35,12 +35,12 @@ func (o *WorkerOptions) Run() error {
 		}
 	}
 
-	vaultApiClient, err := NewVaultClient("127.0.0.1", "8200", tlsConfig)
+	vClient, err := vault.NewVaultClient("https://127.0.0.1:8200", tlsConfig)
 	if err != nil {
 		return errors.Wrap(err, "failed to create vault api client")
 	}
 
-	v, err := vault.New(kvService, vaultApiClient, *o.Vault)
+	v, err := unseal.New(kvService, vClient, *o.Unseal)
 	if err != nil {
 		return errors.Wrap(err, "failed create vault helper")
 	}
@@ -49,7 +49,7 @@ func (o *WorkerOptions) Run() error {
 	for {
 		glog.Infoln("checking if vault is initialized...")
 
-		initialized, err := vaultApiClient.Sys().InitStatus()
+		initialized, err := vClient.Sys().InitStatus()
 		if err != nil {
 			glog.Error("failed to get initialized status. reason :", err)
 		} else {
@@ -150,12 +150,4 @@ func (o *WorkerOptions) getKVService() (kv.Service, error) {
 	}
 
 	return nil, errors.New("Invalid mode")
-}
-
-func NewVaultClient(hostname string, port string, tlsConfig *vaultapi.TLSConfig) (*vaultapi.Client, error) {
-	cfg := vaultapi.DefaultConfig()
-	podURL := fmt.Sprintf("https://%s:%s", hostname, port)
-	cfg.Address = podURL
-	cfg.ConfigureTLS(tlsConfig)
-	return vaultapi.NewClient(cfg)
 }

@@ -7,7 +7,7 @@ import (
 	"github.com/kubevault/unsealer/pkg/kv/azure"
 	google "github.com/kubevault/unsealer/pkg/kv/cloudkms"
 	"github.com/kubevault/unsealer/pkg/kv/kubernetes"
-	"github.com/kubevault/unsealer/pkg/vault"
+	"github.com/kubevault/unsealer/pkg/vault/unseal"
 	"github.com/pkg/errors"
 	"github.com/spf13/pflag"
 )
@@ -36,7 +36,7 @@ type WorkerOptions struct {
 	// If InSecureTLS is true, then it will skip tls verification when communicating with vault server
 	InSecureTLS bool
 
-	Vault      *vault.VaultOptions
+	Unseal     *unseal.UnsealOptions
 	Google     *google.Options
 	Aws        *aws.Options
 	Azure      *azure.Options
@@ -46,7 +46,7 @@ type WorkerOptions struct {
 func NewWorkerOptions() *WorkerOptions {
 	return &WorkerOptions{
 		ReTryPeriod: 10 * time.Second,
-		Vault:       vault.NewVaultOptions(),
+		Unseal:      unseal.NewUnsealOptions(),
 		Google:      google.NewOptions(),
 		Aws:         aws.NewOptions(),
 		Azure:       azure.NewOptions(),
@@ -60,7 +60,7 @@ func (o *WorkerOptions) AddFlags(fs *pflag.FlagSet) {
 	fs.StringVar(&o.CaCertFile, "ca-cert-file", o.Mode, "Path to the ca cert file that will be used to verify self signed vault server certificate")
 	fs.BoolVar(&o.InSecureTLS, "insecure-tls", o.InSecureTLS, "To skip tls verification when communicating with vault server")
 
-	o.Vault.AddFlags(fs)
+	o.Unseal.AddFlags(fs)
 	o.Google.AddFlags(fs)
 	o.Aws.AddFlags(fs)
 	o.Azure.AddFlags(fs)
@@ -76,7 +76,7 @@ func (o *WorkerOptions) Validate() []error {
 		errs = append(errs, errors.New("invalid mode"))
 	}
 
-	errs = append(errs, o.Vault.Validate()...)
+	errs = append(errs, o.Unseal.Validate()...)
 
 	if o.Mode == ModeGoogleCloudKmsGCS {
 		errs = append(errs, o.Google.Validate()...)
