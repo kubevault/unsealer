@@ -1,5 +1,5 @@
 hash: aa41161240ab53eeb0a19f21bee080c32242c0aed89d2a4e94e0f6533e7a6e17
-updated: 2018-10-13T12:37:26.786503052-07:00
+updated: 2018-10-17T15:51:25.139424192+06:00
 imports:
 - name: cloud.google.com/go
   version: 0fd7230b2a7505833d5f69b75cbd6c9582401479
@@ -30,7 +30,7 @@ imports:
 - name: github.com/appscode/jsonpatch
   version: 5af499cf01c842bfdd7761a433fc90525ccd6836
 - name: github.com/appscode/kutil
-  version: 303298aa86dad096fed4c49ba117700e506eca2c
+  version: 25382b15981e816818803a66b6e1a1270efa89ab
   subpackages:
   - core/v1
   - meta
@@ -86,7 +86,7 @@ imports:
   - autorest/validation
   - version
 - name: github.com/cenkalti/backoff
-  version: 2ea60e5f094469f9e65adb9cd103795b73ae743e
+  version: 62661b46c4093e2c1f38d943e663db1a29873e80
 - name: github.com/cpuguy83/go-md2man
   version: 20f5889cbdc3c73dbd2862796665e7c465ade7d1
   subpackages:
@@ -128,14 +128,14 @@ imports:
 - name: github.com/google/btree
   version: 7d79101e329e5a3adf994758c578dab82b90c017
 - name: github.com/google/go-cmp
-  version: 875f8df8b7965f1eac1098d36d677f807ac0b49e
+  version: 97aa668b73e764ccdd786bc3ccd2edffe621150e
   subpackages:
   - cmp
   - cmp/internal/diff
   - cmp/internal/function
   - cmp/internal/value
 - name: github.com/google/go-querystring
-  version: 44c6ddd0a2342c386950e880b658017258da92fc
+  version: 53e6ce116135b80d037921a7fdd5138cf32d7a8a
   subpackages:
   - query
 - name: github.com/google/gofuzz
@@ -208,7 +208,8 @@ imports:
 - name: github.com/ryanuber/go-glob
   version: 256dc444b735e061061cf46c809487313d5b0065
 - name: github.com/sergi/go-diff
-  version: 97b2266dfe4bd4ea1b81a463322f04f8b724801e
+  version: 24e2351369ec4949b2ed0dc5c477afdd4c4034e8
+  repo: https://github.com/sergi/go-diff
   subpackages:
   - diffmatchpatch
 - name: github.com/sethgrid/pester
@@ -224,16 +225,16 @@ imports:
 - name: github.com/spf13/pflag
   version: 583c0c0531f06d5278b7d917446061adc344b5cd
 - name: github.com/yudai/gojsondiff
-  version: 7b1b7adf999dab73a6eb02669c3d82dbb27a3dd6
+  version: 0525c875b75ca60b9e67ddc44496aa16f21066b0
   subpackages:
   - formatter
 - name: github.com/yudai/golcs
   version: d1c525dea8ce39ea9a783d33cf08932305373f2c
+  repo: https://github.com/yudai/golcs
 - name: go.opencensus.io
-  version: ae36bd8445ff9cde752c94cf0d4f3f9dced1facc
+  version: 1eb9a13c7dd02141e065a665f6bf5c99a090a16a
   subpackages:
   - exemplar
-  - exporter/stackdriver/propagation
   - internal
   - internal/tagencoding
   - plugin/ochttp
@@ -287,7 +288,7 @@ imports:
   subpackages:
   - rate
 - name: google.golang.org/api
-  version: 3639d6d93f377f39a1de765fa4ef37b3c7ca8bd9
+  version: 3f6e8463aa1d824abe11b439d178c02220079da5
   subpackages:
   - cloudkms/v1
   - gensupport
@@ -299,8 +300,9 @@ imports:
   - option
   - storage/v1
   - transport/http
+  - transport/http/internal/propagation
 - name: google.golang.org/appengine
-  version: ae0ab99deb4dc413a2b4bd6c8bdd0eb67f1e4d06
+  version: 12d5545dc1cfa6047a286d5e853841b6471f4c19
   subpackages:
   - internal
   - internal/app_identity
@@ -347,7 +349,7 @@ imports:
 - name: gopkg.in/inf.v0
   version: 3887ee99ecf07df5b447e9b00d9c0b2adaa9f3e4
 - name: gopkg.in/yaml.v2
-  version: 670d4cfef0544295bc27a114dbac37980d83185a
+  version: 53feefa2559fb8dfa8d81baad31be332c97d6c77
 - name: k8s.io/api
   version: fd83cbc87e7632ccd8bbab63d2b673d4e0c631cc
   subpackages:
@@ -483,6 +485,8 @@ imports:
   subpackages:
   - pkg/util/proto
 testImports:
+- name: github.com/appscode/pat
+  version: 48ff78925b7955367d8a048fc2b5cec8efadf8d3
 - name: github.com/pmezard/go-difflib
   version: d8ed2627bdf02c080bf22230dbb337003b7aba2d
   subpackages:
