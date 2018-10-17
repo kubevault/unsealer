@@ -16,13 +16,23 @@ func TestVaultOptions_Validate(t *testing.T) {
 	}{
 		{
 			"host is empty, validation failed",
-			&K8sAuthOptions{},
+			&K8sAuthOptions{
+				Jwt: "ok",
+			},
 			errors.New("auth.k8s-host must be non empty"),
+		},
+		{
+			"env K8S_TOKEN_REVIEWER_JWT is empty, validation failed",
+			&K8sAuthOptions{
+				Host: "hi.com",
+			},
+			errors.New("env K8S_TOKEN_REVIEWER_JWT must be non empty"),
 		},
 		{
 			"validation successful",
 			&K8sAuthOptions{
 				Host: "hi.com",
+				Jwt:  "ok",
 			},
 			nil,
 		},

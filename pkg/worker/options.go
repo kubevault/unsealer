@@ -7,6 +7,8 @@ import (
 	"github.com/kubevault/unsealer/pkg/kv/azure"
 	google "github.com/kubevault/unsealer/pkg/kv/cloudkms"
 	"github.com/kubevault/unsealer/pkg/kv/kubernetes"
+	"github.com/kubevault/unsealer/pkg/vault/auth"
+	"github.com/kubevault/unsealer/pkg/vault/policy"
 	"github.com/kubevault/unsealer/pkg/vault/unseal"
 	"github.com/pkg/errors"
 	"github.com/spf13/pflag"
@@ -36,7 +38,9 @@ type WorkerOptions struct {
 	// If InSecureTLS is true, then it will skip tls verification when communicating with vault server
 	InSecureTLS bool
 
+	Auth       *auth.K8sAuthOptions
 	Unseal     *unseal.UnsealOptions
+	Policy     *policy.PolicyOptions
 	Google     *google.Options
 	Aws        *aws.Options
 	Azure      *azure.Options
@@ -47,6 +51,8 @@ func NewWorkerOptions() *WorkerOptions {
 	return &WorkerOptions{
 		ReTryPeriod: 10 * time.Second,
 		Unseal:      unseal.NewUnsealOptions(),
+		Auth:        auth.NewK8sAuthOptions(),
+		Policy:      policy.NewPolicyOptions(),
 		Google:      google.NewOptions(),
 		Aws:         aws.NewOptions(),
 		Azure:       azure.NewOptions(),
@@ -61,6 +67,8 @@ func (o *WorkerOptions) AddFlags(fs *pflag.FlagSet) {
 	fs.BoolVar(&o.InSecureTLS, "insecure-tls", o.InSecureTLS, "To skip tls verification when communicating with vault server")
 
 	o.Unseal.AddFlags(fs)
+	o.Auth.AddFlags(fs)
+	o.Policy.AddFlags(fs)
 	o.Google.AddFlags(fs)
 	o.Aws.AddFlags(fs)
 	o.Azure.AddFlags(fs)
@@ -77,6 +85,8 @@ func (o *WorkerOptions) Validate() []error {
 	}
 
 	errs = append(errs, o.Unseal.Validate()...)
+	errs = append(errs, o.Auth.Validate()...)
+	errs = append(errs, o.Policy.Validate()...)
 
 	if o.Mode == ModeGoogleCloudKmsGCS {
 		errs = append(errs, o.Google.Validate()...)

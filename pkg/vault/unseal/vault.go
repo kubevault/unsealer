@@ -3,8 +3,11 @@ package unseal
 import (
 	"fmt"
 
+	"github.com/golang/glog"
 	"github.com/hashicorp/vault/api"
 	"github.com/kubevault/unsealer/pkg/kv"
+	"github.com/kubevault/unsealer/pkg/vault/util"
+	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
 )
 
@@ -21,9 +24,11 @@ var _ Unseal = &unseal{}
 // Unseal is an interface that can be used to attempt to perform actions against
 // a Vault server.
 type Unseal interface {
-	Sealed() (bool, error)
+	IsSealed() (bool, error)
+	IsInitialized() (bool, error)
 	Unseal() error
 	Init() error
+	CheckReadWriteAccess() error
 }
 
 // New returns a new Unseal, or an error.
@@ -35,12 +40,20 @@ func New(k kv.Service, cl *api.Client, config UnsealOptions) (Unseal, error) {
 	}, nil
 }
 
-func (u *unseal) Sealed() (bool, error) {
+func (u *unseal) IsSealed() (bool, error) {
 	resp, err := u.cl.Sys().SealStatus()
 	if err != nil {
 		return false, fmt.Errorf("error checking status: %s", err.Error())
 	}
 	return resp.Sealed, nil
+}
+
+func (u *unseal) IsInitialized() (bool, error) {
+	resp, err := u.cl.Sys().InitStatus()
+	if err != nil {
+		return false, fmt.Errorf("error checking init status: %s", err.Error())
+	}
+	return resp, nil
 }
 
 // Unseal will attempt to unseal vault by retrieving keys from the kms service
@@ -49,7 +62,7 @@ func (u *unseal) Sealed() (bool, error) {
 // was invalid.
 func (u *unseal) Unseal() error {
 	for i := 0; ; i++ {
-		keyID := u.unsealKeyForID(i)
+		keyID := util.UnsealKeyID(u.config.KeyPrefix, i)
 
 		logrus.Debugf("retrieving key from kms service...")
 		k, err := u.keyStore.Get(keyID)
@@ -80,6 +93,9 @@ func (u *unseal) Unseal() error {
 
 func (u *unseal) keyStoreNotFound(key string) bool {
 	_, err := u.keyStore.Get(key)
+	if err != nil {
+		glog.Errorf("error response when checking whether key(%s) exists or not: %v", key, err)
+	}
 	if _, ok := err.(*kv.NotFoundError); ok {
 		return true
 	}
@@ -95,7 +111,7 @@ func (u *unseal) keyStoreSet(key string, val []byte) error {
 
 func (u *unseal) Init() error {
 	// test backend first
-	err := u.keyStore.Test(u.testKey())
+	err := u.keyStore.Test(testKey(u.config.KeyPrefix))
 	if err != nil {
 		return fmt.Errorf("error testing keystore before init: %s", err.Error())
 	}
@@ -103,12 +119,12 @@ func (u *unseal) Init() error {
 	// test for an existing keys
 	if !u.config.OverwriteExisting {
 		keys := []string{
-			u.rootTokenKey(),
+			util.RootTokenID(u.config.KeyPrefix),
 		}
 
 		// add unseal keys
 		for i := 0; i <= u.config.SecretShares; i++ {
-			keys = append(keys, u.unsealKeyForID(i))
+			keys = append(keys, util.UnsealKeyID(u.config.KeyPrefix, i))
 		}
 
 		// test every key
@@ -129,7 +145,7 @@ func (u *unseal) Init() error {
 	}
 
 	for i, k := range resp.Keys {
-		keyID := u.unsealKeyForID(i)
+		keyID := util.UnsealKeyID(u.config.KeyPrefix, i)
 		err := u.keyStoreSet(keyID, []byte(k))
 
 		if err != nil {
@@ -140,11 +156,11 @@ func (u *unseal) Init() error {
 	rootToken := resp.RootToken
 
 	if u.config.StoreRootToken {
-		rootTokenKey := u.rootTokenKey()
-		if err = u.keyStoreSet(rootTokenKey, []byte(resp.RootToken)); err != nil {
-			return fmt.Errorf("error storing root token '%s' in key'%s'", rootToken, rootTokenKey)
+		rootTokenID := util.RootTokenID(u.config.KeyPrefix)
+		if err = u.keyStoreSet(rootTokenID, []byte(resp.RootToken)); err != nil {
+			return fmt.Errorf("error storing root token '%s' in key'%s'", rootToken, rootTokenID)
 		}
-		logrus.WithField("key", rootTokenKey).Info("root token stored in key store")
+		logrus.WithField("key", rootTokenID).Info("root token stored in key store")
 	} else {
 		logrus.WithField("root-token", resp.RootToken).Warnf("won't store root token in key store, this token grants full privileges to vault, so keep this secret")
 	}
@@ -153,14 +169,19 @@ func (u *unseal) Init() error {
 
 }
 
-func (u *unseal) unsealKeyForID(i int) string {
-	return fmt.Sprintf("%s-unseal-%d", u.config.KeyPrefix, i)
+func testKey(prefix string) string {
+	return fmt.Sprintf("%s-test", prefix)
 }
 
-func (u *unseal) rootTokenKey() string {
-	return fmt.Sprintf("%s-root", u.config.KeyPrefix)
-}
+// CheckReadWriteAccess will test read write access
+func (u *unseal) CheckReadWriteAccess() error {
+	glog.Infoln("Testing the read/write access...")
 
-func (u *unseal) testKey() string {
-	return fmt.Sprintf("%s-test", u.config.KeyPrefix)
+	err := u.keyStore.CheckWriteAccess()
+	if err != nil {
+		return errors.Wrap(err, "read/write access test failed")
+	}
+
+	glog.Infoln("Testing the read/write access is successful")
+	return nil
 }

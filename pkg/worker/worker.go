@@ -13,13 +13,15 @@ import (
 	"github.com/kubevault/unsealer/pkg/kv/gcs"
 	"github.com/kubevault/unsealer/pkg/kv/kubernetes"
 	"github.com/kubevault/unsealer/pkg/vault"
+	"github.com/kubevault/unsealer/pkg/vault/auth"
+	"github.com/kubevault/unsealer/pkg/vault/policy"
 	"github.com/kubevault/unsealer/pkg/vault/unseal"
+	"github.com/kubevault/unsealer/pkg/vault/util"
 	"github.com/pkg/errors"
 )
 
 func (o *WorkerOptions) Run() error {
-
-	kvService, err := o.getKVService()
+	keyStore, err := o.getKVService()
 	if err != nil {
 		return errors.Wrap(err, "failed to create kv service")
 	}
@@ -35,67 +37,115 @@ func (o *WorkerOptions) Run() error {
 		}
 	}
 
-	vClient, err := vault.NewVaultClient("https://127.0.0.1:8200", tlsConfig)
+	vc, err := vault.NewVaultClient("https://127.0.0.1:8200", tlsConfig)
 	if err != nil {
 		return errors.Wrap(err, "failed to create vault api client")
 	}
 
-	v, err := unseal.New(kvService, vClient, *o.Unseal)
+	o.unsealAndConfigureVault(vc, keyStore, o.ReTryPeriod)
+
+	return nil
+}
+
+// It will do:
+//	- If vault is not initialized, then initialize vault
+//	- If vault is not unsealed, then unseal it
+//  - configure vault
+// it will periodically check for infinite time
+func (o *WorkerOptions) unsealAndConfigureVault(vc *vaultapi.Client, keyStore kv.Service, retryPeriod time.Duration) {
+	rootTokenID := util.RootTokenID(o.Unseal.KeyPrefix)
+
+	unsl, err := unseal.New(keyStore, vc, *o.Unseal)
 	if err != nil {
-		return errors.Wrap(err, "failed create vault helper")
+		glog.Error("failed create unsealer client:", err)
 	}
 
-	//initialize
 	for {
 		glog.Infoln("checking if vault is initialized...")
-
-		initialized, err := vClient.Sys().InitStatus()
+		initialized, err := unsl.IsInitialized()
 		if err != nil {
 			glog.Error("failed to get initialized status. reason :", err)
+
 		} else {
 			if !initialized {
-				if err = v.CheckReadWriteAccess(); err != nil {
+				if err = unsl.CheckReadWriteAccess(); err != nil {
 					glog.Errorf("Failed to check read/write access to key store. reason: %v\n", err)
 					continue
 				}
-
-				if err = v.Init(); err != nil {
+				if err = unsl.Init(); err != nil {
 					glog.Error("error initializing vault: ", err)
 				} else {
 					glog.Infoln("vault is initialized")
-					break
 				}
 			} else {
 				glog.Infoln("vault is already initialized")
-				break
-			}
-		}
 
-		time.Sleep(o.ReTryPeriod)
-	}
-
-	// unseal
-	for {
-		glog.Infoln("checking if vault is sealed...")
-
-		sealed, err := v.Sealed()
-		if err != nil {
-			glog.Error("failed to get initialized status. reason: ", err)
-		} else {
-			if sealed {
-				if err := v.Unseal(); err != nil {
-					glog.Error("failed to unseal vault. reason: ", err)
+				glog.Infoln("checking if vault is sealed...")
+				sealed, err := unsl.IsSealed()
+				if err != nil {
+					glog.Error("failed to get unseal status. reason: ", err)
 				} else {
-					glog.Infoln("vault is unsealed")
+					if sealed {
+						if err := unsl.Unseal(); err != nil {
+							glog.Error("failed to unseal vault. reason: ", err)
+						} else {
+							glog.Infoln("vault is unsealed")
+
+							for {
+								glog.Infoln("configure vault")
+								err := o.configureVault(vc, keyStore, rootTokenID)
+								if err != nil {
+									glog.Error("failed to configure vault. reason: ", err)
+								} else {
+									glog.Infoln("vault is configured")
+									break
+								}
+							}
+
+						}
+					} else {
+						glog.Infoln("vault is unsealed")
+					}
 				}
-			} else {
-				glog.Infoln("vault is unsealed")
 			}
 		}
 
-		time.Sleep(o.ReTryPeriod)
+		time.Sleep(retryPeriod)
 	}
+}
 
+// configureVault will do:
+//	- enable and configure kubernetes auth
+//	- create policy and policy binding
+func (o *WorkerOptions) configureVault(vc *vaultapi.Client, keyStore kv.Service, rootTokenID string) error {
+	rootToken, err := keyStore.Get(rootTokenID)
+	if err != nil {
+		return errors.Wrap(err, "failed to get root token")
+	}
+	vc.SetToken(string(rootToken))
+
+	k8sAuth := auth.NewKubernetesAuth(vc, o.Auth)
+
+	glog.Infoln("enable kubernetes auth")
+	err = k8sAuth.EnsureAuth()
+	if err != nil {
+		return errors.Wrap(err, "failed to enable kubernetes auth")
+	}
+	glog.Infoln("kubernetes auth is enabled")
+
+	glog.Infoln("configure kubernetes auth")
+	err = k8sAuth.ConfigureAuth()
+	if err != nil {
+		return errors.Wrap(err, "failed to configure kubernetes auth")
+	}
+	glog.Infoln("kubernetes auth is configured")
+
+	glog.Infoln("write policy and policy binding for policy controller")
+	err = policy.EnsurePolicyAndPolicyBinding(vc, o.Policy)
+	if err != nil {
+		return errors.Wrap(err, "failed to write policy and policy binding for policy controller")
+	}
+	glog.Infoln("policy for policy and policy binding controller is written")
 	return nil
 }
 
