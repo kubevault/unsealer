@@ -32,11 +32,11 @@ type WorkerOptions struct {
 	//  - 'kubernetes-secret' => Kubernetes secret to store unseal keys
 	Mode string
 
-	// ca cert file for vault api client, if vault used a self signed certificate
-	CaCertFile string
+	// ca cert for vault api client, if vault used a self signed certificate
+	CaCert string
 
-	// If InSecureTLS is true, then it will skip tls verification when communicating with vault server
-	InSecureTLS bool
+	// If InsecureSkipTLSVerify is true, then it will skip tls verification when communicating with vault server
+	InsecureSkipTLSVerify bool
 
 	Auth       *auth.K8sAuthOptions
 	Unseal     *unseal.UnsealOptions
@@ -63,8 +63,8 @@ func NewWorkerOptions() *WorkerOptions {
 func (o *WorkerOptions) AddFlags(fs *pflag.FlagSet) {
 	fs.StringVar(&o.Mode, "mode", o.Mode, "Select the mode to use 'google-cloud-kms-gcs' => Google Cloud Storage with encryption using Google KMS; 'aws-kms-ssm' => AWS SSM parameter store using AWS KMS; 'azure-key-vault' => Azure Key Vault Secret store; 'kubernetes-secret' => Kubernetes secret to store unseal keys")
 	fs.DurationVar(&o.ReTryPeriod, "retry-period", o.ReTryPeriod, "How often to attempt to unseal the vault instance")
-	fs.StringVar(&o.CaCertFile, "ca-cert-file", o.Mode, "Path to the ca cert file that will be used to verify self signed vault server certificate")
-	fs.BoolVar(&o.InSecureTLS, "insecure-tls", o.InSecureTLS, "To skip tls verification when communicating with vault server")
+	fs.StringVar(&o.CaCert, "ca-cert", o.CaCert, "Specifies the CA cert that will be used to verify self signed vault server certificate")
+	fs.BoolVar(&o.InsecureSkipTLSVerify, "insecure-skip-tls-verify", o.InsecureSkipTLSVerify, "To skip tls verification when communicating with vault server")
 
 	o.Unseal.AddFlags(fs)
 	o.Auth.AddFlags(fs)

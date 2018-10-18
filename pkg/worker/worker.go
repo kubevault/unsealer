@@ -26,18 +26,7 @@ func (o *WorkerOptions) Run() error {
 		return errors.Wrap(err, "failed to create kv service")
 	}
 
-	var tlsConfig *vaultapi.TLSConfig
-	if o.InSecureTLS {
-		tlsConfig = &vaultapi.TLSConfig{
-			Insecure: true,
-		}
-	} else if o.CaCertFile != "" {
-		tlsConfig = &vaultapi.TLSConfig{
-			CACert: o.CaCertFile,
-		}
-	}
-
-	vc, err := vault.NewVaultClient("https://127.0.0.1:8200", tlsConfig)
+	vc, err := vault.NewVaultClient("https://127.0.0.1:8200", o.InsecureSkipTLSVerify, []byte(o.CaCert))
 	if err != nil {
 		return errors.Wrap(err, "failed to create vault api client")
 	}

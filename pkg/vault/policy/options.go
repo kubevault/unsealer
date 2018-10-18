@@ -17,7 +17,7 @@ func NewPolicyOptions() *PolicyOptions {
 
 func (o *PolicyOptions) AddFlags(fs *pflag.FlagSet) {
 	fs.StringVar(&o.ServiceAccountName, "policy.service-account-name", o.ServiceAccountName, "Name of the service account")
-	fs.StringVar(&o.ServiceAccountName, "policy.service-account-namespace", o.ServiceAccountNamespace, "Namespace of the service account")
+	fs.StringVar(&o.ServiceAccountNamespace, "policy.service-account-namespace", o.ServiceAccountNamespace, "Namespace of the service account")
 	fs.StringVar(&o.Name, "policy.name", o.Name, "Name of the policy. A policy and a kubernetes role will be created using this name")
 }
 

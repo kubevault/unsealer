@@ -9,7 +9,6 @@ import (
 	"testing"
 
 	"github.com/appscode/pat"
-	vaultapi "github.com/hashicorp/vault/api"
 	"github.com/kubevault/unsealer/pkg/vault"
 	"github.com/stretchr/testify/assert"
 )
@@ -81,9 +80,7 @@ func TestEnsureKubernetesAuth2(t *testing.T) {
 
 	for _, c := range cases {
 		t.Run(c.testName, func(t *testing.T) {
-			vc, err := vault.NewVaultClient(srv.URL, &vaultapi.TLSConfig{
-				Insecure: true,
-			})
+			vc, err := vault.NewVaultClient(srv.URL, true, nil)
 			if assert.Nil(t, err) {
 				k := NewKubernetesAuth(vc, nil)
 				err = k.EnsureAuth()
@@ -140,9 +137,7 @@ func TestConfigureKubernetesAuth2(t *testing.T) {
 
 	for _, c := range cases {
 		t.Run(c.testName, func(t *testing.T) {
-			vc, err := vault.NewVaultClient(srv.URL, &vaultapi.TLSConfig{
-				Insecure: true,
-			})
+			vc, err := vault.NewVaultClient(srv.URL, true, nil)
 			if assert.Nil(t, err) {
 				k := NewKubernetesAuth(vc, &K8sAuthOptions{c.k8sHost, c.k8sCA, c.jwt})
 				err = k.ConfigureAuth()
@@ -162,9 +157,7 @@ func TestEnsureKubernetesAuth(t *testing.T) {
 	if addr == "" || token == "" {
 		t.Skip()
 	}
-	vc, err := vault.NewVaultClient(addr, &vaultapi.TLSConfig{
-		Insecure: true,
-	})
+	vc, err := vault.NewVaultClient(addr, true, nil)
 	vc.SetToken(token)
 	if !assert.Nil(t, err) {
 		return
@@ -183,9 +176,7 @@ func TestConfigureKubernetesAuth(t *testing.T) {
 	if addr == "" || token == "" || k8s_host == "" || k8s_ca == "" || jwt == "" {
 		t.Skip()
 	}
-	vc, err := vault.NewVaultClient(addr, &vaultapi.TLSConfig{
-		Insecure: true,
-	})
+	vc, err := vault.NewVaultClient(addr, true, nil)
 	vc.SetToken(token)
 	if !assert.Nil(t, err) {
 		return

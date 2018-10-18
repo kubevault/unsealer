@@ -7,7 +7,6 @@ import (
 	"testing"
 
 	"github.com/appscode/pat"
-	vaultapi "github.com/hashicorp/vault/api"
 	"github.com/kubevault/unsealer/pkg/vault"
 	"github.com/stretchr/testify/assert"
 )
@@ -56,9 +55,7 @@ func TestEnsurePolicyAndPolicyBinding2(t *testing.T) {
 
 	for _, c := range cases {
 		t.Run(c.testName, func(t *testing.T) {
-			vc, err := vault.NewVaultClient(srv.URL, &vaultapi.TLSConfig{
-				Insecure: true,
-			})
+			vc, err := vault.NewVaultClient(srv.URL, true, nil)
 			if assert.Nil(t, err) {
 				err = EnsurePolicyAndPolicyBinding(vc, &PolicyOptions{c.name, c.saName, c.saNamespace})
 				if c.expectErr {
@@ -81,9 +78,7 @@ func TestConfigureKubernetesAuth(t *testing.T) {
 	if addr == "" || token == "" || policy == "" || saName == "" || saNamespace == "" {
 		t.Skip()
 	}
-	vc, err := vault.NewVaultClient(addr, &vaultapi.TLSConfig{
-		Insecure: true,
-	})
+	vc, err := vault.NewVaultClient(addr, true, nil)
 	vc.SetToken(token)
 	if !assert.Nil(t, err) {
 		return

@@ -34,7 +34,7 @@ func NewK8sAuthOptions() *K8sAuthOptions {
 
 func (o *K8sAuthOptions) AddFlags(fs *pflag.FlagSet) {
 	fs.StringVar(&o.Host, "auth.k8s-host", o.Host, "Host must be a host string, a host:port pair, or a URL to the base of the Kubernetes API server")
-	fs.StringVar(&o.CA, "auth.k8s-ca-cert ", o.CA, "PEM encoded CA cert for use by the TLS client used to talk with the Kubernetes API")
+	fs.StringVar(&o.CA, "auth.k8s-ca-cert", o.CA, "PEM encoded CA cert for use by the TLS client used to talk with the Kubernetes API")
 }
 
 func (o *K8sAuthOptions) Validate() []error {
