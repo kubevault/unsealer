@@ -13,7 +13,15 @@ path "sys/policy/*" {
 }
 
 path "sys/policy" {
-	capabilities = ["read"]
+	capabilities = ["read", "list"]
+}
+
+path "auth/kubernetes/role" {
+	capabilities = ["read", "list"]
+}
+
+path "auth/kubernetes/role/*" {
+	capabilities = ["create", "update", "read", "delete", "list"]
 }
 `
 
