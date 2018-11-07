@@ -1,7 +1,6 @@
 package worker
 
 import (
-	"fmt"
 	"time"
 
 	"github.com/golang/glog"
@@ -14,104 +13,144 @@ import (
 	"github.com/kubevault/unsealer/pkg/kv/gcs"
 	"github.com/kubevault/unsealer/pkg/kv/kubernetes"
 	"github.com/kubevault/unsealer/pkg/vault"
+	"github.com/kubevault/unsealer/pkg/vault/auth"
+	"github.com/kubevault/unsealer/pkg/vault/policy"
+	"github.com/kubevault/unsealer/pkg/vault/unseal"
+	"github.com/kubevault/unsealer/pkg/vault/util"
 	"github.com/pkg/errors"
 )
 
 func (o *WorkerOptions) Run() error {
-
-	kvService, err := o.getKVService()
+	keyStore, err := o.getKVService()
 	if err != nil {
 		return errors.Wrap(err, "failed to create kv service")
 	}
 
-	var tlsConfig *vaultapi.TLSConfig
-	if o.InSecureTLS {
-		tlsConfig = &vaultapi.TLSConfig{
-			Insecure: true,
-		}
-	} else if o.CaCertFile != "" {
-		tlsConfig = &vaultapi.TLSConfig{
-			CACert: o.CaCertFile,
-		}
-	}
-
-	vaultApiClient, err := NewVaultClient("127.0.0.1", "8200", tlsConfig)
+	vc, err := vault.NewVaultClient(o.Address, o.InsecureSkipTLSVerify, []byte(o.CaCert))
 	if err != nil {
 		return errors.Wrap(err, "failed to create vault api client")
 	}
 
-	v, err := vault.New(kvService, vaultApiClient, *o.Vault)
+	o.unsealAndConfigureVault(vc, keyStore, o.ReTryPeriod)
+
+	return nil
+}
+
+// It will do:
+//	- If vault is not initialized, then initialize vault
+//	- If vault is not unsealed, then unseal it
+//  - configure vault
+// it will periodically check for infinite time
+func (o *WorkerOptions) unsealAndConfigureVault(vc *vaultapi.Client, keyStore kv.Service, retryPeriod time.Duration) {
+	rootTokenID := util.RootTokenID(o.UnsealerOptions.KeyPrefix)
+
+	unsl, err := unseal.New(keyStore, vc, *o.UnsealerOptions)
 	if err != nil {
-		return errors.Wrap(err, "failed create vault helper")
+		glog.Error("failed create unsealer client:", err)
 	}
 
-	//initialize
 	for {
 		glog.Infoln("checking if vault is initialized...")
-
-		initialized, err := vaultApiClient.Sys().InitStatus()
+		initialized, err := unsl.IsInitialized()
 		if err != nil {
 			glog.Error("failed to get initialized status. reason :", err)
+
 		} else {
 			if !initialized {
-				if err = v.CheckReadWriteAccess(); err != nil {
+				if err = unsl.CheckReadWriteAccess(); err != nil {
 					glog.Errorf("Failed to check read/write access to key store. reason: %v\n", err)
 					continue
 				}
-
-				if err = v.Init(); err != nil {
+				if err = unsl.Init(); err != nil {
 					glog.Error("error initializing vault: ", err)
 				} else {
 					glog.Infoln("vault is initialized")
-					break
 				}
 			} else {
 				glog.Infoln("vault is already initialized")
-				break
-			}
-		}
 
-		time.Sleep(o.ReTryPeriod)
-	}
-
-	// unseal
-	for {
-		glog.Infoln("checking if vault is sealed...")
-
-		sealed, err := v.Sealed()
-		if err != nil {
-			glog.Error("failed to get initialized status. reason: ", err)
-		} else {
-			if sealed {
-				if err := v.Unseal(); err != nil {
-					glog.Error("failed to unseal vault. reason: ", err)
+				glog.Infoln("checking if vault is sealed...")
+				sealed, err := unsl.IsSealed()
+				if err != nil {
+					glog.Error("failed to get unseal status. reason: ", err)
 				} else {
-					glog.Infoln("vault is unsealed")
+					if sealed {
+						if err := unsl.Unseal(); err != nil {
+							glog.Error("failed to unseal vault. reason: ", err)
+						} else {
+							glog.Infoln("vault is unsealed")
+
+							for {
+								glog.Infoln("configure vault")
+								err := o.configureVault(vc, keyStore, rootTokenID)
+								if err != nil {
+									glog.Error("failed to configure vault. reason: ", err)
+								} else {
+									glog.Infoln("vault is configured")
+									break
+								}
+							}
+
+						}
+					} else {
+						glog.Infoln("vault is unsealed")
+					}
 				}
-			} else {
-				glog.Infoln("vault is unsealed")
 			}
 		}
 
-		time.Sleep(o.ReTryPeriod)
+		time.Sleep(retryPeriod)
 	}
+}
 
+// configureVault will do:
+//	- enable and configure kubernetes auth
+//	- create policy and policy binding
+func (o *WorkerOptions) configureVault(vc *vaultapi.Client, keyStore kv.Service, rootTokenID string) error {
+	rootToken, err := keyStore.Get(rootTokenID)
+	if err != nil {
+		return errors.Wrap(err, "failed to get root token")
+	}
+	vc.SetToken(string(rootToken))
+
+	k8sAuth := auth.NewKubernetesAuthenticator(vc, o.AuthenticatorOptions)
+
+	glog.Infoln("enable kubernetes auth")
+	err = k8sAuth.EnsureAuth()
+	if err != nil {
+		return errors.Wrap(err, "failed to enable kubernetes auth")
+	}
+	glog.Infoln("kubernetes auth is enabled")
+
+	glog.Infoln("configure kubernetes auth")
+	err = k8sAuth.ConfigureAuth()
+	if err != nil {
+		return errors.Wrap(err, "failed to configure kubernetes auth")
+	}
+	glog.Infoln("kubernetes auth is configured")
+
+	glog.Infoln("write policy and policy binding for policy controller")
+	err = policy.EnsurePolicyAndPolicyBinding(vc, o.PolicyManagerOptions)
+	if err != nil {
+		return errors.Wrap(err, "failed to write policy and policy binding for policy controller")
+	}
+	glog.Infoln("policy for policy and policy binding controller is written")
 	return nil
 }
 
 func (o *WorkerOptions) getKVService() (kv.Service, error) {
 	if o.Mode == ModeAwsKmsSsm {
-		ssmService, err := aws_ssm.New(o.Aws.UseSecureString, o.Aws.SsmKeyPrefix)
+		ssmService, err := aws_ssm.New(o.AwsOptions.UseSecureString, o.AwsOptions.SsmKeyPrefix)
 		if err != nil {
 			return nil, errors.Wrap(err, "failed to create aws ssm service")
 		}
 
 		var kvService kv.Service
 
-		if o.Aws.UseSecureString {
+		if o.AwsOptions.UseSecureString {
 			kvService = ssmService
 		} else {
-			kvService, err = aws_kms.New(ssmService, o.Aws.KmsKeyID)
+			kvService, err = aws_kms.New(ssmService, o.AwsOptions.KmsKeyID)
 			if err != nil {
 				return nil, errors.Wrap(err, "failed to create kv service for aws")
 			}
@@ -120,12 +159,12 @@ func (o *WorkerOptions) getKVService() (kv.Service, error) {
 		return kvService, nil
 	}
 	if o.Mode == ModeGoogleCloudKmsGCS {
-		gcsService, err := gcs.New(o.Google.StorageBucket, o.Google.StoragePrefix)
+		gcsService, err := gcs.New(o.GoogleOptions.StorageBucket, o.GoogleOptions.StoragePrefix)
 		if err != nil {
 			return nil, errors.Wrap(err, "failed to create google gcs service")
 		}
 
-		kvService, err := cloudkms.New(gcsService, o.Google.KmsProject, o.Google.KmsLocation, o.Google.KmsKeyRing, o.Google.KmsCryptoKey)
+		kvService, err := cloudkms.New(gcsService, o.GoogleOptions.KmsProject, o.GoogleOptions.KmsLocation, o.GoogleOptions.KmsKeyRing, o.GoogleOptions.KmsCryptoKey)
 		if err != nil {
 			return nil, errors.Wrap(err, "failed to create kv service for aws")
 		}
@@ -133,7 +172,7 @@ func (o *WorkerOptions) getKVService() (kv.Service, error) {
 		return kvService, nil
 	}
 	if o.Mode == ModeAzureKeyVault {
-		kvService, err := azure.NewKVService(o.Azure)
+		kvService, err := azure.NewKVService(o.AzureOptions)
 		if err != nil {
 			return nil, errors.Wrap(err, "failed to create azure kv service")
 		}
@@ -141,7 +180,7 @@ func (o *WorkerOptions) getKVService() (kv.Service, error) {
 		return kvService, nil
 	}
 	if o.Mode == ModeKubernetesSecret {
-		kvService, err := kubernetes.NewKVService(o.Kubernetes)
+		kvService, err := kubernetes.NewKVService(o.KubernetesOptions)
 		if err != nil {
 			return nil, errors.Wrap(err, "failed to create kv service for kubernetes")
 		}
@@ -150,12 +189,4 @@ func (o *WorkerOptions) getKVService() (kv.Service, error) {
 	}
 
 	return nil, errors.New("Invalid mode")
-}
-
-func NewVaultClient(hostname string, port string, tlsConfig *vaultapi.TLSConfig) (*vaultapi.Client, error) {
-	cfg := vaultapi.DefaultConfig()
-	podURL := fmt.Sprintf("https://%s:%s", hostname, port)
-	cfg.Address = podURL
-	cfg.ConfigureTLS(tlsConfig)
-	return vaultapi.NewClient(cfg)
 }

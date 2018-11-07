@@ -1,4 +1,4 @@
-package vault
+package unseal
 
 import (
 	"fmt"
@@ -21,7 +21,7 @@ func (f *fakeKV) Test(key string) error {
 	return fmt.Errorf("not-implemented")
 }
 
-func (f *fakeKV) CheckReadWriteAccess() error {
+func (f *fakeKV) CheckWriteAccess() error {
 	return fmt.Errorf("not-implemented")
 }
 
@@ -42,7 +42,7 @@ func (f *fakeKV) Get(key string) ([]byte, error) {
 
 func TestKeyStoreNotFound(t *testing.T) {
 	fakeKV := NewFakeKV()
-	v := &vault{
+	v := &unsealer{
 		keyStore: fakeKV,
 	}
 

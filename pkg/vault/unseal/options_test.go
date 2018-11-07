@@ -1,4 +1,4 @@
-package vault
+package unseal
 
 import (
 	"testing"
@@ -11,12 +11,12 @@ import (
 func TestVaultOptions_Validate(t *testing.T) {
 	testData := []struct {
 		testName    string
-		opts        *VaultOptions
+		opts        *UnsealOptions
 		expectedErr error
 	}{
 		{
 			"secret threshold is zero, validation failed",
-			&VaultOptions{
+			&UnsealOptions{
 				SecretShares:    1,
 				SecretThreshold: 0,
 			},
@@ -24,7 +24,7 @@ func TestVaultOptions_Validate(t *testing.T) {
 		},
 		{
 			"secret threshold > secret shares, validation failed",
-			&VaultOptions{
+			&UnsealOptions{
 				SecretShares:    1,
 				SecretThreshold: 2,
 			},
@@ -32,7 +32,7 @@ func TestVaultOptions_Validate(t *testing.T) {
 		},
 		{
 			"validation successful",
-			&VaultOptions{
+			&UnsealOptions{
 				SecretShares:    10,
 				SecretThreshold: 2,
 			},

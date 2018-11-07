@@ -1,14 +1,12 @@
-package vault
+package unseal
 
 import (
-	aws "github.com/kubevault/unsealer/pkg/kv/aws_kms"
-	google "github.com/kubevault/unsealer/pkg/kv/cloudkms"
 	"github.com/pkg/errors"
 	"github.com/spf13/pflag"
 )
 
 // That configures the vault API
-type VaultOptions struct {
+type UnsealOptions struct {
 	KeyPrefix string
 
 	// how many key parts exist
@@ -21,13 +19,10 @@ type VaultOptions struct {
 
 	// overwrite existing tokens
 	OverwriteExisting bool
-
-	Google *google.Options
-	Aws    *aws.Options
 }
 
-func NewVaultOptions() *VaultOptions {
-	return &VaultOptions{
+func NewUnsealOptions() *UnsealOptions {
+	return &UnsealOptions{
 		KeyPrefix:       "vault",
 		SecretThreshold: 3,
 		SecretShares:    5,
@@ -35,14 +30,14 @@ func NewVaultOptions() *VaultOptions {
 	}
 }
 
-func (o *VaultOptions) AddFlags(fs *pflag.FlagSet) {
+func (o *UnsealOptions) AddFlags(fs *pflag.FlagSet) {
 	fs.BoolVar(&o.StoreRootToken, "store-root-token", o.StoreRootToken, "should the root token be stored in the key store")
 	fs.BoolVar(&o.OverwriteExisting, "overwrite-existing", o.OverwriteExisting, "overwrite existing unseal keys and root tokens, possibly dangerous!")
 	fs.IntVar(&o.SecretShares, "secret-shares", o.SecretShares, "Total count of secret shares that exist")
 	fs.IntVar(&o.SecretThreshold, "secret-threshold", o.SecretThreshold, "Minimum required secret shares to unseal")
 }
 
-func (o *VaultOptions) Validate() []error {
+func (o *UnsealOptions) Validate() []error {
 	var errs []error
 	if o.SecretThreshold <= 0 {
 		errs = append(errs, errors.New("secret threshold must be positive"))
@@ -56,6 +51,6 @@ func (o *VaultOptions) Validate() []error {
 	return errs
 }
 
-func (o *VaultOptions) Apply() error {
+func (o *UnsealOptions) Apply() error {
 	return nil
 }
