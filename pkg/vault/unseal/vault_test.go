@@ -42,7 +42,7 @@ func (f *fakeKV) Get(key string) ([]byte, error) {
 
 func TestKeyStoreNotFound(t *testing.T) {
 	fakeKV := NewFakeKV()
-	v := &unseal{
+	v := &unsealer{
 		keyStore: fakeKV,
 	}
 

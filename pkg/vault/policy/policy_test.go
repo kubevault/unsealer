@@ -57,7 +57,7 @@ func TestEnsurePolicyAndPolicyBinding2(t *testing.T) {
 		t.Run(c.testName, func(t *testing.T) {
 			vc, err := vault.NewVaultClient(srv.URL, true, nil)
 			if assert.Nil(t, err) {
-				err = EnsurePolicyAndPolicyBinding(vc, &PolicyOptions{c.name, c.saName, c.saNamespace})
+				err = EnsurePolicyAndPolicyBinding(vc, &PolicyManagerOptions{c.name, c.saName, c.saNamespace})
 				if c.expectErr {
 					assert.NotNil(t, err)
 				} else {
@@ -84,6 +84,6 @@ func TestConfigureKubernetesAuth(t *testing.T) {
 		return
 	}
 
-	err = EnsurePolicyAndPolicyBinding(vc, &PolicyOptions{policy, saName, saNamespace})
+	err = EnsurePolicyAndPolicyBinding(vc, &PolicyManagerOptions{policy, saName, saNamespace})
 	assert.Nil(t, err)
 }

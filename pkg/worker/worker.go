@@ -26,7 +26,7 @@ func (o *WorkerOptions) Run() error {
 		return errors.Wrap(err, "failed to create kv service")
 	}
 
-	vc, err := vault.NewVaultClient("https://127.0.0.1:8200", o.InsecureSkipTLSVerify, []byte(o.CaCert))
+	vc, err := vault.NewVaultClient(o.Address, o.InsecureSkipTLSVerify, []byte(o.CaCert))
 	if err != nil {
 		return errors.Wrap(err, "failed to create vault api client")
 	}
@@ -42,9 +42,9 @@ func (o *WorkerOptions) Run() error {
 //  - configure vault
 // it will periodically check for infinite time
 func (o *WorkerOptions) unsealAndConfigureVault(vc *vaultapi.Client, keyStore kv.Service, retryPeriod time.Duration) {
-	rootTokenID := util.RootTokenID(o.Unseal.KeyPrefix)
+	rootTokenID := util.RootTokenID(o.UnsealerOptions.KeyPrefix)
 
-	unsl, err := unseal.New(keyStore, vc, *o.Unseal)
+	unsl, err := unseal.New(keyStore, vc, *o.UnsealerOptions)
 	if err != nil {
 		glog.Error("failed create unsealer client:", err)
 	}
@@ -113,7 +113,7 @@ func (o *WorkerOptions) configureVault(vc *vaultapi.Client, keyStore kv.Service,
 	}
 	vc.SetToken(string(rootToken))
 
-	k8sAuth := auth.NewKubernetesAuth(vc, o.Auth)
+	k8sAuth := auth.NewKubernetesAuthenticator(vc, o.AuthenticatorOptions)
 
 	glog.Infoln("enable kubernetes auth")
 	err = k8sAuth.EnsureAuth()
@@ -130,7 +130,7 @@ func (o *WorkerOptions) configureVault(vc *vaultapi.Client, keyStore kv.Service,
 	glog.Infoln("kubernetes auth is configured")
 
 	glog.Infoln("write policy and policy binding for policy controller")
-	err = policy.EnsurePolicyAndPolicyBinding(vc, o.Policy)
+	err = policy.EnsurePolicyAndPolicyBinding(vc, o.PolicyManagerOptions)
 	if err != nil {
 		return errors.Wrap(err, "failed to write policy and policy binding for policy controller")
 	}
@@ -140,17 +140,17 @@ func (o *WorkerOptions) configureVault(vc *vaultapi.Client, keyStore kv.Service,
 
 func (o *WorkerOptions) getKVService() (kv.Service, error) {
 	if o.Mode == ModeAwsKmsSsm {
-		ssmService, err := aws_ssm.New(o.Aws.UseSecureString, o.Aws.SsmKeyPrefix)
+		ssmService, err := aws_ssm.New(o.AwsOptions.UseSecureString, o.AwsOptions.SsmKeyPrefix)
 		if err != nil {
 			return nil, errors.Wrap(err, "failed to create aws ssm service")
 		}
 
 		var kvService kv.Service
 
-		if o.Aws.UseSecureString {
+		if o.AwsOptions.UseSecureString {
 			kvService = ssmService
 		} else {
-			kvService, err = aws_kms.New(ssmService, o.Aws.KmsKeyID)
+			kvService, err = aws_kms.New(ssmService, o.AwsOptions.KmsKeyID)
 			if err != nil {
 				return nil, errors.Wrap(err, "failed to create kv service for aws")
 			}
@@ -159,12 +159,12 @@ func (o *WorkerOptions) getKVService() (kv.Service, error) {
 		return kvService, nil
 	}
 	if o.Mode == ModeGoogleCloudKmsGCS {
-		gcsService, err := gcs.New(o.Google.StorageBucket, o.Google.StoragePrefix)
+		gcsService, err := gcs.New(o.GoogleOptions.StorageBucket, o.GoogleOptions.StoragePrefix)
 		if err != nil {
 			return nil, errors.Wrap(err, "failed to create google gcs service")
 		}
 
-		kvService, err := cloudkms.New(gcsService, o.Google.KmsProject, o.Google.KmsLocation, o.Google.KmsKeyRing, o.Google.KmsCryptoKey)
+		kvService, err := cloudkms.New(gcsService, o.GoogleOptions.KmsProject, o.GoogleOptions.KmsLocation, o.GoogleOptions.KmsKeyRing, o.GoogleOptions.KmsCryptoKey)
 		if err != nil {
 			return nil, errors.Wrap(err, "failed to create kv service for aws")
 		}
@@ -172,7 +172,7 @@ func (o *WorkerOptions) getKVService() (kv.Service, error) {
 		return kvService, nil
 	}
 	if o.Mode == ModeAzureKeyVault {
-		kvService, err := azure.NewKVService(o.Azure)
+		kvService, err := azure.NewKVService(o.AzureOptions)
 		if err != nil {
 			return nil, errors.Wrap(err, "failed to create azure kv service")
 		}
@@ -180,7 +180,7 @@ func (o *WorkerOptions) getKVService() (kv.Service, error) {
 		return kvService, nil
 	}
 	if o.Mode == ModeKubernetesSecret {
-		kvService, err := kubernetes.NewKVService(o.Kubernetes)
+		kvService, err := kubernetes.NewKVService(o.KubernetesOptions)
 		if err != nil {
 			return nil, errors.Wrap(err, "failed to create kv service for kubernetes")
 		}

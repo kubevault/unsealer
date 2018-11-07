@@ -11,7 +11,7 @@ const (
 	K8sTokenReviewerJwtEnv = "K8S_TOKEN_REVIEWER_JWT"
 )
 
-type K8sAuthOptions struct {
+type K8sAuthenticatorOptions struct {
 	// Host must be a host string, a host:port pair
 	// or a URL to the base of the Kubernetes API server.
 	Host string
@@ -23,31 +23,32 @@ type K8sAuthOptions struct {
 	// A service account JWT used to access the TokenReview API
 	// to validate other JWTs during login. If not set the JWT
 	// used for login will be used to access the API.
-	Jwt string
+	Token string
 }
 
-func NewK8sAuthOptions() *K8sAuthOptions {
-	return &K8sAuthOptions{
-		Jwt: os.Getenv(K8sTokenReviewerJwtEnv),
+func NewK8sAuthOptions() *K8sAuthenticatorOptions {
+	return &K8sAuthenticatorOptions{
+		Token: os.Getenv(K8sTokenReviewerJwtEnv),
 	}
 }
 
-func (o *K8sAuthOptions) AddFlags(fs *pflag.FlagSet) {
+func (o *K8sAuthenticatorOptions) AddFlags(fs *pflag.FlagSet) {
 	fs.StringVar(&o.Host, "auth.k8s-host", o.Host, "Host must be a host string, a host:port pair, or a URL to the base of the Kubernetes API server")
 	fs.StringVar(&o.CA, "auth.k8s-ca-cert", o.CA, "PEM encoded CA cert for use by the TLS client used to talk with the Kubernetes API")
+	fs.StringVar(&o.Token, "auth.k8s-token-reviewer-jwt", o.Token, "A service account JWT used to access the TokenReview API to validate other JWTs during login. If this flag is not provided, then the value from K8S_TOKEN_REVIEWER_JWT environment variable will be used")
 }
 
-func (o *K8sAuthOptions) Validate() []error {
+func (o *K8sAuthenticatorOptions) Validate() []error {
 	var errs []error
 	if o.Host == "" {
 		errs = append(errs, errors.New("auth.k8s-host must be non empty"))
 	}
-	if o.Jwt == "" {
+	if o.Token == "" {
 		errs = append(errs, errors.New("env K8S_TOKEN_REVIEWER_JWT must be non empty"))
 	}
 	return errs
 }
 
-func (o *K8sAuthOptions) Apply() error {
+func (o *K8sAuthenticatorOptions) Apply() error {
 	return nil
 }

@@ -19,9 +19,23 @@ const (
 	ModeAwsKmsSsm         = "aws-kms-ssm"
 	ModeAzureKeyVault     = "azure-key-vault"
 	ModeKubernetesSecret  = "kubernetes-secret"
+
+	VaultAddressDefault = "https://127.0.0.1:8200"
+
+	RetryPeriod = 10 * time.Second
 )
 
 type WorkerOptions struct {
+	// Specifies the vault address
+	// Address form : scheme://host:port
+	Address string
+
+	// ca cert for vault api client, if vault used a self signed certificate
+	CaCert string
+
+	// If InsecureSkipTLSVerify is true, then it will skip tls verification when communicating with vault server
+	InsecureSkipTLSVerify bool
+
 	// retry period to try initializing and unsealing
 	ReTryPeriod time.Duration
 
@@ -32,47 +46,43 @@ type WorkerOptions struct {
 	//  - 'kubernetes-secret' => Kubernetes secret to store unseal keys
 	Mode string
 
-	// ca cert for vault api client, if vault used a self signed certificate
-	CaCert string
-
-	// If InsecureSkipTLSVerify is true, then it will skip tls verification when communicating with vault server
-	InsecureSkipTLSVerify bool
-
-	Auth       *auth.K8sAuthOptions
-	Unseal     *unseal.UnsealOptions
-	Policy     *policy.PolicyOptions
-	Google     *google.Options
-	Aws        *aws.Options
-	Azure      *azure.Options
-	Kubernetes *kubernetes.Options
+	AuthenticatorOptions *auth.K8sAuthenticatorOptions
+	UnsealerOptions      *unseal.UnsealOptions
+	PolicyManagerOptions *policy.PolicyManagerOptions
+	GoogleOptions        *google.Options
+	AwsOptions           *aws.Options
+	AzureOptions         *azure.Options
+	KubernetesOptions    *kubernetes.Options
 }
 
 func NewWorkerOptions() *WorkerOptions {
 	return &WorkerOptions{
-		ReTryPeriod: 10 * time.Second,
-		Unseal:      unseal.NewUnsealOptions(),
-		Auth:        auth.NewK8sAuthOptions(),
-		Policy:      policy.NewPolicyOptions(),
-		Google:      google.NewOptions(),
-		Aws:         aws.NewOptions(),
-		Azure:       azure.NewOptions(),
-		Kubernetes:  kubernetes.NewOptions(),
+		Address:              VaultAddressDefault,
+		ReTryPeriod:          RetryPeriod,
+		UnsealerOptions:      unseal.NewUnsealOptions(),
+		AuthenticatorOptions: auth.NewK8sAuthOptions(),
+		PolicyManagerOptions: policy.NewPolicyOptions(),
+		GoogleOptions:        google.NewOptions(),
+		AwsOptions:           aws.NewOptions(),
+		AzureOptions:         azure.NewOptions(),
+		KubernetesOptions:    kubernetes.NewOptions(),
 	}
 }
 
 func (o *WorkerOptions) AddFlags(fs *pflag.FlagSet) {
+	fs.StringVar(&o.Address, "vault.address", o.Address, "Specifies the vault address. Address form : scheme://host:port")
+	fs.StringVar(&o.CaCert, "vault.ca-cert", o.CaCert, "Specifies the CA cert that will be used to verify self signed vault server certificate")
+	fs.BoolVar(&o.InsecureSkipTLSVerify, "vault.insecure-skip-tls-verify", o.InsecureSkipTLSVerify, "To skip tls verification when communicating with vault server")
 	fs.StringVar(&o.Mode, "mode", o.Mode, "Select the mode to use 'google-cloud-kms-gcs' => Google Cloud Storage with encryption using Google KMS; 'aws-kms-ssm' => AWS SSM parameter store using AWS KMS; 'azure-key-vault' => Azure Key Vault Secret store; 'kubernetes-secret' => Kubernetes secret to store unseal keys")
 	fs.DurationVar(&o.ReTryPeriod, "retry-period", o.ReTryPeriod, "How often to attempt to unseal the vault instance")
-	fs.StringVar(&o.CaCert, "ca-cert", o.CaCert, "Specifies the CA cert that will be used to verify self signed vault server certificate")
-	fs.BoolVar(&o.InsecureSkipTLSVerify, "insecure-skip-tls-verify", o.InsecureSkipTLSVerify, "To skip tls verification when communicating with vault server")
 
-	o.Unseal.AddFlags(fs)
-	o.Auth.AddFlags(fs)
-	o.Policy.AddFlags(fs)
-	o.Google.AddFlags(fs)
-	o.Aws.AddFlags(fs)
-	o.Azure.AddFlags(fs)
-	o.Kubernetes.AddFlags(fs)
+	o.UnsealerOptions.AddFlags(fs)
+	o.AuthenticatorOptions.AddFlags(fs)
+	o.PolicyManagerOptions.AddFlags(fs)
+	o.GoogleOptions.AddFlags(fs)
+	o.AwsOptions.AddFlags(fs)
+	o.AzureOptions.AddFlags(fs)
+	o.KubernetesOptions.AddFlags(fs)
 }
 
 func (o *WorkerOptions) Validate() []error {
@@ -84,21 +94,21 @@ func (o *WorkerOptions) Validate() []error {
 		errs = append(errs, errors.New("invalid mode"))
 	}
 
-	errs = append(errs, o.Unseal.Validate()...)
-	errs = append(errs, o.Auth.Validate()...)
-	errs = append(errs, o.Policy.Validate()...)
+	errs = append(errs, o.UnsealerOptions.Validate()...)
+	errs = append(errs, o.AuthenticatorOptions.Validate()...)
+	errs = append(errs, o.PolicyManagerOptions.Validate()...)
 
 	if o.Mode == ModeGoogleCloudKmsGCS {
-		errs = append(errs, o.Google.Validate()...)
+		errs = append(errs, o.GoogleOptions.Validate()...)
 	}
 	if o.Mode == ModeAwsKmsSsm {
-		errs = append(errs, o.Aws.Validate()...)
+		errs = append(errs, o.AwsOptions.Validate()...)
 	}
 	if o.Mode == ModeAzureKeyVault {
-		errs = append(errs, o.Azure.Validate()...)
+		errs = append(errs, o.AzureOptions.Validate()...)
 	}
 	if o.Mode == ModeKubernetesSecret {
-		errs = append(errs, o.Kubernetes.Validate()...)
+		errs = append(errs, o.KubernetesOptions.Validate()...)
 	}
 
 	return errs

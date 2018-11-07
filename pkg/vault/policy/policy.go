@@ -28,7 +28,7 @@ path "auth/kubernetes/role/*" {
 // EnsurePolicyAndPolicyBinding will ensure policy and kubernetes role
 // Name of the policy will be 'config.Name'
 // Name of the kubernetes role will be 'config.Name'
-func EnsurePolicyAndPolicyBinding(vc *vaultapi.Client, config *PolicyOptions) error {
+func EnsurePolicyAndPolicyBinding(vc *vaultapi.Client, config *PolicyManagerOptions) error {
 	if vc == nil {
 		return errors.New("vault client is nil")
 	}
@@ -58,8 +58,5 @@ func EnsurePolicyAndPolicyBinding(vc *vaultapi.Client, config *PolicyOptions) er
 	}
 
 	_, err = vc.RawRequest(req)
-	if err != nil {
-		return err
-	}
-	return nil
+	return err
 }

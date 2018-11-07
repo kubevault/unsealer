@@ -11,19 +11,19 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
-// unseal is an implementation of the Unseal interface that will perform actions
+// unsealer is an implementation of the Unsealer interface that will perform actions
 // against a Vault server, using a provided KMS to retrieve
-type unseal struct {
+type unsealer struct {
 	keyStore kv.Service
 	cl       *api.Client
 	config   *UnsealOptions
 }
 
-var _ Unseal = &unseal{}
+var _ Unsealer = &unsealer{}
 
-// Unseal is an interface that can be used to attempt to perform actions against
+// Unsealer is an interface that can be used to attempt to perform actions against
 // a Vault server.
-type Unseal interface {
+type Unsealer interface {
 	IsSealed() (bool, error)
 	IsInitialized() (bool, error)
 	Unseal() error
@@ -31,16 +31,16 @@ type Unseal interface {
 	CheckReadWriteAccess() error
 }
 
-// New returns a new Unseal, or an error.
-func New(k kv.Service, cl *api.Client, config UnsealOptions) (Unseal, error) {
-	return &unseal{
+// New returns a new Unsealer, or an error.
+func New(k kv.Service, cl *api.Client, config UnsealOptions) (Unsealer, error) {
+	return &unsealer{
 		keyStore: k,
 		cl:       cl,
 		config:   &config,
 	}, nil
 }
 
-func (u *unseal) IsSealed() (bool, error) {
+func (u *unsealer) IsSealed() (bool, error) {
 	resp, err := u.cl.Sys().SealStatus()
 	if err != nil {
 		return false, fmt.Errorf("error checking status: %s", err.Error())
@@ -48,7 +48,7 @@ func (u *unseal) IsSealed() (bool, error) {
 	return resp.Sealed, nil
 }
 
-func (u *unseal) IsInitialized() (bool, error) {
+func (u *unsealer) IsInitialized() (bool, error) {
 	resp, err := u.cl.Sys().InitStatus()
 	if err != nil {
 		return false, fmt.Errorf("error checking init status: %s", err.Error())
@@ -60,7 +60,7 @@ func (u *unseal) IsInitialized() (bool, error) {
 // and sending unseal requests to vault. It will return an error if retrieving
 // a key fails, or if the unseal progress is reset to 0 (indicating that a key)
 // was invalid.
-func (u *unseal) Unseal() error {
+func (u *unsealer) Unseal() error {
 	for i := 0; ; i++ {
 		keyID := util.UnsealKeyID(u.config.KeyPrefix, i)
 
@@ -91,7 +91,7 @@ func (u *unseal) Unseal() error {
 	}
 }
 
-func (u *unseal) keyStoreNotFound(key string) bool {
+func (u *unsealer) keyStoreNotFound(key string) bool {
 	_, err := u.keyStore.Get(key)
 	if err != nil {
 		glog.Errorf("error response when checking whether key(%s) exists or not: %v", key, err)
@@ -102,14 +102,14 @@ func (u *unseal) keyStoreNotFound(key string) bool {
 	return false
 }
 
-func (u *unseal) keyStoreSet(key string, val []byte) error {
+func (u *unsealer) keyStoreSet(key string, val []byte) error {
 	if !u.config.OverwriteExisting && !u.keyStoreNotFound(key) {
 		return fmt.Errorf("error setting key '%s': it already exists", key)
 	}
 	return u.keyStore.Set(key, val)
 }
 
-func (u *unseal) Init() error {
+func (u *unsealer) Init() error {
 	// test backend first
 	err := u.keyStore.Test(testKey(u.config.KeyPrefix))
 	if err != nil {
@@ -174,7 +174,7 @@ func testKey(prefix string) string {
 }
 
 // CheckReadWriteAccess will test read write access
-func (u *unseal) CheckReadWriteAccess() error {
+func (u *unsealer) CheckReadWriteAccess() error {
 	glog.Infoln("Testing the read/write access...")
 
 	err := u.keyStore.CheckWriteAccess()

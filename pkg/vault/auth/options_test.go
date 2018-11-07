@@ -11,28 +11,28 @@ import (
 func TestVaultOptions_Validate(t *testing.T) {
 	testData := []struct {
 		testName    string
-		opts        *K8sAuthOptions
+		opts        *K8sAuthenticatorOptions
 		expectedErr error
 	}{
 		{
 			"host is empty, validation failed",
-			&K8sAuthOptions{
-				Jwt: "ok",
+			&K8sAuthenticatorOptions{
+				Token: "ok",
 			},
 			errors.New("auth.k8s-host must be non empty"),
 		},
 		{
 			"env K8S_TOKEN_REVIEWER_JWT is empty, validation failed",
-			&K8sAuthOptions{
+			&K8sAuthenticatorOptions{
 				Host: "hi.com",
 			},
 			errors.New("env K8S_TOKEN_REVIEWER_JWT must be non empty"),
 		},
 		{
 			"validation successful",
-			&K8sAuthOptions{
-				Host: "hi.com",
-				Jwt:  "ok",
+			&K8sAuthenticatorOptions{
+				Host:  "hi.com",
+				Token: "ok",
 			},
 			nil,
 		},

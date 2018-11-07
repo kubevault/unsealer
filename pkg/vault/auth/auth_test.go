@@ -82,7 +82,7 @@ func TestEnsureKubernetesAuth2(t *testing.T) {
 		t.Run(c.testName, func(t *testing.T) {
 			vc, err := vault.NewVaultClient(srv.URL, true, nil)
 			if assert.Nil(t, err) {
-				k := NewKubernetesAuth(vc, nil)
+				k := NewKubernetesAuthenticator(vc, nil)
 				err = k.EnsureAuth()
 				if c.expectErr {
 					assert.NotNil(t, err)
@@ -139,7 +139,7 @@ func TestConfigureKubernetesAuth2(t *testing.T) {
 		t.Run(c.testName, func(t *testing.T) {
 			vc, err := vault.NewVaultClient(srv.URL, true, nil)
 			if assert.Nil(t, err) {
-				k := NewKubernetesAuth(vc, &K8sAuthOptions{c.k8sHost, c.k8sCA, c.jwt})
+				k := NewKubernetesAuthenticator(vc, &K8sAuthenticatorOptions{c.k8sHost, c.k8sCA, c.jwt})
 				err = k.ConfigureAuth()
 				if c.expectErr {
 					assert.NotNil(t, err)
@@ -162,7 +162,7 @@ func TestEnsureKubernetesAuth(t *testing.T) {
 	if !assert.Nil(t, err) {
 		return
 	}
-	k := NewKubernetesAuth(vc, nil)
+	k := NewKubernetesAuthenticator(vc, nil)
 	err = k.EnsureAuth()
 	assert.Nil(t, err)
 }
@@ -182,7 +182,7 @@ func TestConfigureKubernetesAuth(t *testing.T) {
 		return
 	}
 
-	k := NewKubernetesAuth(vc, &K8sAuthOptions{k8s_host, k8s_ca, jwt})
+	k := NewKubernetesAuthenticator(vc, &K8sAuthenticatorOptions{k8s_host, k8s_ca, jwt})
 	err = k.ConfigureAuth()
 	assert.Nil(t, err)
 }

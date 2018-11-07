@@ -11,12 +11,12 @@ import (
 func TestVaultOptions_Validate(t *testing.T) {
 	testData := []struct {
 		testName    string
-		opts        *PolicyOptions
+		opts        *PolicyManagerOptions
 		expectedErr error
 	}{
 		{
 			"validation successful",
-			&PolicyOptions{
+			&PolicyManagerOptions{
 				Name:                    "ok",
 				ServiceAccountName:      "ok",
 				ServiceAccountNamespace: "ok",
@@ -25,30 +25,30 @@ func TestVaultOptions_Validate(t *testing.T) {
 		},
 		{
 			"name is empty, validation failed",
-			&PolicyOptions{
+			&PolicyManagerOptions{
 				Name:                    "",
 				ServiceAccountName:      "ok",
 				ServiceAccountNamespace: "ok",
 			},
-			errors.New("policy.name must be non empty"),
+			errors.New("policy-manager.name must be non empty"),
 		},
 		{
 			"service account name is empty, validation failed",
-			&PolicyOptions{
+			&PolicyManagerOptions{
 				Name:                    "ok",
 				ServiceAccountName:      "",
 				ServiceAccountNamespace: "ok",
 			},
-			errors.New("policy.service-account-name must be non empty"),
+			errors.New("policy-manager.service-account-name must be non empty"),
 		},
 		{
 			"service account namespace is empty, validation failed",
-			&PolicyOptions{
+			&PolicyManagerOptions{
 				Name:                    "ok",
 				ServiceAccountName:      "ok",
 				ServiceAccountNamespace: "",
 			},
-			errors.New("policy.service-account-namespace must be non empty"),
+			errors.New("policy-manager.service-account-namespace must be non empty"),
 		},
 	}
 

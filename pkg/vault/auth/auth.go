@@ -10,18 +10,18 @@ const (
 	kubernetesAuthPath = "kubernetes/"
 )
 
-type Auth interface {
+type Authenticator interface {
 	EnsureAuth() error
 	ConfigureAuth() error
 }
 
-type KubernetesAuth struct {
+type KubernetesAuthenticator struct {
 	vc     *vaultapi.Client
-	config *K8sAuthOptions
+	config *K8sAuthenticatorOptions
 }
 
-func NewKubernetesAuth(vc *vaultapi.Client, cf *K8sAuthOptions) Auth {
-	return &KubernetesAuth{
+func NewKubernetesAuthenticator(vc *vaultapi.Client, cf *K8sAuthenticatorOptions) Authenticator {
+	return &KubernetesAuthenticator{
 		vc:     vc,
 		config: cf,
 	}
@@ -29,7 +29,7 @@ func NewKubernetesAuth(vc *vaultapi.Client, cf *K8sAuthOptions) Auth {
 
 // EnsureAuth will ensure kubernetes auth
 // it's safe to call multiple times
-func (k *KubernetesAuth) EnsureAuth() error {
+func (k *KubernetesAuthenticator) EnsureAuth() error {
 	if k.vc == nil {
 		return errors.New("vault client is nil")
 	}
@@ -54,7 +54,7 @@ func (k *KubernetesAuth) EnsureAuth() error {
 // links: https://www.vaultproject.io/api/auth/kubernetes/index.html#configure-method
 // ConfigureAuth will set the kubernetes config
 // it's safe to call multiple times
-func (k *KubernetesAuth) ConfigureAuth() error {
+func (k *KubernetesAuthenticator) ConfigureAuth() error {
 	if k.vc == nil {
 		return errors.New("vault client is nil")
 	}
@@ -66,7 +66,7 @@ func (k *KubernetesAuth) ConfigureAuth() error {
 	payload := map[string]interface{}{
 		"kubernetes_host":    k.config.Host,
 		"kubernetes_ca_cert": k.config.CA,
-		"token_reviewer_jwt": k.config.Jwt,
+		"token_reviewer_jwt": k.config.Token,
 	}
 	if err := req.SetJSONBody(payload); err != nil {
 		return err
