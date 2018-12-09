@@ -3,8 +3,9 @@ package kubernetes
 import (
 	"fmt"
 
-	kutilpatch "github.com/appscode/kutil/core/v1"
-	kutilmeta "github.com/appscode/kutil/meta"
+	core_util "github.com/appscode/kutil/core/v1"
+	meta_util "github.com/appscode/kutil/meta"
+	"github.com/appscode/kutil/tools/clientcmd"
 	"github.com/kubevault/unsealer/pkg/kv"
 	"github.com/pkg/errors"
 	corev1 "k8s.io/api/core/v1"
@@ -23,15 +24,16 @@ type KVService struct {
 func NewKVService(c *Options) (*KVService, error) {
 	k := &KVService{
 		SecretName: c.SecretName,
-		Namespace:  kutilmeta.Namespace(),
+		Namespace:  meta_util.Namespace(),
 	}
 
-	kubeConfig, err := rest.InClusterConfig()
+	config, err := rest.InClusterConfig()
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to create in cluster config")
 	}
+	clientcmd.Fix(config)
 
-	k.KubeClient, err = kubernetes.NewForConfig(kubeConfig)
+	k.KubeClient, err = kubernetes.NewForConfig(config)
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to create kubernetes clientset")
 	}
@@ -44,7 +46,7 @@ func (k *KVService) Set(key string, value []byte) error {
 		Name:      k.SecretName,
 		Namespace: k.Namespace,
 	}
-	_, _, err := kutilpatch.CreateOrPatchSecret(k.KubeClient, secretMeta, func(s *corev1.Secret) *corev1.Secret {
+	_, _, err := core_util.CreateOrPatchSecret(k.KubeClient, secretMeta, func(s *corev1.Secret) *corev1.Secret {
 		if s.Data == nil {
 			s.Data = map[string][]byte{}
 		}
@@ -107,7 +109,7 @@ func (k *KVService) CheckWriteAccess() error {
 		}
 	}
 
-	_, _, err = kutilpatch.CreateOrPatchSecret(k.KubeClient, sr.ObjectMeta, func(s *corev1.Secret) *corev1.Secret {
+	_, _, err = core_util.CreateOrPatchSecret(k.KubeClient, sr.ObjectMeta, func(s *corev1.Secret) *corev1.Secret {
 		s.Data = newData
 		return s
 	})
