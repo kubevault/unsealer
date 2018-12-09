@@ -14,7 +14,7 @@ source "$REPO_ROOT/hack/libbuild/common/lib.sh"
 source "$REPO_ROOT/hack/libbuild/common/kubevault_image.sh"
 
 APPSCODE_ENV=${APPSCODE_ENV:-dev}
-IMG=unsealer
+IMG=vault-unsealer
 
 DIST=$GOPATH/src/github.com/kubevault/unsealer/dist
 mkdir -p $DIST
