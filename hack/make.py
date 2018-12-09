@@ -101,15 +101,16 @@ def gen():
 
 def build_cmd(name):
     cfg = libbuild.BIN_MATRIX[name]
-    entrypoint='*.go'
+    entrypoint = 'cmd/{}/*.go'.format(name)
     compress = libbuild.ENV in ['prod']
+    upx= False
     if cfg['type'] == 'go':
         if 'distro' in cfg:
             for goos, archs in cfg['distro'].items():
                 for goarch in archs:
-                    libbuild.go_build(name, goos, goarch, entrypoint, compress)
+                    libbuild.go_build(name, goos, goarch, entrypoint, compress, upx)
         else:
-            libbuild.go_build(name, libbuild.GOHOSTOS, libbuild.GOHOSTARCH, entrypoint, compress)
+            libbuild.go_build(name, libbuild.GOHOSTOS, libbuild.GOHOSTARCH, entrypoint, compress, upx)
 
 
 def build_cmds():
@@ -153,7 +154,7 @@ def update_registry():
 
 
 def install():
-    die(call('GO15VENDOREXPERIMENT=1 ' + libbuild.GOC + ' install .'))
+    die(call(libbuild.GOC + ' install ./...'))
 
 
 def default():
