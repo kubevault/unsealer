@@ -1,5 +1,5 @@
-hash: aa41161240ab53eeb0a19f21bee080c32242c0aed89d2a4e94e0f6533e7a6e17
-updated: 2018-10-17T15:51:25.139424192+06:00
+hash: dec0d3934b1a163489082b05850840b25e3bf5cea98d083e37bc29c44f92ccae
+updated: 2018-12-08T21:35:05.594214897-08:00
 imports:
 - name: cloud.google.com/go
   version: 0fd7230b2a7505833d5f69b75cbd6c9582401479
@@ -12,11 +12,12 @@ imports:
   - internal/version
   - storage
 - name: github.com/appscode/go
-  version: 0499c350ad263174dc8c1e3006b2d3300ff398e6
+  version: aa0a55d74dac66f9b9bec9c0e7b67944115a3f44
   subpackages:
   - analytics
   - context
   - encoding/json/types
+  - flags
   - homedir
   - log
   - log/golog
@@ -30,11 +31,12 @@ imports:
 - name: github.com/appscode/jsonpatch
   version: 5af499cf01c842bfdd7761a433fc90525ccd6836
 - name: github.com/appscode/kutil
-  version: 25382b15981e816818803a66b6e1a1270efa89ab
+  version: 51b5bcd8acd29487177991028426f9864c4c3637
   subpackages:
   - core/v1
   - meta
   - tools/analytics
+  - tools/cli
 - name: github.com/appscode/mergo
   version: 9f23e2d6bd2a77f959b2bf6acdbefd708a83a4a4
 - name: github.com/aws/aws-sdk-go
@@ -86,7 +88,7 @@ imports:
   - autorest/validation
   - version
 - name: github.com/cenkalti/backoff
-  version: 62661b46c4093e2c1f38d943e663db1a29873e80
+  version: 2ea60e5f094469f9e65adb9cd103795b73ae743e
 - name: github.com/cpuguy83/go-md2man
   version: 20f5889cbdc3c73dbd2862796665e7c465ade7d1
   subpackages:
@@ -124,18 +126,18 @@ imports:
   - ptypes/struct
   - ptypes/timestamp
 - name: github.com/golang/snappy
-  version: 2e65f85255dbc3072edf28d6b5b8efc472979f5a
+  version: d9eb7a3d35ec988b8585d4a0068e462c27d28380
 - name: github.com/google/btree
   version: 7d79101e329e5a3adf994758c578dab82b90c017
 - name: github.com/google/go-cmp
-  version: 97aa668b73e764ccdd786bc3ccd2edffe621150e
+  version: 2248b49eaa8e1c8c0963ee77b40841adbc19d4ca
   subpackages:
   - cmp
   - cmp/internal/diff
   - cmp/internal/function
   - cmp/internal/value
 - name: github.com/google/go-querystring
-  version: 53e6ce116135b80d037921a7fdd5138cf32d7a8a
+  version: 44c6ddd0a2342c386950e880b658017258da92fc
   subpackages:
   - query
 - name: github.com/google/gofuzz
@@ -143,13 +145,17 @@ imports:
 - name: github.com/google/uuid
   version: 8c31c18f31ede9fc8eae72290a7e7a8064e9b3e3
 - name: github.com/googleapis/gax-go
-  version: 1ef592c90f479e3ab30c6c2312e20e13881b7ea6
+  version: a2f8411585aeae89985ca40e3be2984a82a2bcc7
+  subpackages:
+  - v2
 - name: github.com/googleapis/gnostic
   version: 0c5108395e2debce0d731cf0287ddf7242066aba
   subpackages:
   - OpenAPIv2
   - compiler
   - extensions
+- name: github.com/gorilla/websocket
+  version: 66b9c49e59c6c48f0ffce28c2d8b8a5678502c6d
 - name: github.com/gregjones/httpcache
   version: 787624de3eb7bd915c329cba748687a3b22666a6
   subpackages:
@@ -204,18 +210,15 @@ imports:
 - name: github.com/pkg/errors
   version: 645ef00459ed84a119197bfb8d8205042c6df63d
 - name: github.com/russross/blackfriday
-  version: 300106c228d52c8941d4b3de6054a6062a86dda3
+  version: 05f3235734ad95d0016f6a23902f06461fcf567a
 - name: github.com/ryanuber/go-glob
   version: 256dc444b735e061061cf46c809487313d5b0065
 - name: github.com/sergi/go-diff
-  version: 24e2351369ec4949b2ed0dc5c477afdd4c4034e8
-  repo: https://github.com/sergi/go-diff
+  version: 97b2266dfe4bd4ea1b81a463322f04f8b724801e
   subpackages:
   - diffmatchpatch
 - name: github.com/sethgrid/pester
   version: 03e26c9abbbf5accb8349790bf9f41bde09d72c3
-- name: github.com/shurcooL/sanitized_anchor_name
-  version: 10ef21a441db47d8b13ebcc5fd2310f636973c77
 - name: github.com/sirupsen/logrus
   version: c155da19408a8799da419ed3eeb0cb5db0ad5dbc
 - name: github.com/spf13/cobra
@@ -223,18 +226,18 @@ imports:
   subpackages:
   - doc
 - name: github.com/spf13/pflag
-  version: 583c0c0531f06d5278b7d917446061adc344b5cd
+  version: 298182f68c66c05229eb03ac171abe6e309ee79a
 - name: github.com/yudai/gojsondiff
-  version: 0525c875b75ca60b9e67ddc44496aa16f21066b0
+  version: 7b1b7adf999dab73a6eb02669c3d82dbb27a3dd6
   subpackages:
   - formatter
 - name: github.com/yudai/golcs
   version: d1c525dea8ce39ea9a783d33cf08932305373f2c
-  repo: https://github.com/yudai/golcs
 - name: go.opencensus.io
-  version: 1eb9a13c7dd02141e065a665f6bf5c99a090a16a
+  version: aab39bd6a98b853ab66c8a564f5d6cfcad59ce8a
   subpackages:
   - exemplar
+  - exporter/stackdriver/propagation
   - internal
   - internal/tagencoding
   - plugin/ochttp
@@ -288,7 +291,7 @@ imports:
   subpackages:
   - rate
 - name: google.golang.org/api
-  version: 3f6e8463aa1d824abe11b439d178c02220079da5
+  version: 3639d6d93f377f39a1de765fa4ef37b3c7ca8bd9
   subpackages:
   - cloudkms/v1
   - gensupport
@@ -300,7 +303,6 @@ imports:
   - option
   - storage/v1
   - transport/http
-  - transport/http/internal/propagation
 - name: google.golang.org/appengine
   version: 12d5545dc1cfa6047a286d5e853841b6471f4c19
   subpackages:
@@ -348,8 +350,10 @@ imports:
   - transport
 - name: gopkg.in/inf.v0
   version: 3887ee99ecf07df5b447e9b00d9c0b2adaa9f3e4
+- name: gopkg.in/square/go-jose.v2
+  version: 72415094398e2f013bf50b76fd6de36df47938ea
 - name: gopkg.in/yaml.v2
-  version: 53feefa2559fb8dfa8d81baad31be332c97d6c77
+  version: 5420a8b6744d3b0345ab293f6fcba19c978f1183
 - name: k8s.io/api
   version: fd83cbc87e7632ccd8bbab63d2b673d4e0c631cc
   subpackages:
@@ -385,7 +389,7 @@ imports:
   - storage/v1alpha1
   - storage/v1beta1
 - name: k8s.io/apimachinery
-  version: 8d7a0c3d7f0948197f384288363dfe20cd1f00e4
+  version: 00edbc532482e56a75224c794deaa1366dd292cb
   repo: https://github.com/kmodules/apimachinery.git
   vcs: git
   subpackages:
