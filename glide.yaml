@@ -15,7 +15,7 @@ import:
   version: v1.0.0
 - package: github.com/golang/glog
 - package: github.com/hashicorp/vault
-  version: v0.10.1
+  version: v1.0.0
 - package: github.com/jpillora/go-ogle-analytics
 - package: github.com/pkg/errors
   version: v0.8.0
@@ -31,7 +31,7 @@ import:
   version: ec22f46f877b4505e0117eeaab541714644fdd28
 - package: google.golang.org/api
 - package: google.golang.org/grpc
-  version: v1.12.0
+  version: v1.13.0
 - package: github.com/golang/protobuf
   version: v1.1.0
 - package: k8s.io/api
@@ -64,6 +64,8 @@ import:
   version: v1.4.0
 - package: gopkg.in/square/go-jose.v2
   version: v2.2.1
+- package: go.opencensus.io
+  version: v0.18.0
 testImport:
 - package: github.com/stretchr/testify
   version: v1.2.1
