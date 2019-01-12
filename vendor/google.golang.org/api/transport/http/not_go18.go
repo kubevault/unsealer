@@ -1,4 +1,4 @@
-// Copyright 2016 Google Inc. All Rights Reserved.
+// Copyright 2018 Google Inc. All Rights Reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -12,19 +12,10 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-// +build appengine
+// +build !go1.8
 
 package http
 
-import (
-	"net/http"
+import "net/http"
 
-	"golang.org/x/net/context"
-	"google.golang.org/appengine/urlfetch"
-)
-
-func init() {
-	appengineUrlfetchHook = func(ctx context.Context) http.RoundTripper {
-		return &urlfetch.Transport{Context: ctx}
-	}
-}
+func addOCTransport(trans http.RoundTripper) http.RoundTripper { return trans }

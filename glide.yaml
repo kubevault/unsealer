@@ -15,7 +15,7 @@ import:
   version: v1.0.0
 - package: github.com/golang/glog
 - package: github.com/hashicorp/vault
-  version: v1.0.0
+  version: v1.0.1
 - package: github.com/jpillora/go-ogle-analytics
 - package: github.com/pkg/errors
   version: v0.8.0
