@@ -16,38 +16,38 @@ import (
 )
 
 const (
-	version = "0.0.1"
+	version = "0.1.0"
 )
 
 var (
 	tplFrontMatter = template.Must(template.New("index").Parse(`---
-title: Reference
-description: Messenger CLI Reference
+title: Reference | Vault Unsealer
+description: Vault Unsealer CLI Reference
 menu:
-  product_unsealer_{{ .Version }}:
-    identifier: reference
-    name: Reference
-    weight: 1000
-menu_name: product_unsealer_{{ .Version }}
+  docs_{{ .Version }}:
+    identifier: reference-unsealer
+    name: Vault Unsealer
+    weight: 40
+    parent: reference
+menu_name: docs_{{ .Version }}
 ---
 `))
 
 	_ = template.Must(tplFrontMatter.New("cmd").Parse(`---
 title: {{ .Name }}
 menu:
-  product_unsealer_{{ .Version }}:
+  docs_{{ .Version }}:
     identifier: {{ .ID }}
     name: {{ .Name }}
-    parent: reference
+    parent: reference-unsealer
 {{- if .RootCmd }}
     weight: 0
 {{ end }}
-product_name: unsealer
-menu_name: product_unsealer_{{ .Version }}
+menu_name: docs_{{ .Version }}
 section_menu_id: reference
 {{- if .RootCmd }}
 aliases:
-  - products/unsealer/{{ .Version }}/reference/
+  - /docs/{{ .Version }}/reference/unsealer/
 {{ end }}
 ---
 `))
@@ -56,7 +56,7 @@ aliases:
 // ref: https://github.com/spf13/cobra/blob/master/doc/md_docs.md
 func main() {
 	rootCmd := cmds.NewRootCmd()
-	dir := runtime.GOPath() + "/src/github.com/kubevault/unsealer/docs/reference"
+	dir := runtime.GOPath() + "/src/github.com/kubevault/docs/docs/reference/unsealer"
 	fmt.Printf("Generating cli markdown tree in: %v\n", dir)
 	err := os.RemoveAll(dir)
 	if err != nil {
