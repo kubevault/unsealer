@@ -5,8 +5,8 @@ import (
 
 	"github.com/appscode/go/flags"
 	v "github.com/appscode/go/version"
-	"github.com/appscode/kutil/tools/cli"
 	"github.com/spf13/cobra"
+	"kmodules.xyz/client-go/tools/cli"
 )
 
 func NewRootCmd() *cobra.Command {
