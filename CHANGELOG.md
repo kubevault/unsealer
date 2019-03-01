@@ -1,5 +1,13 @@
 # Change Log
 
+## [0.2.0](https://github.com/kubevault/unsealer/tree/0.2.0) (2019-03-01)
+[Full Changelog](https://github.com/kubevault/unsealer/compare/0.1.0...0.2.0)
+
+**Merged pull requests:**
+
+- Use kmodules.xyz/client-go [\#22](https://github.com/kubevault/unsealer/pull/22) ([tamalsaha](https://github.com/tamalsaha))
+- Update Kubernetes client libraries to 1.13.0 [\#21](https://github.com/kubevault/unsealer/pull/21) ([tamalsaha](https://github.com/tamalsaha))
+
 ## [0.1.0](https://github.com/kubevault/unsealer/tree/0.1.0) (2019-02-28)
 **Merged pull requests:**
 
