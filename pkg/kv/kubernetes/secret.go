@@ -3,9 +3,6 @@ package kubernetes
 import (
 	"fmt"
 
-	core_util "github.com/appscode/kutil/core/v1"
-	meta_util "github.com/appscode/kutil/meta"
-	"github.com/appscode/kutil/tools/clientcmd"
 	"github.com/kubevault/unsealer/pkg/kv"
 	"github.com/pkg/errors"
 	corev1 "k8s.io/api/core/v1"
@@ -13,6 +10,9 @@ import (
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/client-go/kubernetes"
 	"k8s.io/client-go/rest"
+	core_util "kmodules.xyz/client-go/core/v1"
+	meta_util "kmodules.xyz/client-go/meta"
+	"kmodules.xyz/client-go/tools/clientcmd"
 )
 
 type KVService struct {

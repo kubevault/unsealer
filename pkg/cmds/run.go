@@ -3,10 +3,10 @@ package cmds
 import (
 	utilerrors "github.com/appscode/go/util/errors"
 	v "github.com/appscode/go/version"
-	"github.com/appscode/kutil/tools/cli"
 	"github.com/golang/glog"
 	"github.com/kubevault/unsealer/pkg/worker"
 	"github.com/spf13/cobra"
+	"kmodules.xyz/client-go/tools/cli"
 )
 
 func NewCmdRun() *cobra.Command {
