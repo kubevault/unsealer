@@ -5,8 +5,6 @@
 [![Slack](https://slack.appscode.com/badge.svg)](https://slack.appscode.com)
 [![Twitter](https://img.shields.io/twitter/follow/kubevault.svg?style=social&logo=twitter&label=Follow)](https://twitter.com/intent/follow?screen_name=KubeVault)
 
-[![Throughput Graph](https://graphs.waffle.io/kubevault/project/throughput.svg)](https://waffle.io/kubevault/project/metrics/throughput)
-
 # Vault Unsealer
 
 This project automates the process of [initializing](https://www.vaultproject.io/docs/commands/operator/init.html) and [unsealing](https://www.vaultproject.io/docs/concepts/seal.html#unsealing) HashiCorp Vault instances running.
