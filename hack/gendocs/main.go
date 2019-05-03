@@ -89,7 +89,7 @@ func main() {
 	}
 
 	linkHandler := func(name string) string {
-		return "/docs/reference/" + name
+		return "/docs/reference/unsealer/" + name
 	}
 	doc.GenMarkdownTreeCustom(rootCmd, dir, filePrepender, linkHandler)
 
