@@ -20,11 +20,15 @@ _testmain.go
 *.test
 *.prof
 
-.idea/
-dist/
-pki/
-**/junit.xml
-**/.env
-.vscode/
-apiserver.local.config/
-coverage.txt
+/bin
+/.go
+
+/.idea
+/.markdownlint.json
+/.vscode
+/apiserver.local.config
+/coverage.txt
+/dist
+/hack/configs/.env
+/test/e2e/junit.xml
+/test/e2e/report.xml
