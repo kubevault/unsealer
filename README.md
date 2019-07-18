@@ -1,4 +1,4 @@
-[![Go Report Card](https://goreportcard.com/badge/github.com/kubevault/unsealer)](https://goreportcard.com/report/github.com/kubevault/unsealer)
+[![Go Report Card](https://goreportcard.com/badge/kubevault.dev/unsealer)](https://goreportcard.com/report/kubevault.dev/unsealer)
 [![Build Status](https://travis-ci.org/kubevault/unsealer.svg?branch=master)](https://travis-ci.org/kubevault/unsealer)
 [![codecov](https://codecov.io/gh/kubevault/unsealer/branch/master/graph/badge.svg)](https://codecov.io/gh/kubevault/unsealer)
 [![Docker Pulls](https://img.shields.io/docker/pulls/kubevault/vault-unsealer.svg)](https://hub.docker.com/r/kubevault/vault-unsealer/)

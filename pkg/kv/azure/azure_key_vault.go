@@ -9,8 +9,8 @@ import (
 
 	azurekv "github.com/Azure/azure-sdk-for-go/services/keyvault/2016-10-01/keyvault"
 	"github.com/Azure/go-autorest/autorest/to"
-	"github.com/kubevault/unsealer/pkg/kv"
 	"github.com/pkg/errors"
+	"kubevault.dev/unsealer/pkg/kv"
 )
 
 type KVService struct {
