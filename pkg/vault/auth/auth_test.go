@@ -9,8 +9,8 @@ import (
 	"testing"
 
 	"github.com/appscode/pat"
-	"github.com/kubevault/unsealer/pkg/vault"
 	"github.com/stretchr/testify/assert"
+	"kubevault.dev/unsealer/pkg/vault"
 )
 
 const authList = `

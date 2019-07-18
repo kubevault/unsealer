@@ -4,7 +4,7 @@ import (
 	"os"
 
 	logs "github.com/appscode/go/log/golog"
-	"github.com/kubevault/unsealer/pkg/cmds"
+	"kubevault.dev/unsealer/pkg/cmds"
 )
 
 func main() {

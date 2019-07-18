@@ -6,8 +6,8 @@ import (
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/kms"
-	"github.com/kubevault/unsealer/pkg/kv"
-	"github.com/kubevault/unsealer/pkg/kv/util"
+	"kubevault.dev/unsealer/pkg/kv"
+	"kubevault.dev/unsealer/pkg/kv/util"
 )
 
 type awsKMS struct {

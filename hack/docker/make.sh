@@ -8,7 +8,7 @@ GOPATH=$(go env GOPATH)
 SRC=$GOPATH/src
 BIN=$GOPATH/bin
 ROOT=$GOPATH
-REPO_ROOT=$GOPATH/src/github.com/kubevault/unsealer
+REPO_ROOT=$GOPATH/src/kubevault.dev/unsealer
 
 source "$REPO_ROOT/hack/libbuild/common/lib.sh"
 source "$REPO_ROOT/hack/libbuild/common/kubevault_image.sh"
@@ -16,20 +16,20 @@ source "$REPO_ROOT/hack/libbuild/common/kubevault_image.sh"
 APPSCODE_ENV=${APPSCODE_ENV:-dev}
 IMG=vault-unsealer
 
-DIST=$GOPATH/src/github.com/kubevault/unsealer/dist
+DIST=$GOPATH/src/kubevault.dev/unsealer/dist
 mkdir -p $DIST
 if [ -f "$DIST/.tag" ]; then
     export $(cat $DIST/.tag | xargs)
 fi
 
 clean() {
-    pushd $GOPATH/src/github.com/kubevault/unsealer/hack/docker
+    pushd $GOPATH/src/kubevault.dev/unsealer/hack/docker
     rm vault-unsealer Dockerfile
     popd
 }
 
 build_binary() {
-    pushd $GOPATH/src/github.com/kubevault/unsealer
+    pushd $GOPATH/src/kubevault.dev/unsealer
     ./hack/builddeps.sh
     ./hack/make.py build vault-unsealer
     detect_tag $DIST/.tag
@@ -37,7 +37,7 @@ build_binary() {
 }
 
 build_docker() {
-    pushd $GOPATH/src/github.com/kubevault/unsealer/hack/docker
+    pushd $GOPATH/src/kubevault.dev/unsealer/hack/docker
     cp $DIST/vault-unsealer/vault-unsealer-alpine-amd64 vault-unsealer
     chmod 755 vault-unsealer
 

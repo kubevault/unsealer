@@ -11,8 +11,8 @@ import (
 	"text/template"
 
 	"github.com/appscode/go/runtime"
-	"github.com/kubevault/unsealer/pkg/cmds"
 	"github.com/spf13/cobra/doc"
+	"kubevault.dev/unsealer/pkg/cmds"
 )
 
 const (
@@ -56,7 +56,7 @@ aliases:
 // ref: https://github.com/spf13/cobra/blob/master/doc/md_docs.md
 func main() {
 	rootCmd := cmds.NewRootCmd()
-	dir := runtime.GOPath() + "/src/github.com/kubevault/docs/docs/reference/unsealer"
+	dir := runtime.GOPath() + "/src/kubevault.dev/docs/docs/reference/unsealer"
 	fmt.Printf("Generating cli markdown tree in: %v\n", dir)
 	err := os.RemoveAll(dir)
 	if err != nil {

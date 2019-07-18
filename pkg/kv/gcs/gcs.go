@@ -6,8 +6,8 @@ import (
 	"io/ioutil"
 
 	"cloud.google.com/go/storage"
-	"github.com/kubevault/unsealer/pkg/kv"
 	"github.com/pkg/errors"
+	"kubevault.dev/unsealer/pkg/kv"
 )
 
 type gcsStorage struct {

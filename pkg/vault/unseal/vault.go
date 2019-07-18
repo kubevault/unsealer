@@ -5,10 +5,10 @@ import (
 
 	"github.com/golang/glog"
 	"github.com/hashicorp/vault/api"
-	"github.com/kubevault/unsealer/pkg/kv"
-	"github.com/kubevault/unsealer/pkg/vault/util"
 	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
+	"kubevault.dev/unsealer/pkg/kv"
+	"kubevault.dev/unsealer/pkg/vault/util"
 )
 
 // unsealer is an implementation of the Unsealer interface that will perform actions

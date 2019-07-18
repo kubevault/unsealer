@@ -7,9 +7,9 @@ import (
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/ssm"
-	"github.com/kubevault/unsealer/pkg/kv"
-	"github.com/kubevault/unsealer/pkg/kv/util"
 	"github.com/pkg/errors"
+	"kubevault.dev/unsealer/pkg/kv"
+	"kubevault.dev/unsealer/pkg/kv/util"
 )
 
 type awsSSM struct {
