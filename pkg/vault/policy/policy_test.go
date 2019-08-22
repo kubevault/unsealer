@@ -13,10 +13,10 @@ import (
 
 func NewFakeVaultServer() *httptest.Server {
 	m := pat.New()
-	m.Put("/v1/sys/policy/ok", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+	m.Put("/v1/sys/policies/acl/ok", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusOK)
 	}))
-	m.Put("/v1/sys/policy/err", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+	m.Put("/v1/sys/policies/acl/err", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusUnauthorized)
 	}))
 	m.Post("/v1/auth/kubernetes/role/ok", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
