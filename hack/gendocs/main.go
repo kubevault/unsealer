@@ -46,9 +46,10 @@ menu:
 menu_name: docs_{{ .Version }}
 section_menu_id: reference
 {{- if .RootCmd }}
+url: /docs/{{ .Version }}/reference/unsealer/
 aliases:
-  - /docs/{{ .Version }}/reference/unsealer/
-{{ end }}
+- /docs/{{ .Version }}/reference/unsealer/{{ .ID }}/
+{{- end }}
 ---
 `))
 )
