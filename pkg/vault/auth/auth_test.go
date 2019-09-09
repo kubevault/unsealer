@@ -15,18 +15,20 @@ import (
 
 const authList = `
 {
-  "github/": {
-    "type": "github",
-    "description": "GitHub auth"
-  },
-  "token/": {
-    "config": {
-      "default_lease_ttl": 0,
-      "max_lease_ttl": 0
-    },
-    "description": "token based credentials",
-    "type": "token"
-  }
+"data": {
+	  "github/": {
+		"type": "github",
+		"description": "GitHub auth"
+	  },
+	  "token/": {
+		"config": {
+		  "default_lease_ttl": 0,
+		  "max_lease_ttl": 0
+		},
+		"description": "token based credentials",
+		"type": "token"
+	  }
+	}
 }
 `
 
