@@ -30,7 +30,7 @@ github.com/Azure/go-autorest/tracing
 github.com/PuerkitoBio/purell
 # github.com/PuerkitoBio/urlesc v0.0.0-20170810143723-de5bf2ad4578
 github.com/PuerkitoBio/urlesc
-# github.com/appscode/go v0.0.0-20191006073906-e3d193d493fc
+# github.com/appscode/go v0.0.0-20191016085057-e186b6c94a3b
 github.com/appscode/go/log/golog
 github.com/appscode/go/version
 github.com/appscode/go/runtime
@@ -450,6 +450,7 @@ k8s.io/apimachinery/pkg/util/sets
 k8s.io/apimachinery/pkg/api/meta
 k8s.io/apimachinery/pkg/util/strategicpatch
 k8s.io/apimachinery/pkg/util/wait
+k8s.io/apimachinery/pkg/apis/meta/v1/unstructured
 k8s.io/apimachinery/pkg/runtime/serializer/versioning
 k8s.io/apimachinery/pkg/util/mergepatch
 k8s.io/apimachinery/pkg/conversion/queryparams
@@ -462,7 +463,6 @@ k8s.io/apimachinery/pkg/runtime/serializer
 k8s.io/apimachinery/pkg/version
 k8s.io/apimachinery/pkg/util/clock
 k8s.io/apimachinery/pkg/apis/meta/v1beta1
-k8s.io/apimachinery/pkg/apis/meta/v1/unstructured
 k8s.io/apimachinery/third_party/forked/golang/json
 k8s.io/apimachinery/pkg/runtime/serializer/json
 k8s.io/apimachinery/pkg/runtime/serializer/protobuf
@@ -555,14 +555,14 @@ k8s.io/client-go/tools/clientcmd/api/latest
 k8s.io/client-go/util/jsonpath
 k8s.io/client-go/tools/clientcmd/api/v1
 k8s.io/client-go/third_party/forked/golang/template
-# k8s.io/klog v0.3.1 => k8s.io/klog v0.3.0
+# k8s.io/klog v0.3.0 => k8s.io/klog v0.3.0
 k8s.io/klog
 # k8s.io/kube-openapi v0.0.0-20190502190224-411b2483e503 => k8s.io/kube-openapi v0.0.0-20190228160746-b3a7cee44a30
 k8s.io/kube-openapi/pkg/util/proto
 k8s.io/kube-openapi/pkg/common
 # k8s.io/utils v0.0.0-20190506122338-8fab8cb257d5 => k8s.io/utils v0.0.0-20190221042446-c2654d5206da
 k8s.io/utils/integer
-# kmodules.xyz/client-go v0.0.0-20191006173540-91f8ee6b6b4b
+# kmodules.xyz/client-go v0.0.0-20191016085444-3044854ca625
 kmodules.xyz/client-go/tools/cli
 kmodules.xyz/client-go/core/v1
 kmodules.xyz/client-go/meta
