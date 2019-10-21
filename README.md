@@ -1,5 +1,5 @@
 [![Go Report Card](https://goreportcard.com/badge/kubevault.dev/unsealer)](https://goreportcard.com/report/kubevault.dev/unsealer)
-[![Build Status](https://travis-ci.org/kubevault/unsealer.svg?branch=master)](https://travis-ci.org/kubevault/unsealer)
+[![Build Status](https://github.com/kubevault/unsealer/workflows/CI/badge.svg)](https://github.com/kubevault/unsealer/actions?workflow=CI)
 [![codecov](https://codecov.io/gh/kubevault/unsealer/branch/master/graph/badge.svg)](https://codecov.io/gh/kubevault/unsealer)
 [![Docker Pulls](https://img.shields.io/docker/pulls/kubevault/vault-unsealer.svg)](https://hub.docker.com/r/kubevault/vault-unsealer/)
 [![Slack](https://slack.appscode.com/badge.svg)](https://slack.appscode.com)
