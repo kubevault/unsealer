@@ -8,7 +8,6 @@ import (
 
 	"github.com/appscode/pat"
 	"github.com/stretchr/testify/assert"
-	utilruntime "k8s.io/apimachinery/pkg/util/runtime"
 	"kubevault.dev/unsealer/pkg/vault"
 )
 
@@ -80,11 +79,10 @@ func TestConfigureKubernetesAuth(t *testing.T) {
 		t.Skip()
 	}
 	vc, err := vault.NewVaultClient(addr, true, nil)
-	utilruntime.Must(err)
-	vc.SetToken(token)
 	if !assert.Nil(t, err) {
 		return
 	}
+	vc.SetToken(token)
 
 	err = EnsurePolicyAndPolicyBinding(vc, &PolicyManagerOptions{policy, saName, saNamespace})
 	assert.Nil(t, err)

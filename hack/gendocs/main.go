@@ -12,7 +12,6 @@ import (
 
 	"github.com/appscode/go/runtime"
 	"github.com/spf13/cobra/doc"
-	utilruntime "k8s.io/apimachinery/pkg/util/runtime"
 	"kubevault.dev/unsealer/pkg/cmds"
 )
 
@@ -93,7 +92,10 @@ func main() {
 	linkHandler := func(name string) string {
 		return "/docs/reference/unsealer/" + name
 	}
-	utilruntime.Must(doc.GenMarkdownTreeCustom(rootCmd, dir, filePrepender, linkHandler))
+	err = doc.GenMarkdownTreeCustom(rootCmd, dir, filePrepender, linkHandler)
+	if err != nil {
+		log.Fatalln(err)
+	}
 
 	index := filepath.Join(dir, "_index.md")
 	f, err := os.OpenFile(index, os.O_WRONLY|os.O_CREATE|os.O_TRUNC, 0644)
