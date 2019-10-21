@@ -34,8 +34,10 @@ func NewKVService(opts *Options) (kv.Service, error) {
 
 	k.KeyClient = azurekv.New()
 	k.KeyClient.Authorizer = auth
-	k.KeyClient.AddToUserAgent(azurekv.UserAgent())
-
+	err = k.KeyClient.AddToUserAgent(azurekv.UserAgent())
+	if err != nil {
+		return nil, errors.Wrap(err, "failed to add to user agent")
+	}
 	return k, nil
 }
 

@@ -5,8 +5,8 @@ import (
 	"encoding/base64"
 	"fmt"
 
-	"golang.org/x/oauth2/google"
 	cloudkms "google.golang.org/api/cloudkms/v1"
+	"google.golang.org/api/option"
 	"kubevault.dev/unsealer/pkg/kv"
 )
 
@@ -23,14 +23,7 @@ var _ kv.Service = &googleKms{}
 
 func New(store kv.Service, project, location, keyring, cryptoKey string) (kv.Service, error) {
 	ctx := context.Background()
-	client, err := google.DefaultClient(ctx, cloudkms.CloudPlatformScope)
-
-	if err != nil {
-		return nil, fmt.Errorf("error creating google client: %s", err.Error())
-	}
-
-	kmsService, err := cloudkms.New(client)
-
+	kmsService, err := cloudkms.NewService(ctx, option.WithScopes(cloudkms.CloudkmsScope))
 	if err != nil {
 		return nil, fmt.Errorf("error creating google kms service client: %s", err.Error())
 	}

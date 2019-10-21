@@ -22,10 +22,6 @@ import (
 	"golang.org/x/crypto/pkcs12"
 )
 
-var (
-	oauthConfig *adal.OAuthConfig
-)
-
 // OAuthGrantType specifies which grant type to use.
 type OAuthGrantType int
 
