@@ -10,7 +10,7 @@ require (
 	github.com/Azure/go-autorest/autorest/adal v0.4.0
 	github.com/Azure/go-autorest/autorest/to v0.2.0
 	github.com/PuerkitoBio/purell v1.1.1 // indirect
-	github.com/appscode/go v0.0.0-20191006073906-e3d193d493fc
+	github.com/appscode/go v0.0.0-20191016085057-e186b6c94a3b
 	github.com/appscode/pat v0.0.0-20170521084856-48ff78925b79
 	github.com/aws/aws-sdk-go v1.20.20
 	github.com/ghodss/yaml v1.0.0
@@ -41,7 +41,7 @@ require (
 	k8s.io/client-go v11.0.0+incompatible
 	k8s.io/kube-openapi v0.0.0-20190502190224-411b2483e503 // indirect
 	k8s.io/utils v0.0.0-20190506122338-8fab8cb257d5 // indirect
-	kmodules.xyz/client-go v0.0.0-20191006173540-91f8ee6b6b4b
+	kmodules.xyz/client-go v0.0.0-20191016085444-3044854ca625
 )
 
 replace (

@@ -10,6 +10,7 @@ import (
 
 	"github.com/appscode/pat"
 	"github.com/stretchr/testify/assert"
+	utilruntime "k8s.io/apimachinery/pkg/util/runtime"
 	"kubevault.dev/unsealer/pkg/vault"
 )
 
@@ -37,7 +38,7 @@ func NewFakeVaultServer() *httptest.Server {
 	m.Post("/v1/auth/kubernetes/config", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		var v map[string]interface{}
 		defer r.Body.Close()
-		json.NewDecoder(r.Body).Decode(&v)
+		utilruntime.Must(json.NewDecoder(r.Body).Decode(&v))
 		fmt.Println("***")
 		fmt.Println(v)
 		fmt.Println("***")
@@ -56,7 +57,8 @@ func NewFakeVaultServer() *httptest.Server {
 		w.WriteHeader(http.StatusOK)
 	}))
 	m.Get("/v1/sys/auth", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		w.Write([]byte(authList))
+		_, err := w.Write([]byte(authList))
+		utilruntime.Must(err)
 		w.WriteHeader(http.StatusOK)
 	}))
 	m.Post("/v1/sys/auth/kubernetes", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
@@ -160,6 +162,7 @@ func TestEnsureKubernetesAuth(t *testing.T) {
 		t.Skip()
 	}
 	vc, err := vault.NewVaultClient(addr, true, nil)
+	utilruntime.Must(err)
 	vc.SetToken(token)
 	if !assert.Nil(t, err) {
 		return
@@ -172,19 +175,20 @@ func TestEnsureKubernetesAuth(t *testing.T) {
 func TestConfigureKubernetesAuth(t *testing.T) {
 	addr := os.Getenv("VAULT_ADDR")
 	token := os.Getenv("VAULT_TOKEN")
-	k8s_host := os.Getenv("K8S_HOST")
-	k8s_ca := os.Getenv("K8S_CA")
+	k8sHOST := os.Getenv("K8S_HOST")
+	k8sCA := os.Getenv("K8S_CA")
 	jwt := os.Getenv("K8S_JWT")
-	if addr == "" || token == "" || k8s_host == "" || k8s_ca == "" || jwt == "" {
+	if addr == "" || token == "" || k8sHOST == "" || k8sCA == "" || jwt == "" {
 		t.Skip()
 	}
 	vc, err := vault.NewVaultClient(addr, true, nil)
+	utilruntime.Must(err)
 	vc.SetToken(token)
 	if !assert.Nil(t, err) {
 		return
 	}
 
-	k := NewKubernetesAuthenticator(vc, &K8sAuthenticatorOptions{k8s_host, k8s_ca, jwt})
+	k := NewKubernetesAuthenticator(vc, &K8sAuthenticatorOptions{k8sHOST, k8sCA, jwt})
 	err = k.ConfigureAuth()
 	assert.Nil(t, err)
 }
