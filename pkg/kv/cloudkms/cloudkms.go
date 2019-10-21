@@ -23,7 +23,7 @@ var _ kv.Service = &googleKms{}
 
 func New(store kv.Service, project, location, keyring, cryptoKey string) (kv.Service, error) {
 	ctx := context.Background()
-	kmsService, err := cloudkms.NewService(ctx, option.WithScopes(cloudkms.CloudkmsScope))
+	kmsService, err := cloudkms.NewService(ctx, option.WithScopes(cloudkms.CloudPlatformScope))
 	if err != nil {
 		return nil, fmt.Errorf("error creating google kms service client: %s", err.Error())
 	}
