@@ -5,9 +5,10 @@ import (
 	"fmt"
 	"io/ioutil"
 
+	"kubevault.dev/unsealer/pkg/kv"
+
 	"cloud.google.com/go/storage"
 	"github.com/pkg/errors"
-	"kubevault.dev/unsealer/pkg/kv"
 )
 
 type gcsStorage struct {

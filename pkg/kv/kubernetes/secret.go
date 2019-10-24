@@ -3,6 +3,8 @@ package kubernetes
 import (
 	"fmt"
 
+	"kubevault.dev/unsealer/pkg/kv"
+
 	"github.com/pkg/errors"
 	corev1 "k8s.io/api/core/v1"
 	kerror "k8s.io/apimachinery/pkg/api/errors"
@@ -12,7 +14,6 @@ import (
 	core_util "kmodules.xyz/client-go/core/v1"
 	meta_util "kmodules.xyz/client-go/meta"
 	"kmodules.xyz/client-go/tools/clientcmd"
-	"kubevault.dev/unsealer/pkg/kv"
 )
 
 type KVService struct {

@@ -3,8 +3,9 @@ package main
 import (
 	"os"
 
-	logs "github.com/appscode/go/log/golog"
 	"kubevault.dev/unsealer/pkg/cmds"
+
+	logs "github.com/appscode/go/log/golog"
 )
 
 func main() {

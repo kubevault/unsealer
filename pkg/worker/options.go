@@ -3,8 +3,6 @@ package worker
 import (
 	"time"
 
-	"github.com/pkg/errors"
-	"github.com/spf13/pflag"
 	aws "kubevault.dev/unsealer/pkg/kv/aws_kms"
 	"kubevault.dev/unsealer/pkg/kv/azure"
 	google "kubevault.dev/unsealer/pkg/kv/cloudkms"
@@ -12,6 +10,9 @@ import (
 	"kubevault.dev/unsealer/pkg/vault/auth"
 	"kubevault.dev/unsealer/pkg/vault/policy"
 	"kubevault.dev/unsealer/pkg/vault/unseal"
+
+	"github.com/pkg/errors"
+	"github.com/spf13/pflag"
 )
 
 const (

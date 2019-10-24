@@ -5,9 +5,10 @@ import (
 	"encoding/base64"
 	"fmt"
 
+	"kubevault.dev/unsealer/pkg/kv"
+
 	cloudkms "google.golang.org/api/cloudkms/v1"
 	"google.golang.org/api/option"
-	"kubevault.dev/unsealer/pkg/kv"
 )
 
 // googleKms is an implementation of the kv.Service interface, that encrypts

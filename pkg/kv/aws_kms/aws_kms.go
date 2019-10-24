@@ -3,11 +3,12 @@ package aws_kms
 import (
 	"fmt"
 
+	"kubevault.dev/unsealer/pkg/kv"
+	"kubevault.dev/unsealer/pkg/kv/util"
+
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/kms"
-	"kubevault.dev/unsealer/pkg/kv"
-	"kubevault.dev/unsealer/pkg/kv/util"
 )
 
 type awsKMS struct {
