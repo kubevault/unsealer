@@ -8,10 +8,11 @@ import (
 	"os"
 	"testing"
 
+	"kubevault.dev/unsealer/pkg/vault"
+
 	"github.com/appscode/pat"
 	"github.com/stretchr/testify/assert"
 	utilruntime "k8s.io/apimachinery/pkg/util/runtime"
-	"kubevault.dev/unsealer/pkg/vault"
 )
 
 const authList = `

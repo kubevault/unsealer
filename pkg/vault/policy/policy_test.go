@@ -6,9 +6,10 @@ import (
 	"os"
 	"testing"
 
+	"kubevault.dev/unsealer/pkg/vault"
+
 	"github.com/appscode/pat"
 	"github.com/stretchr/testify/assert"
-	"kubevault.dev/unsealer/pkg/vault"
 )
 
 func NewFakeVaultServer() *httptest.Server {

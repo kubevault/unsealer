@@ -15,13 +15,9 @@
 
 SHELL=/bin/bash -o pipefail
 
-GO_PKG   := kubevault.dev
+GO_PKG   := kmodules.xyz
 REPO     := $(notdir $(shell pwd))
-BIN      := vault-unsealer
-COMPRESS ?= no
-
-# Where to push the docker image.
-REGISTRY ?= kubevault
+BIN      := client-go
 
 # This version-strategy uses git tags to set the version string
 git_branch       := $(shell git rev-parse --abbrev-ref HEAD)
@@ -47,8 +43,7 @@ endif
 ### These variables should not need tweaking.
 ###
 
-SRC_PKGS := cmd pkg # directories which hold app source excluding tests (not vendored)
-SRC_DIRS := $(SRC_PKGS) hack/gendocs # directories which hold app source (not vendored)
+SRC_DIRS := *.go admissionregistration apiextensions apiregistration apps batch bin certificates core discovery dynamic extensions logs meta openapi policy rbac storage tools 
 
 DOCKER_PLATFORMS := linux/amd64 linux/arm linux/arm64
 BIN_PLATFORMS    := $(DOCKER_PLATFORMS)
@@ -59,13 +54,6 @@ ARCH := $(if $(GOARCH),$(GOARCH),$(shell go env GOARCH))
 
 BASEIMAGE_PROD   ?= gcr.io/distroless/static
 BASEIMAGE_DBG    ?= debian:stretch
-
-IMAGE            := $(REGISTRY)/$(BIN)
-VERSION_PROD     := $(VERSION)
-VERSION_DBG      := $(VERSION)-dbg
-TAG              := $(VERSION)_$(OS)_$(ARCH)
-TAG_PROD         := $(TAG)
-TAG_DBG          := $(VERSION)-dbg_$(OS)_$(ARCH)
 
 GO_VERSION       ?= 1.12.12
 BUILD_IMAGE      ?= appscode/golang-dev:$(GO_VERSION)-stretch
@@ -84,9 +72,6 @@ BUILD_DIRS  := bin/$(OS)_$(ARCH)     \
                $(HOME)/.kube         \
                $(HOME)/.minikube
 
-DOCKERFILE_PROD  = Dockerfile.in
-DOCKERFILE_DBG   = Dockerfile.dbg
-
 # If you want to build all binaries, see the 'all-build' rule.
 # If you want to build all containers, see the 'all-container' rule.
 # If you want to build AND push all containers, see the 'all-push' rule.
@@ -101,32 +86,17 @@ build-%:
 	    GOOS=$(firstword $(subst _, ,$*)) \
 	    GOARCH=$(lastword $(subst _, ,$*))
 
-container-%:
-	@$(MAKE) container                    \
-	    --no-print-directory              \
-	    GOOS=$(firstword $(subst _, ,$*)) \
-	    GOARCH=$(lastword $(subst _, ,$*))
-
-push-%:
-	@$(MAKE) push                         \
-	    --no-print-directory              \
-	    GOOS=$(firstword $(subst _, ,$*)) \
-	    GOARCH=$(lastword $(subst _, ,$*))
-
 all-build: $(addprefix build-, $(subst /,_, $(BIN_PLATFORMS)))
 
-all-container: $(addprefix container-, $(subst /,_, $(DOCKER_PLATFORMS)))
-
-all-push: $(addprefix push-, $(subst /,_, $(DOCKER_PLATFORMS)))
-
 version:
-	@echo ::set-output name=version::$(VERSION)
-	@echo ::set-output name=version_strategy::$(version_strategy)
-	@echo ::set-output name=git_tag::$(git_tag)
-	@echo ::set-output name=git_branch::$(git_branch)
-	@echo ::set-output name=commit_hash::$(commit_hash)
-	@echo ::set-output name=commit_timestamp::$(commit_timestamp)
+	@echo version=$(VERSION)
+	@echo version_strategy=$(version_strategy)
+	@echo git_tag=$(git_tag)
+	@echo git_branch=$(git_branch)
+	@echo commit_hash=$(commit_hash)
+	@echo commit_timestamp=$(commit_timestamp)
 
+.PHONY: gen
 gen:
 	@true
 
@@ -144,22 +114,14 @@ fmt: $(BUILD_DIRS)
 	    --env HTTPS_PROXY=$(HTTPS_PROXY)                        \
 	    $(BUILD_IMAGE)                                          \
 	    /bin/bash -c "                                          \
-	        REPO_PKG=$(GO_PKG)                                  \
+	        REPO_PKG=$(GO_PKG)/$(REPO)                          \
 	        ./hack/fmt.sh $(SRC_DIRS)                           \
 	    "
 
 build: $(OUTBIN)
 
-# The following structure defeats Go's (intentional) behavior to always touch
-# result files, even if they have not changed.  This will still run `go` but
-# will not trigger further work if nothing has actually changed.
-
-$(OUTBIN): .go/$(OUTBIN).stamp
-	@true
-
-# This will build the binary under ./.go and update the real binary iff needed.
-.PHONY: .go/$(OUTBIN).stamp
-.go/$(OUTBIN).stamp: $(BUILD_DIRS)
+.PHONY: .go/$(OUTBIN)
+$(OUTBIN): $(BUILD_DIRS)
 	@echo "making $(OUTBIN)"
 	@docker run                                                 \
 	    -i                                                      \
@@ -184,60 +146,9 @@ $(OUTBIN): .go/$(OUTBIN).stamp
 	        commit_timestamp=$(commit_timestamp)                \
 	        ./hack/build.sh                                     \
 	    "
-	@if [ $(COMPRESS) = yes ] && [ $(OS) != darwin ]; then          \
-		echo "compressing $(OUTBIN)";                               \
-		@docker run                                                 \
-		    -i                                                      \
-		    --rm                                                    \
-		    -u $$(id -u):$$(id -g)                                  \
-		    -v $$(pwd):/src                                         \
-		    -w /src                                                 \
-		    -v $$(pwd)/.go/bin/$(OS)_$(ARCH):/go/bin                \
-		    -v $$(pwd)/.go/bin/$(OS)_$(ARCH):/go/bin/$(OS)_$(ARCH)  \
-		    -v $$(pwd)/.go/cache:/.cache                            \
-		    --env HTTP_PROXY=$(HTTP_PROXY)                          \
-		    --env HTTPS_PROXY=$(HTTPS_PROXY)                        \
-		    $(BUILD_IMAGE)                                          \
-		    upx --brute /go/$(OUTBIN);                              \
-	fi
-	@if ! cmp -s .go/$(OUTBIN) $(OUTBIN); then \
-	    mv .go/$(OUTBIN) $(OUTBIN);            \
-	    date >$@;                              \
-	fi
 	@echo
 
-# Used to track state in hidden files.
-DOTFILE_IMAGE    = $(subst /,_,$(IMAGE))-$(TAG)
-
-container: bin/.container-$(DOTFILE_IMAGE)-PROD bin/.container-$(DOTFILE_IMAGE)-DBG
-bin/.container-$(DOTFILE_IMAGE)-%: bin/$(OS)_$(ARCH)/$(BIN) $(DOCKERFILE_%)
-	@echo "container: $(IMAGE):$(TAG_$*)"
-	@sed                                    \
-		-e 's|{ARG_BIN}|$(BIN)|g'           \
-		-e 's|{ARG_ARCH}|$(ARCH)|g'         \
-		-e 's|{ARG_OS}|$(OS)|g'             \
-		-e 's|{ARG_FROM}|$(BASEIMAGE_$*)|g' \
-		$(DOCKERFILE_$*) > bin/.dockerfile-$*-$(OS)_$(ARCH)
-	@DOCKER_CLI_EXPERIMENTAL=enabled docker buildx build --platform $(OS)/$(ARCH) --load --pull -t $(IMAGE):$(TAG_$*) -f bin/.dockerfile-$*-$(OS)_$(ARCH) .
-	@docker images -q $(IMAGE):$(TAG_$*) > $@
-	@echo
-
-push: bin/.push-$(DOTFILE_IMAGE)-PROD bin/.push-$(DOTFILE_IMAGE)-DBG
-bin/.push-$(DOTFILE_IMAGE)-%: bin/.container-$(DOTFILE_IMAGE)-%
-	@docker push $(IMAGE):$(TAG_$*)
-	@echo "pushed: $(IMAGE):$(TAG_$*)"
-	@echo
-
-.PHONY: docker-manifest
-docker-manifest: docker-manifest-PROD docker-manifest-DBG
-docker-manifest-%:
-	DOCKER_CLI_EXPERIMENTAL=enabled docker manifest create -a $(IMAGE):$(VERSION_$*) $(foreach PLATFORM,$(DOCKER_PLATFORMS),$(IMAGE):$(VERSION_$*)_$(subst /,_,$(PLATFORM)))
-	DOCKER_CLI_EXPERIMENTAL=enabled docker manifest push $(IMAGE):$(VERSION_$*)
-
-.PHONY: test
-test: unit-tests e2e-tests
-
-unit-tests: $(BUILD_DIRS)
+test: $(BUILD_DIRS)
 	@docker run                                                 \
 	    -i                                                      \
 	    --rm                                                    \
@@ -254,55 +165,8 @@ unit-tests: $(BUILD_DIRS)
 	        ARCH=$(ARCH)                                        \
 	        OS=$(OS)                                            \
 	        VERSION=$(VERSION)                                  \
-	        ./hack/test.sh $(SRC_PKGS)                          \
+	        ./hack/test.sh $(SRC_DIRS)                          \
 	    "
-
-# - e2e-tests can hold both ginkgo args (as GINKGO_ARGS) and program/test args (as TEST_ARGS).
-#       make e2e-tests TEST_ARGS="--selfhosted-operator=false --storageclass=standard" GINKGO_ARGS="--flakeAttempts=2"
-#
-# - Minimalist:
-#       make e2e-tests
-#
-# NB: -t is used to catch ctrl-c interrupt from keyboard and -t will be problematic for CI.
-
-GINKGO_ARGS ?=
-TEST_ARGS   ?=
-
-.PHONY: e2e-tests
-e2e-tests: $(BUILD_DIRS)
-	@docker run                                                 \
-	    -i                                                      \
-	    --rm                                                    \
-	    -u $$(id -u):$$(id -g)                                  \
-	    -v $$(pwd):/src                                         \
-	    -w /src                                                 \
-	    --net=host                                              \
-	    -v $(HOME)/.kube:/.kube                                 \
-	    -v $(HOME)/.minikube:$(HOME)/.minikube                  \
-	    -v $(HOME)/.credentials:$(HOME)/.credentials            \
-	    -v $$(pwd)/.go/bin/$(OS)_$(ARCH):/go/bin                \
-	    -v $$(pwd)/.go/bin/$(OS)_$(ARCH):/go/bin/$(OS)_$(ARCH)  \
-	    -v $$(pwd)/.go/cache:/.cache                            \
-	    --env HTTP_PROXY=$(HTTP_PROXY)                          \
-	    --env HTTPS_PROXY=$(HTTPS_PROXY)                        \
-	    --env KUBECONFIG=$(KUBECONFIG)                          \
-	    --env-file=$$(pwd)/hack/config/.env                     \
-	    $(BUILD_IMAGE)                                          \
-	    /bin/bash -c "                                          \
-	        ARCH=$(ARCH)                                        \
-	        OS=$(OS)                                            \
-	        VERSION=$(VERSION)                                  \
-	        DOCKER_REGISTRY=$(REGISTRY)                         \
-	        TAG=$(TAG)                                          \
-	        KUBECONFIG=$${KUBECONFIG#$(HOME)}                   \
-	        GINKGO_ARGS='$(GINKGO_ARGS)'                        \
-	        TEST_ARGS='$(TEST_ARGS)'                            \
-	        ./hack/e2e.sh                                       \
-	    "
-
-.PHONY: e2e-parallel
-e2e-parallel:
-	@$(MAKE) e2e-tests GINKGO_ARGS="-p -stream" --no-print-directory
 
 ADDTL_LINTERS   := goconst,gofmt,goimports,unparam
 
@@ -345,35 +209,11 @@ verify-modules:
 .PHONY: verify-gen
 verify-gen: gen fmt
 	@if !(git diff --exit-code HEAD); then \
-		echo "generated files are out of date, run make gen fmt"; exit 1; \
+		echo "file formatting is out of date, run make gen fmt"; exit 1; \
 	fi
 
 .PHONY: ci
-ci: verify lint build unit-tests #cover
-
-.PHONY: qa
-qa:
-	@if [ "$$APPSCODE_ENV" = "prod" ]; then                                              \
-		echo "Nothing to do in prod env. Are you trying to 'release' binaries to prod?"; \
-		exit 1;                                                                          \
-	fi
-	@if [ "$(version_strategy)" = "tag" ]; then               \
-		echo "Are you trying to 'release' binaries to prod?"; \
-		exit 1;                                               \
-	fi
-	@$(MAKE) clean all-push docker-manifest --no-print-directory
-
-.PHONY: release
-release:
-	@if [ "$$APPSCODE_ENV" != "prod" ]; then      \
-		echo "'release' only works in PROD env."; \
-		exit 1;                                   \
-	fi
-	@if [ "$(version_strategy)" != "tag" ]; then                    \
-		echo "apply tag to release binaries and/or docker images."; \
-		exit 1;                                                     \
-	fi
-	@$(MAKE) clean all-push docker-manifest --no-print-directory
+ci: verify lint build test #cover
 
 .PHONY: clean
 clean:

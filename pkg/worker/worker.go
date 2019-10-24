@@ -3,9 +3,6 @@ package worker
 import (
 	"time"
 
-	"github.com/golang/glog"
-	vaultapi "github.com/hashicorp/vault/api"
-	"github.com/pkg/errors"
 	"kubevault.dev/unsealer/pkg/kv"
 	"kubevault.dev/unsealer/pkg/kv/aws_kms"
 	"kubevault.dev/unsealer/pkg/kv/aws_ssm"
@@ -18,6 +15,10 @@ import (
 	"kubevault.dev/unsealer/pkg/vault/policy"
 	"kubevault.dev/unsealer/pkg/vault/unseal"
 	"kubevault.dev/unsealer/pkg/vault/util"
+
+	"github.com/golang/glog"
+	vaultapi "github.com/hashicorp/vault/api"
+	"github.com/pkg/errors"
 )
 
 func (o *WorkerOptions) Run() error {

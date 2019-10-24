@@ -1,12 +1,13 @@
 package cmds
 
 import (
+	"kubevault.dev/unsealer/pkg/worker"
+
 	utilerrors "github.com/appscode/go/util/errors"
 	v "github.com/appscode/go/version"
 	"github.com/golang/glog"
 	"github.com/spf13/cobra"
 	"kmodules.xyz/client-go/tools/cli"
-	"kubevault.dev/unsealer/pkg/worker"
 )
 
 func NewCmdRun() *cobra.Command {
