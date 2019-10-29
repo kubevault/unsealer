@@ -1,5 +1,3 @@
-#!/usr/bin/env bash
-
 # Copyright The KubeVault Authors.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -14,7 +12,11 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+FROM {ARG_FROM}
 
-pushd $GOPATH/src/kubevault.dev/unsealer/hack/gendocs
-go run main.go
-popd
+ADD bin/{ARG_OS}_{ARG_ARCH}/{ARG_BIN} /{ARG_BIN}
+
+# This would be nicer as `nobody:nobody` but distroless has no such entries.
+USER 65535:65535
+
+ENTRYPOINT ["/{ARG_BIN}"]
