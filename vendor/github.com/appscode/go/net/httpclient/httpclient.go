@@ -142,18 +142,21 @@ func (c *Client) NewRequest(method, path string, request interface{}) (*http.Req
 		}
 	}
 
-	qv, err := query.Values(request)
-	if err != nil {
-		return nil, err
-	}
-	qs := qv.Encode()
-	if qs != "" {
-		if strings.Contains(path, "?") {
-			path += "&" + qs
-		} else {
-			path += "?" + qs
+	if method == "" || method == "GET" || method == "HEAD" {
+		qv, err := query.Values(request)
+		if err != nil {
+			return nil, err
+		}
+		qs := qv.Encode()
+		if qs != "" {
+			if strings.Contains(path, "?") {
+				path += "&" + qs
+			} else {
+				path += "?" + qs
+			}
 		}
 	}
+
 	if path != "" {
 		rel, err := url.Parse(path)
 		if err != nil {
