@@ -30,7 +30,7 @@ require (
 	k8s.io/api v0.0.0-20191114100352-16d7abae0d2a
 	k8s.io/apimachinery v0.0.0-20191028221656-72ed19daf4bb
 	k8s.io/client-go v12.0.0+incompatible
-	kmodules.xyz/client-go v0.0.0-20191127054604-26981530831d
+	kmodules.xyz/client-go v0.0.0-20200108114229-70ba8841e60f
 )
 
 replace (

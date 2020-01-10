@@ -40,31 +40,31 @@ var (
 title: Reference | Vault Unsealer
 description: Vault Unsealer CLI Reference
 menu:
-  docs_{{ .Version }}:
+  docs_{{ "{{ .version }}" }}:
     identifier: reference-unsealer
     name: Vault Unsealer
     weight: 40
     parent: reference
-menu_name: docs_{{ .Version }}
+menu_name: docs_{{ "{{ .version }}" }}
 ---
 `))
 
 	_ = template.Must(tplFrontMatter.New("cmd").Parse(`---
 title: {{ .Name }}
 menu:
-  docs_{{ .Version }}:
+  docs_{{ "{{ .version }}" }}:
     identifier: {{ .ID }}
     name: {{ .Name }}
     parent: reference-unsealer
 {{- if .RootCmd }}
     weight: 0
 {{ end }}
-menu_name: docs_{{ .Version }}
+menu_name: docs_{{ "{{ .version }}" }}
 section_menu_id: reference
 {{- if .RootCmd }}
-url: /docs/{{ .Version }}/reference/unsealer/
+url: /docs/{{ "{{ .version }}" }}/reference/unsealer/
 aliases:
-- /docs/{{ .Version }}/reference/unsealer/{{ .ID }}/
+- /docs/{{ "{{ .version }}" }}/reference/unsealer/{{ .ID }}/
 {{- end }}
 ---
 `))
@@ -90,12 +90,10 @@ func main() {
 		data := struct {
 			ID      string
 			Name    string
-			Version string
 			RootCmd bool
 		}{
 			strings.Replace(base, "_", "-", -1),
 			strings.Title(strings.Replace(base, "_", " ", -1)),
-			version,
 			!strings.ContainsRune(base, '_'),
 		}
 		var buf bytes.Buffer
@@ -118,7 +116,7 @@ func main() {
 	if err != nil {
 		log.Fatalln(err)
 	}
-	err = tplFrontMatter.ExecuteTemplate(f, "index", struct{ Version string }{version})
+	err = tplFrontMatter.ExecuteTemplate(f, "index", struct{}{})
 	if err != nil {
 		log.Fatalln(err)
 	}
