@@ -31,10 +31,6 @@ import (
 	"github.com/spf13/cobra/doc"
 )
 
-const (
-	version = "0.2.0"
-)
-
 var (
 	tplFrontMatter = template.Must(template.New("index").Parse(`---
 title: Reference | Vault Unsealer
