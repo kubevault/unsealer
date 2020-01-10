@@ -30,11 +30,9 @@ github.com/PuerkitoBio/purell
 github.com/PuerkitoBio/urlesc
 # github.com/appscode/go v0.0.0-20191119085241-0887d8ec2ecc
 github.com/appscode/go/analytics
-github.com/appscode/go/context
 github.com/appscode/go/encoding/json/types
 github.com/appscode/go/flags
 github.com/appscode/go/homedir
-github.com/appscode/go/log
 github.com/appscode/go/log/golog
 github.com/appscode/go/net
 github.com/appscode/go/net/httpclient
@@ -413,10 +411,12 @@ k8s.io/apimachinery/pkg/api/errors
 k8s.io/apimachinery/pkg/api/meta
 k8s.io/apimachinery/pkg/api/resource
 k8s.io/apimachinery/pkg/api/validation
+k8s.io/apimachinery/pkg/apis/meta/internalversion
 k8s.io/apimachinery/pkg/apis/meta/v1
 k8s.io/apimachinery/pkg/apis/meta/v1/unstructured
 k8s.io/apimachinery/pkg/apis/meta/v1/unstructured/unstructuredscheme
 k8s.io/apimachinery/pkg/apis/meta/v1/validation
+k8s.io/apimachinery/pkg/apis/meta/v1beta1
 k8s.io/apimachinery/pkg/conversion
 k8s.io/apimachinery/pkg/conversion/queryparams
 k8s.io/apimachinery/pkg/fields
@@ -526,6 +526,7 @@ k8s.io/client-go/tools/clientcmd/api
 k8s.io/client-go/tools/clientcmd/api/latest
 k8s.io/client-go/tools/clientcmd/api/v1
 k8s.io/client-go/tools/metrics
+k8s.io/client-go/tools/pager
 k8s.io/client-go/tools/reference
 k8s.io/client-go/transport
 k8s.io/client-go/util/cert
@@ -541,7 +542,7 @@ k8s.io/kube-openapi/pkg/common
 k8s.io/kube-openapi/pkg/util/proto
 # k8s.io/utils v0.0.0-20190801114015-581e00157fb1 => k8s.io/utils v0.0.0-20190801114015-581e00157fb1
 k8s.io/utils/integer
-# kmodules.xyz/client-go v0.0.0-20191127054604-26981530831d
+# kmodules.xyz/client-go v0.0.0-20200108114229-70ba8841e60f
 kmodules.xyz/client-go
 kmodules.xyz/client-go/core/v1
 kmodules.xyz/client-go/meta
