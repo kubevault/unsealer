@@ -1,16 +1,33 @@
 # Change Log
 
-## [0.2.0](https://github.com/kubevault/unsealer/tree/0.2.0) (2019-03-01)
+## [v0.3.0](https://github.com/kubevault/unsealer/tree/v0.3.0) (2020-01-10)
+[Full Changelog](https://github.com/kubevault/unsealer/compare/0.2.0...v0.3.0)
+
+**Merged pull requests:**
+
+- Update dependencies [\#36](https://github.com/kubevault/unsealer/pull/36) ([tamalsaha](https://github.com/tamalsaha))
+- Update client-go to kubernetes-1.16.3 [\#35](https://github.com/kubevault/unsealer/pull/35) ([tamalsaha](https://github.com/tamalsaha))
+- Add license header to files [\#34](https://github.com/kubevault/unsealer/pull/34) ([tamalsaha](https://github.com/tamalsaha))
+- Split imports into 3 blocks [\#33](https://github.com/kubevault/unsealer/pull/33) ([tamalsaha](https://github.com/tamalsaha))
+- Enable make ci [\#32](https://github.com/kubevault/unsealer/pull/32) ([tamalsaha](https://github.com/tamalsaha))
+- Update kubevault.dev/operator dependency [\#31](https://github.com/kubevault/unsealer/pull/31) ([tamalsaha](https://github.com/tamalsaha))
+- Add release pipeline [\#30](https://github.com/kubevault/unsealer/pull/30) ([tamalsaha](https://github.com/tamalsaha))
+- Fix unit tests [\#29](https://github.com/kubevault/unsealer/pull/29) ([kamolhasan](https://github.com/kamolhasan))
+- Add policy for enabling secret engine [\#28](https://github.com/kubevault/unsealer/pull/28) ([kamolhasan](https://github.com/kamolhasan))
+- Change package path to kubevault.dev/unsealer [\#27](https://github.com/kubevault/unsealer/pull/27) ([tamalsaha](https://github.com/tamalsaha))
+- Add license header to Makefiles [\#26](https://github.com/kubevault/unsealer/pull/26) ([tamalsaha](https://github.com/tamalsaha))
+- Add Makefile [\#25](https://github.com/kubevault/unsealer/pull/25) ([tamalsaha](https://github.com/tamalsaha))
+- Update to k8s 1.14.0 client libraries using go.mod [\#24](https://github.com/kubevault/unsealer/pull/24) ([tamalsaha](https://github.com/tamalsaha))
+
+## [0.2.0](https://github.com/kubevault/unsealer/tree/0.2.0) (2019-05-03)
 [Full Changelog](https://github.com/kubevault/unsealer/compare/0.1.0...0.2.0)
 
+## [0.1.0](https://github.com/kubevault/unsealer/tree/0.1.0) (2019-05-03)
 **Merged pull requests:**
 
+- Update Kubernetes client libraries to 1.13.5 [\#23](https://github.com/kubevault/unsealer/pull/23) ([tamalsaha](https://github.com/tamalsaha))
 - Use kmodules.xyz/client-go [\#22](https://github.com/kubevault/unsealer/pull/22) ([tamalsaha](https://github.com/tamalsaha))
 - Update Kubernetes client libraries to 1.13.0 [\#21](https://github.com/kubevault/unsealer/pull/21) ([tamalsaha](https://github.com/tamalsaha))
-
-## [0.1.0](https://github.com/kubevault/unsealer/tree/0.1.0) (2019-02-28)
-**Merged pull requests:**
-
 - Update Vault api and policy [\#20](https://github.com/kubevault/unsealer/pull/20) ([nightfury1204](https://github.com/nightfury1204))
 - Use kubeapiserver fqdn for AKS [\#19](https://github.com/kubevault/unsealer/pull/19) ([tamalsaha](https://github.com/tamalsaha))
 - Send analytics [\#18](https://github.com/kubevault/unsealer/pull/18) ([tamalsaha](https://github.com/tamalsaha))
