@@ -23,6 +23,7 @@ import (
 
 	"github.com/golang/glog"
 	"github.com/pkg/errors"
+	"gomodules.xyz/version"
 	core "k8s.io/api/core/v1"
 	kerr "k8s.io/apimachinery/pkg/api/errors"
 	"k8s.io/apimachinery/pkg/api/meta"
@@ -37,29 +38,32 @@ import (
 	kutil "kmodules.xyz/client-go"
 )
 
-func CreateOrPatchNode(c kubernetes.Interface, meta metav1.ObjectMeta, transform func(*core.Node) *core.Node) (*core.Node, kutil.VerbType, error) {
-	cur, err := c.CoreV1().Nodes().Get(meta.Name, metav1.GetOptions{})
+func CreateOrPatchNode(ctx context.Context, c kubernetes.Interface, meta metav1.ObjectMeta, transform func(*core.Node) *core.Node, opts metav1.PatchOptions) (*core.Node, kutil.VerbType, error) {
+	cur, err := c.CoreV1().Nodes().Get(ctx, meta.Name, metav1.GetOptions{})
 	if kerr.IsNotFound(err) {
 		glog.V(3).Infof("Creating Node %s", meta.Name)
-		out, err := c.CoreV1().Nodes().Create(transform(&core.Node{
+		out, err := c.CoreV1().Nodes().Create(ctx, transform(&core.Node{
 			TypeMeta: metav1.TypeMeta{
 				Kind:       "Node",
 				APIVersion: core.SchemeGroupVersion.String(),
 			},
 			ObjectMeta: meta,
-		}))
+		}), metav1.CreateOptions{
+			DryRun:       opts.DryRun,
+			FieldManager: opts.FieldManager,
+		})
 		return out, kutil.VerbCreated, err
 	} else if err != nil {
 		return nil, kutil.VerbUnchanged, err
 	}
-	return PatchNode(c, cur, transform)
+	return PatchNode(ctx, c, cur, transform, opts)
 }
 
-func PatchNode(c kubernetes.Interface, cur *core.Node, transform func(*core.Node) *core.Node) (*core.Node, kutil.VerbType, error) {
-	return PatchNodeObject(c, cur, transform(cur.DeepCopy()))
+func PatchNode(ctx context.Context, c kubernetes.Interface, cur *core.Node, transform func(*core.Node) *core.Node, opts metav1.PatchOptions) (*core.Node, kutil.VerbType, error) {
+	return PatchNodeObject(ctx, c, cur, transform(cur.DeepCopy()), opts)
 }
 
-func PatchNodeObject(c kubernetes.Interface, cur, mod *core.Node) (*core.Node, kutil.VerbType, error) {
+func PatchNodeObject(ctx context.Context, c kubernetes.Interface, cur, mod *core.Node, opts metav1.PatchOptions) (*core.Node, kutil.VerbType, error) {
 	curJson, err := json.Marshal(cur)
 	if err != nil {
 		return nil, kutil.VerbUnchanged, err
@@ -78,19 +82,19 @@ func PatchNodeObject(c kubernetes.Interface, cur, mod *core.Node) (*core.Node, k
 		return cur, kutil.VerbUnchanged, nil
 	}
 	glog.V(3).Infof("Patching Node %s with %s", cur.Name, string(patch))
-	out, err := c.CoreV1().Nodes().Patch(cur.Name, types.StrategicMergePatchType, patch)
+	out, err := c.CoreV1().Nodes().Patch(ctx, cur.Name, types.StrategicMergePatchType, patch, opts)
 	return out, kutil.VerbPatched, err
 }
 
-func TryUpdateNode(c kubernetes.Interface, meta metav1.ObjectMeta, transform func(*core.Node) *core.Node) (result *core.Node, err error) {
+func TryUpdateNode(ctx context.Context, c kubernetes.Interface, meta metav1.ObjectMeta, transform func(*core.Node) *core.Node, opts metav1.UpdateOptions) (result *core.Node, err error) {
 	attempt := 0
 	err = wait.PollImmediate(kutil.RetryInterval, kutil.RetryTimeout, func() (bool, error) {
 		attempt++
-		cur, e2 := c.CoreV1().Nodes().Get(meta.Name, metav1.GetOptions{})
+		cur, e2 := c.CoreV1().Nodes().Get(ctx, meta.Name, metav1.GetOptions{})
 		if kerr.IsNotFound(e2) {
 			return false, e2
 		} else if e2 == nil {
-			result, e2 = c.CoreV1().Nodes().Update(transform(cur.DeepCopy()))
+			result, e2 = c.CoreV1().Nodes().Update(ctx, transform(cur.DeepCopy()), opts)
 			return e2 == nil, nil
 		}
 		glog.Errorf("Attempt %d failed to update Node %s due to %v.", attempt, cur.Name, e2)
@@ -121,16 +125,114 @@ func IsMaster(node core.Node) bool {
 	return ok17 || (ok16 && role16 == "master")
 }
 
-func Topology(kc kubernetes.Interface) (regions map[string][]string, instances map[string]int, err error) {
+type Topology struct {
+	Regions       map[string][]string
+	TotalNodes    int
+	InstanceTypes map[string]int
+
+	LabelZone         string
+	LabelRegion       string
+	LabelInstanceType string
+
+	// https://github.com/kubernetes/kubernetes/blob/v1.17.2/staging/src/k8s.io/api/core/v1/well_known_labels.go
+
+	//LabelHostname = "kubernetes.io/hostname"
+	//
+	//LabelZoneFailureDomain       = "failure-domain.beta.kubernetes.io/zone"
+	//LabelZoneRegion              = "failure-domain.beta.kubernetes.io/region"
+	//LabelZoneFailureDomainStable = "topology.kubernetes.io/zone"
+	//LabelZoneRegionStable        = "topology.kubernetes.io/region"
+	//
+	//LabelInstanceType       = "beta.kubernetes.io/instance-type"
+	//LabelInstanceTypeStable = "node.kubernetes.io/instance-type"
+}
+
+func (t Topology) ConvertAffinity(affinity *core.Affinity) {
+	if affinity == nil {
+		return
+	}
+
+	if affinity.PodAffinity != nil {
+		t.convertPodAffinityTerm(affinity.PodAffinity.RequiredDuringSchedulingIgnoredDuringExecution)
+		t.convertWeightedPodAffinityTerm(affinity.PodAffinity.PreferredDuringSchedulingIgnoredDuringExecution)
+	}
+
+	if affinity.PodAntiAffinity != nil {
+		t.convertPodAffinityTerm(affinity.PodAntiAffinity.RequiredDuringSchedulingIgnoredDuringExecution)
+		t.convertWeightedPodAffinityTerm(affinity.PodAntiAffinity.PreferredDuringSchedulingIgnoredDuringExecution)
+	}
+}
+
+func isZoneKey(key string) bool {
+	return key == core.LabelZoneFailureDomain || key == "topology.kubernetes.io/zone"
+}
+
+func isRegionKey(key string) bool {
+	return key == core.LabelZoneRegion || key == "topology.kubernetes.io/region"
+}
+
+func isInstanceTypeKey(key string) bool {
+	return key == core.LabelInstanceType || key == "node.kubernetes.io/instance-type"
+}
+
+func (t Topology) convertPodAffinityTerm(terms []core.PodAffinityTerm) {
+	for i := range terms {
+		if isZoneKey(terms[i].TopologyKey) {
+			terms[i].TopologyKey = t.LabelZone
+		} else if isRegionKey(terms[i].TopologyKey) {
+			terms[i].TopologyKey = t.LabelRegion
+		} else if isInstanceTypeKey(terms[i].TopologyKey) {
+			terms[i].TopologyKey = t.LabelInstanceType
+		}
+	}
+}
+
+func (t Topology) convertWeightedPodAffinityTerm(terms []core.WeightedPodAffinityTerm) {
+	for i := range terms {
+		if isZoneKey(terms[i].PodAffinityTerm.TopologyKey) {
+			terms[i].PodAffinityTerm.TopologyKey = t.LabelZone
+		} else if isRegionKey(terms[i].PodAffinityTerm.TopologyKey) {
+			terms[i].PodAffinityTerm.TopologyKey = t.LabelRegion
+		} else if isInstanceTypeKey(terms[i].PodAffinityTerm.TopologyKey) {
+			terms[i].PodAffinityTerm.TopologyKey = t.LabelInstanceType
+		}
+	}
+}
+
+func DetectTopology(ctx context.Context, kc kubernetes.Interface) (*Topology, error) {
 	// TODO: Use https://github.com/kubernetes/client-go/blob/kubernetes-1.17.0/metadata/interface.go once upgraded to 1.17
 
+	var topology Topology
+
+	info, err := kc.Discovery().ServerVersion()
+	if err != nil {
+		return nil, err
+	}
+	ver, err := version.NewVersion(info.GitVersion)
+	if err != nil {
+		return nil, err
+	}
+	ver = ver.ToMutator().ResetPrerelease().ResetMetadata().Done()
+	if ver.Major() >= 1 && ver.Minor() >= 17 {
+		topology.LabelZone = "topology.kubernetes.io/zone"
+		topology.LabelRegion = "topology.kubernetes.io/region"
+		topology.LabelInstanceType = "node.kubernetes.io/instance-type"
+	} else {
+		topology.LabelZone = core.LabelZoneFailureDomain
+		topology.LabelRegion = core.LabelZoneRegion
+		topology.LabelInstanceType = core.LabelInstanceType
+	}
+	topology.TotalNodes = 0
+
 	mapRegion := make(map[string]sets.String)
-	instances = make(map[string]int)
+	instances := make(map[string]int)
 
 	lister := pager.New(pager.SimplePageFunc(func(opts metav1.ListOptions) (runtime.Object, error) {
-		return kc.CoreV1().Nodes().List(opts)
+		return kc.CoreV1().Nodes().List(ctx, opts)
 	}))
 	err = lister.EachListItem(context.Background(), metav1.ListOptions{Limit: 100}, func(obj runtime.Object) error {
+		topology.TotalNodes++
+
 		m, err := meta.Accessor(obj)
 		if err != nil {
 			return err
@@ -164,12 +266,15 @@ func Topology(kc kubernetes.Interface) (regions map[string][]string, instances m
 		return nil
 	})
 	if err != nil {
-		return nil, nil, err
+		return nil, err
 	}
 
-	regions = make(map[string][]string)
+	regions := make(map[string][]string)
 	for k, v := range mapRegion {
 		regions[k] = v.List()
 	}
-	return regions, instances, nil
+	topology.Regions = regions
+	topology.InstanceTypes = instances
+
+	return &topology, nil
 }

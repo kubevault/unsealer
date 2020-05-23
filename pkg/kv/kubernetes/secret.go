@@ -16,6 +16,7 @@ limitations under the License.
 package kubernetes
 
 import (
+	"context"
 	"fmt"
 
 	"kubevault.dev/unsealer/pkg/kv"
@@ -62,14 +63,14 @@ func (k *KVService) Set(key string, value []byte) error {
 		Name:      k.SecretName,
 		Namespace: k.Namespace,
 	}
-	_, _, err := core_util.CreateOrPatchSecret(k.KubeClient, secretMeta, func(s *corev1.Secret) *corev1.Secret {
+	_, _, err := core_util.CreateOrPatchSecret(context.TODO(), k.KubeClient, secretMeta, func(s *corev1.Secret) *corev1.Secret {
 		if s.Data == nil {
 			s.Data = map[string][]byte{}
 		}
 
 		s.Data[key] = value
 		return s
-	})
+	}, metav1.PatchOptions{})
 	if err != nil {
 		return errors.Wrapf(err, "failed set data in secret(%s)", k.SecretName)
 	}
@@ -78,7 +79,7 @@ func (k *KVService) Set(key string, value []byte) error {
 }
 
 func (k *KVService) Get(key string) ([]byte, error) {
-	sr, err := k.KubeClient.CoreV1().Secrets(k.Namespace).Get(k.SecretName, metav1.GetOptions{})
+	sr, err := k.KubeClient.CoreV1().Secrets(k.Namespace).Get(context.TODO(), k.SecretName, metav1.GetOptions{})
 	if kerror.IsNotFound(err) {
 		return nil, kv.NewNotFoundError(fmt.Sprintf("secret not found. reason: %v", err))
 	} else if err != nil {
@@ -110,7 +111,7 @@ func (k *KVService) CheckWriteAccess() error {
 		return errors.Wrap(err, "failed to get test data")
 	}
 
-	sr, err := k.KubeClient.CoreV1().Secrets(k.Namespace).Get(k.SecretName, metav1.GetOptions{})
+	sr, err := k.KubeClient.CoreV1().Secrets(k.Namespace).Get(context.TODO(), k.SecretName, metav1.GetOptions{})
 	if kerror.IsNotFound(err) {
 		return kv.NewNotFoundError(fmt.Sprintf("secret not found. reason: %v", err))
 	} else if err != nil {
@@ -125,10 +126,10 @@ func (k *KVService) CheckWriteAccess() error {
 		}
 	}
 
-	_, _, err = core_util.CreateOrPatchSecret(k.KubeClient, sr.ObjectMeta, func(s *corev1.Secret) *corev1.Secret {
+	_, _, err = core_util.CreateOrPatchSecret(context.TODO(), k.KubeClient, sr.ObjectMeta, func(s *corev1.Secret) *corev1.Secret {
 		s.Data = newData
 		return s
-	})
+	}, metav1.PatchOptions{})
 	if err != nil {
 		return errors.Wrapf(err, "failed delete data in secret(%s)", k.SecretName)
 	}
