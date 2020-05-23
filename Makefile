@@ -67,12 +67,13 @@ TAG              := $(VERSION)_$(OS)_$(ARCH)
 TAG_PROD         := $(TAG)
 TAG_DBG          := $(VERSION)-dbg_$(OS)_$(ARCH)
 
-GO_VERSION       ?= 1.13.6
+GO_VERSION       ?= 1.14
 BUILD_IMAGE      ?= appscode/golang-dev:$(GO_VERSION)
 
-OUTBIN = bin/$(OS)_$(ARCH)/$(BIN)
+OUTBIN = bin/$(BIN)-$(OS)-$(ARCH)
 ifeq ($(OS),windows)
-  OUTBIN = bin/$(OS)_$(ARCH)/$(BIN).exe
+  OUTBIN := bin/$(BIN)-$(OS)-$(ARCH).exe
+  BIN := $(BIN).exe
 endif
 
 # Directories that we need created to build/test.
@@ -84,8 +85,8 @@ BUILD_DIRS  := bin/$(OS)_$(ARCH)     \
                $(HOME)/.kube         \
                $(HOME)/.minikube
 
-DOCKERFILE_PROD  = in.Dockerfile
-DOCKERFILE_DBG   = dbg.Dockerfile
+DOCKERFILE_PROD  = Dockerfile.in
+DOCKERFILE_DBG   = Dockerfile.dbg
 
 DOCKER_REPO_ROOT := /go/src/$(GO_PKG)/$(REPO)
 
@@ -129,6 +130,7 @@ version:
 	@echo ::set-output name=commit_hash::$(commit_hash)
 	@echo ::set-output name=commit_timestamp::$(commit_timestamp)
 
+.PHONY: gen
 gen:
 	@true
 
@@ -188,7 +190,7 @@ $(OUTBIN): .go/$(OUTBIN).stamp
 	    "
 	@if [ $(COMPRESS) = yes ] && [ $(OS) != darwin ]; then          \
 		echo "compressing $(OUTBIN)";                               \
-		@docker run                                                 \
+		docker run                                                  \
 		    -i                                                      \
 		    --rm                                                    \
 		    -u $$(id -u):$$(id -g)                                  \
@@ -200,11 +202,11 @@ $(OUTBIN): .go/$(OUTBIN).stamp
 		    --env HTTP_PROXY=$(HTTP_PROXY)                          \
 		    --env HTTPS_PROXY=$(HTTPS_PROXY)                        \
 		    $(BUILD_IMAGE)                                          \
-		    upx --brute /go/$(OUTBIN);                              \
+		    upx --brute /go/bin/$(BIN);                             \
 	fi
-	@if ! cmp -s .go/$(OUTBIN) $(OUTBIN); then \
-	    mv .go/$(OUTBIN) $(OUTBIN);            \
-	    date >$@;                              \
+	@if ! cmp -s .go/bin/$(OS)_$(ARCH)/$(BIN) $(OUTBIN); then   \
+	    mv .go/bin/$(OS)_$(ARCH)/$(BIN) $(OUTBIN);              \
+	    date >$@;                                               \
 	fi
 	@echo
 
@@ -212,7 +214,7 @@ $(OUTBIN): .go/$(OUTBIN).stamp
 DOTFILE_IMAGE    = $(subst /,_,$(IMAGE))-$(TAG)
 
 container: bin/.container-$(DOTFILE_IMAGE)-PROD bin/.container-$(DOTFILE_IMAGE)-DBG
-bin/.container-$(DOTFILE_IMAGE)-%: bin/$(OS)_$(ARCH)/$(BIN) $(DOCKERFILE_%)
+bin/.container-$(DOTFILE_IMAGE)-%: $(OUTBIN) $(DOCKERFILE_%)
 	@echo "container: $(IMAGE):$(TAG_$*)"
 	@sed                                    \
 		-e 's|{ARG_BIN}|$(BIN)|g'           \
@@ -251,7 +253,7 @@ unit-tests: $(BUILD_DIRS)
 	    -v $$(pwd)/.go/cache:/.cache                            \
 	    --env HTTP_PROXY=$(HTTP_PROXY)                          \
 	    --env HTTPS_PROXY=$(HTTPS_PROXY)                        \
-	    $(BUILD_IMAGE)                                          \
+	    $(BUILD_IMAGE)                                           \
 	    /bin/bash -c "                                          \
 	        ARCH=$(ARCH)                                        \
 	        OS=$(OS)                                            \
@@ -298,7 +300,7 @@ e2e-tests: $(BUILD_DIRS)
 	        TAG=$(TAG)                                          \
 	        KUBECONFIG=$${KUBECONFIG#$(HOME)}                   \
 	        GINKGO_ARGS='$(GINKGO_ARGS)'                        \
-	        TEST_ARGS='$(TEST_ARGS)'                            \
+	        TEST_ARGS='$(TEST_ARGS) --image-tag=$(TAG)'         \
 	        ./hack/e2e.sh                                       \
 	    "
 
@@ -325,7 +327,7 @@ lint: $(BUILD_DIRS)
 	    --env GO111MODULE=on                                    \
 	    --env GOFLAGS="-mod=vendor"                             \
 	    $(BUILD_IMAGE)                                          \
-	    golangci-lint run --enable $(ADDTL_LINTERS) --timeout=10m --skip-files="generated.*\.go$\" --skip-dirs-use-default
+	    golangci-lint run --enable $(ADDTL_LINTERS) --deadline=10m --skip-files="generated.*\.go$\" --skip-dirs-use-default --skip-dirs=client,vendor
 
 $(BUILD_DIRS):
 	@mkdir -p $@
@@ -347,12 +349,25 @@ verify-modules:
 .PHONY: verify-gen
 verify-gen: gen fmt
 	@if !(git diff --exit-code HEAD); then \
-		echo "generated files are out of date, run make gen fmt"; exit 1; \
+		echo "files are out of date, run make gen fmt"; exit 1; \
 	fi
+
+.PHONY: add-license
+add-license:
+	@echo "Adding license header"
+	@docker run --rm 	                                 \
+		-u $$(id -u):$$(id -g)                           \
+		-v /tmp:/.cache                                  \
+		-v $$(pwd):$(DOCKER_REPO_ROOT)                   \
+		-w $(DOCKER_REPO_ROOT)                           \
+		--env HTTP_PROXY=$(HTTP_PROXY)                   \
+		--env HTTPS_PROXY=$(HTTPS_PROXY)                 \
+		$(BUILD_IMAGE)                                   \
+		ltag -t "./hack/license" --excludes "vendor contrib" -v
 
 .PHONY: check-license
 check-license:
-	@echo "Checking files have proper license header"
+	@echo "Checking files for license header"
 	@docker run --rm 	                                 \
 		-u $$(id -u):$$(id -g)                           \
 		-v /tmp:/.cache                                  \
