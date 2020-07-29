@@ -155,7 +155,8 @@ func (o *WorkerOptions) configureVault(vc *vaultapi.Client, keyStore kv.Service,
 }
 
 func (o *WorkerOptions) getKVService() (kv.Service, error) {
-	if o.Mode == ModeAwsKmsSsm {
+	switch o.Mode {
+	case ModeAwsKmsSsm:
 		ssmService, err := aws_ssm.New(o.AwsOptions.UseSecureString, o.AwsOptions.SsmKeyPrefix)
 		if err != nil {
 			return nil, errors.Wrap(err, "failed to create aws ssm service")
@@ -173,8 +174,8 @@ func (o *WorkerOptions) getKVService() (kv.Service, error) {
 		}
 
 		return kvService, nil
-	}
-	if o.Mode == ModeGoogleCloudKmsGCS {
+
+	case ModeGoogleCloudKmsGCS:
 		gcsService, err := gcs.New(o.GoogleOptions.StorageBucket, o.GoogleOptions.StoragePrefix)
 		if err != nil {
 			return nil, errors.Wrap(err, "failed to create google gcs service")
@@ -186,23 +187,24 @@ func (o *WorkerOptions) getKVService() (kv.Service, error) {
 		}
 
 		return kvService, nil
-	}
-	if o.Mode == ModeAzureKeyVault {
+
+	case ModeAzureKeyVault:
 		kvService, err := azure.NewKVService(o.AzureOptions)
 		if err != nil {
 			return nil, errors.Wrap(err, "failed to create azure kv service")
 		}
 
 		return kvService, nil
-	}
-	if o.Mode == ModeKubernetesSecret {
+
+	case ModeKubernetesSecret:
 		kvService, err := kubernetes.NewKVService(o.KubernetesOptions)
 		if err != nil {
 			return nil, errors.Wrap(err, "failed to create kv service for kubernetes")
 		}
 
 		return kvService, nil
-	}
 
-	return nil, errors.New("Invalid mode")
+	default:
+		return nil, errors.Errorf("failed to create unkown mode %q", o.Mode)
+	}
 }
