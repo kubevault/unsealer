@@ -161,7 +161,7 @@ build: $(OUTBIN)
 $(OUTBIN): .go/$(OUTBIN).stamp
 	@true
 
-# This will build the binary under ./.go and update the real binary iff needed.
+# This will build the binary under ./.go and update the real binary if needed.
 .PHONY: .go/$(OUTBIN).stamp
 .go/$(OUTBIN).stamp: $(BUILD_DIRS)
 	@echo "making $(OUTBIN)"
