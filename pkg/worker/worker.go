@@ -127,30 +127,38 @@ func (o *WorkerOptions) configureVault(vc *vaultapi.Client, keyStore kv.Service,
 	if err != nil {
 		return errors.Wrap(err, "failed to get root token")
 	}
+
 	vc.SetToken(string(rootToken))
 
 	k8sAuth := auth.NewKubernetesAuthenticator(vc, o.AuthenticatorOptions)
 
 	glog.Infoln("enable kubernetes auth")
+
 	err = k8sAuth.EnsureAuth()
 	if err != nil {
 		return errors.Wrap(err, "failed to enable kubernetes auth")
 	}
+
 	glog.Infoln("kubernetes auth is enabled")
 
 	glog.Infoln("configure kubernetes auth")
+
 	err = k8sAuth.ConfigureAuth()
 	if err != nil {
 		return errors.Wrap(err, "failed to configure kubernetes auth")
 	}
+
 	glog.Infoln("kubernetes auth is configured")
 
 	glog.Infoln("write policy and policy binding for policy controller")
+
 	err = policy.EnsurePolicyAndPolicyBinding(vc, o.PolicyManagerOptions)
 	if err != nil {
 		return errors.Wrap(err, "failed to write policy and policy binding for policy controller")
 	}
+
 	glog.Infoln("policy for policy and policy binding controller is written")
+
 	return nil
 }
 
