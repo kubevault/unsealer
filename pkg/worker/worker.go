@@ -13,9 +13,11 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 */
+
 package worker
 
 import (
+	"strings"
 	"time"
 
 	"kubevault.dev/unsealer/pkg/kv"
@@ -65,57 +67,75 @@ func (o *WorkerOptions) unsealAndConfigureVault(vc *vaultapi.Client, keyStore kv
 		glog.Error("failed create unsealer client:", err)
 	}
 
+	period := time.Second
+
 	for {
+		time.Sleep(period)
+		period = retryPeriod
+
 		glog.Infoln("checking if vault is initialized...")
 		initialized, err := unsl.IsInitialized()
 		if err != nil {
 			glog.Error("failed to get initialized status. reason :", err)
-
-		} else {
-			if !initialized {
-				if err = unsl.CheckReadWriteAccess(); err != nil {
-					glog.Errorf("Failed to check read/write access to key store. reason: %v\n", err)
-					continue
-				}
-				if err = unsl.Init(); err != nil {
-					glog.Error("error initializing vault: ", err)
-				} else {
-					glog.Infoln("vault is initialized")
-				}
-			} else {
-				glog.Infoln("vault is already initialized")
-
-				glog.Infoln("checking if vault is sealed...")
-				sealed, err := unsl.IsSealed()
-				if err != nil {
-					glog.Error("failed to get unseal status. reason: ", err)
-				} else {
-					if sealed {
-						if err := unsl.Unseal(); err != nil {
-							glog.Error("failed to unseal vault. reason: ", err)
-						} else {
-							glog.Infoln("vault is unsealed")
-
-							for {
-								glog.Infoln("configure vault")
-								err := o.configureVault(vc, keyStore, rootTokenID)
-								if err != nil {
-									glog.Error("failed to configure vault. reason: ", err)
-								} else {
-									glog.Infoln("vault is configured")
-									break
-								}
-							}
-
-						}
-					} else {
-						glog.Infoln("vault is unsealed")
-					}
-				}
-			}
+			continue
 		}
 
-		time.Sleep(retryPeriod)
+		glog.Infof("vault is initialized: %v", initialized)
+		if !initialized {
+			err = unsl.CheckReadWriteAccess()
+			if err != nil {
+				glog.Errorf("Failed to check read/write access to key store. reason: %v\n", err)
+
+				continue
+			}
+
+			if err = unsl.Init(); err != nil {
+				// XXX This is a hack to skip a failed init
+				//
+				// https://github.com/hashicorp/vault/issues/9618
+				if !strings.HasPrefix(err.Error(), "error before init: keystore") {
+
+					glog.Error("error initializing vault: ", err)
+					continue
+				}
+			}
+
+			glog.Infoln("vault has been initialized")
+		} else {
+			glog.Infoln("vault is already initialized")
+		}
+
+		glog.Infoln("checking if vault is sealed...")
+		sealed, err := unsl.IsSealed()
+		if err != nil {
+			glog.Error("failed to get unseal status. reason: ", err)
+			continue
+		}
+
+		if !sealed {
+			glog.Infoln("vault is unsealed")
+			continue
+		}
+
+		if err := unsl.Unseal(); err != nil {
+			glog.Error("failed to unseal vault. reason: ", err)
+			continue
+		}
+
+		glog.Infoln("vault has been unsealed")
+
+		for {
+			glog.Infoln("configure vault")
+
+			err := o.configureVault(vc, keyStore, rootTokenID)
+			if err == nil {
+				glog.Infoln("vault is configured")
+				break
+			}
+
+			glog.Error("failed to configure vault. reason: ", err)
+			continue
+		}
 	}
 }
 
