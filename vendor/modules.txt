@@ -44,7 +44,7 @@ github.com/appscode/go/util/errors
 github.com/appscode/go/version
 # github.com/appscode/pat v0.0.0-20170521084856-48ff78925b79
 github.com/appscode/pat
-# github.com/aws/aws-sdk-go v1.35.24
+# github.com/aws/aws-sdk-go v1.38.31
 github.com/aws/aws-sdk-go/aws
 github.com/aws/aws-sdk-go/aws/awserr
 github.com/aws/aws-sdk-go/aws/awsutil
@@ -55,6 +55,7 @@ github.com/aws/aws-sdk-go/aws/credentials
 github.com/aws/aws-sdk-go/aws/credentials/ec2rolecreds
 github.com/aws/aws-sdk-go/aws/credentials/endpointcreds
 github.com/aws/aws-sdk-go/aws/credentials/processcreds
+github.com/aws/aws-sdk-go/aws/credentials/ssocreds
 github.com/aws/aws-sdk-go/aws/credentials/stscreds
 github.com/aws/aws-sdk-go/aws/csm
 github.com/aws/aws-sdk-go/aws/defaults
@@ -78,9 +79,12 @@ github.com/aws/aws-sdk-go/private/protocol/jsonrpc
 github.com/aws/aws-sdk-go/private/protocol/query
 github.com/aws/aws-sdk-go/private/protocol/query/queryutil
 github.com/aws/aws-sdk-go/private/protocol/rest
+github.com/aws/aws-sdk-go/private/protocol/restjson
 github.com/aws/aws-sdk-go/private/protocol/xml/xmlutil
 github.com/aws/aws-sdk-go/service/kms
 github.com/aws/aws-sdk-go/service/ssm
+github.com/aws/aws-sdk-go/service/sso
+github.com/aws/aws-sdk-go/service/sso/ssoiface
 github.com/aws/aws-sdk-go/service/sts
 github.com/aws/aws-sdk-go/service/sts/stsiface
 # github.com/cenkalti/backoff v2.2.1+incompatible
@@ -232,7 +236,7 @@ github.com/sergi/go-diff/diffmatchpatch
 github.com/shurcooL/sanitized_anchor_name
 # github.com/sirupsen/logrus v1.7.0
 github.com/sirupsen/logrus
-# github.com/spf13/cobra v1.1.1
+# github.com/spf13/cobra v1.1.3
 github.com/spf13/cobra
 github.com/spf13/cobra/doc
 # github.com/spf13/pflag v1.0.5
