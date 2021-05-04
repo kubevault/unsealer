@@ -357,7 +357,7 @@ gomodules.xyz/jsonpatch/v2
 gomodules.xyz/pointer
 # gomodules.xyz/version v0.1.0
 gomodules.xyz/version
-# gomodules.xyz/x v0.0.0-20201105065653-91c568df6331
+# gomodules.xyz/x v0.0.3
 gomodules.xyz/x/analytics
 gomodules.xyz/x/log/golog
 # google.golang.org/api v0.26.0 => google.golang.org/api v0.20.0
@@ -727,7 +727,7 @@ k8s.io/klog/v2
 k8s.io/kube-openapi/pkg/util/proto
 # k8s.io/utils v0.0.0-20210111153108-fddb29f9d009 => k8s.io/utils v0.0.0-20201110183641-67b214c5f920
 k8s.io/utils/integer
-# kmodules.xyz/client-go v0.0.0-20210503064222-c8c59295a3a5
+# kmodules.xyz/client-go v0.0.0-20210504024435-1eb80721e9b8
 kmodules.xyz/client-go
 kmodules.xyz/client-go/core/v1
 kmodules.xyz/client-go/meta
