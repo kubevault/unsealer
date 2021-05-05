@@ -21,12 +21,12 @@ import (
 
 	"kubevault.dev/unsealer/pkg/cmds"
 
-	logs "gomodules.xyz/x/log/golog"
+	"gomodules.xyz/kglog"
 )
 
 func main() {
-	logs.InitLogs()
-	defer logs.FlushLogs()
+	kglog.InitLogs()
+	defer kglog.FlushLogs()
 
 	if err := cmds.NewRootCmd().Execute(); err != nil {
 		os.Exit(1)
