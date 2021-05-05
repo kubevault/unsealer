@@ -19,9 +19,9 @@ package cloudkms
 import (
 	"testing"
 
-	aggregator "github.com/appscode/go/util/errors"
 	"github.com/pkg/errors"
 	"github.com/stretchr/testify/assert"
+	aggregator "gomodules.xyz/errors"
 )
 
 const (

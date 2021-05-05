@@ -17,9 +17,9 @@ import (
 	"github.com/Azure/go-autorest/autorest/adal"
 	"github.com/Azure/go-autorest/autorest/azure"
 	"github.com/ghodss/yaml"
-	"github.com/golang/glog"
 	"github.com/pkg/errors"
 	"golang.org/x/crypto/pkcs12"
+	"k8s.io/klog/v2"
 )
 
 // OAuthGrantType specifies which grant type to use.
@@ -44,7 +44,7 @@ func GetConfigFromFile(configFilePath string) (*AzureAuthConfig, error) {
 		var configFile *os.File
 		configFile, err := os.Open(configFilePath)
 		if err != nil {
-			glog.Fatalf("Couldn't open cloud provider configuration %s: %#v",
+			klog.Fatalf("Couldn't open cloud provider configuration %s: %#v",
 				configFilePath, err)
 			return nil, err
 		}
@@ -92,7 +92,7 @@ func GetServicePrincipalToken(config *AzureAuthConfig, env *azure.Environment, r
 	}
 
 	if config.UseManagedIdentityExtension {
-		glog.V(2).Infoln("azure: using managed identity extension to retrieve access token")
+		klog.V(2).Infoln("azure: using managed identity extension to retrieve access token")
 		msiEndpoint, err := adal.GetMSIVMEndpoint()
 		if err != nil {
 			return nil, fmt.Errorf("Getting the managed service identity endpoint: %v", err)
@@ -103,7 +103,7 @@ func GetServicePrincipalToken(config *AzureAuthConfig, env *azure.Environment, r
 	}
 
 	if len(config.AADClientSecret) > 0 {
-		glog.V(2).Infoln("azure: using client_id+client_secret to retrieve access token")
+		klog.V(2).Infoln("azure: using client_id+client_secret to retrieve access token")
 		return adal.NewServicePrincipalToken(
 			*oauthConfig,
 			config.AADClientID,
@@ -112,7 +112,7 @@ func GetServicePrincipalToken(config *AzureAuthConfig, env *azure.Environment, r
 	}
 
 	if len(config.AADClientCertPath) > 0 && len(config.AADClientCertPassword) > 0 {
-		glog.V(2).Infoln("azure: using jwt client_assertion (client_cert+client_private_key) to retrieve access token")
+		klog.V(2).Infoln("azure: using jwt client_assertion (client_cert+client_private_key) to retrieve access token")
 		certData, err := ioutil.ReadFile(config.AADClientCertPath)
 		if err != nil {
 			return nil, fmt.Errorf("reading the client certificate from file %s: %v", config.AADClientCertPath, err)

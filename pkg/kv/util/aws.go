@@ -20,7 +20,7 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/appscode/go/net/httpclient"
+	"gomodules.xyz/x/net/httpclient"
 )
 
 // http://docs.aws.amazon.com/AWSEC2/latest/UserGuide/instance-identity-documents.html

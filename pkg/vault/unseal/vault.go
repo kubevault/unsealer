@@ -22,10 +22,10 @@ import (
 	"kubevault.dev/unsealer/pkg/kv"
 	"kubevault.dev/unsealer/pkg/vault/util"
 
-	"github.com/golang/glog"
 	"github.com/hashicorp/vault/api"
 	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
+	"k8s.io/klog/v2"
 )
 
 // unsealer is an implementation of the Unsealer interface that will perform actions
@@ -111,7 +111,7 @@ func (u *unsealer) Unseal() error {
 func (u *unsealer) keyStoreNotFound(key string) bool {
 	_, err := u.keyStore.Get(key)
 	if err != nil {
-		glog.Errorf("error response when checking whether key(%s) exists or not: %v", key, err)
+		klog.Errorf("error response when checking whether key(%s) exists or not: %v", key, err)
 	}
 	if _, ok := err.(*kv.NotFoundError); ok {
 		return true
@@ -192,13 +192,13 @@ func testKey(prefix string) string {
 
 // CheckReadWriteAccess will test read write access
 func (u *unsealer) CheckReadWriteAccess() error {
-	glog.Infoln("Testing the read/write access...")
+	klog.Infoln("Testing the read/write access...")
 
 	err := u.keyStore.CheckWriteAccess()
 	if err != nil {
 		return errors.Wrap(err, "read/write access test failed")
 	}
 
-	glog.Infoln("Testing the read/write access is successful")
+	klog.Infoln("Testing the read/write access is successful")
 	return nil
 }

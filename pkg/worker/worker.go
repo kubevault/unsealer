@@ -32,9 +32,9 @@ import (
 	"kubevault.dev/unsealer/pkg/vault/unseal"
 	"kubevault.dev/unsealer/pkg/vault/util"
 
-	"github.com/golang/glog"
 	vaultapi "github.com/hashicorp/vault/api"
 	"github.com/pkg/errors"
+	"k8s.io/klog/v2"
 )
 
 func (o *WorkerOptions) Run() error {
@@ -63,7 +63,7 @@ func (o *WorkerOptions) unsealAndConfigureVault(vc *vaultapi.Client, keyStore kv
 
 	unsl, err := unseal.New(keyStore, vc, *o.UnsealerOptions)
 	if err != nil {
-		glog.Error("failed create unsealer client:", err)
+		klog.Error("failed create unsealer client:", err)
 	}
 
 	period := time.Second
@@ -72,58 +72,58 @@ func (o *WorkerOptions) unsealAndConfigureVault(vc *vaultapi.Client, keyStore kv
 		time.Sleep(period)
 		period = retryPeriod
 
-		glog.Infoln("checking if vault is initialized...")
+		klog.Infoln("checking if vault is initialized...")
 
 		initialized, err := unsl.IsInitialized()
 		if err != nil {
-			glog.Error("failed to get initialized status. reason :", err)
+			klog.Error("failed to get initialized status. reason :", err)
 			continue
 		}
 
 		if !initialized {
-			glog.Infoln("initialize vault")
+			klog.Infoln("initialize vault")
 
 			if err = unsl.CheckReadWriteAccess(); err != nil {
-				glog.Errorf("Failed to check read/write access to key store. reason: %v\n", err)
+				klog.Errorf("Failed to check read/write access to key store. reason: %v\n", err)
 				continue
 			}
 
 			if err = unsl.Init(); err != nil {
-				glog.Error("error initializing vault: ", err)
+				klog.Error("error initializing vault: ", err)
 				continue
 			}
 		}
 
-		glog.Infoln("checking if vault is sealed...")
+		klog.Infoln("checking if vault is sealed...")
 
 		sealed, err := unsl.IsSealed()
 		if err != nil {
-			glog.Error("failed to get unseal status. reason: ", err)
+			klog.Error("failed to get unseal status. reason: ", err)
 			continue
 		}
 
 		if !sealed {
-			glog.Infoln("vault is unsealed")
+			klog.Infoln("vault is unsealed")
 			continue
 		}
 
-		glog.Infoln("unseal vault")
+		klog.Infoln("unseal vault")
 
 		if err := unsl.Unseal(); err != nil {
-			glog.Error("failed to unseal vault. reason: ", err)
+			klog.Error("failed to unseal vault. reason: ", err)
 			continue
 		}
 
 		for {
-			glog.Infoln("configure vault")
+			klog.Infoln("configure vault")
 
 			err := o.configureVault(vc, keyStore, rootTokenID)
 			if err == nil {
-				glog.Infoln("vault is configured")
+				klog.Infoln("vault is configured")
 				break
 			}
 
-			glog.Error("failed to configure vault. reason: ", err)
+			klog.Error("failed to configure vault. reason: ", err)
 		}
 	}
 }
@@ -141,32 +141,32 @@ func (o *WorkerOptions) configureVault(vc *vaultapi.Client, keyStore kv.Service,
 
 	k8sAuth := auth.NewKubernetesAuthenticator(vc, o.AuthenticatorOptions)
 
-	glog.Infoln("enable kubernetes auth")
+	klog.Infoln("enable kubernetes auth")
 
 	err = k8sAuth.EnsureAuth()
 	if err != nil {
 		return errors.Wrap(err, "failed to enable kubernetes auth")
 	}
 
-	glog.Infoln("kubernetes auth is enabled")
+	klog.Infoln("kubernetes auth is enabled")
 
-	glog.Infoln("configure kubernetes auth")
+	klog.Infoln("configure kubernetes auth")
 
 	err = k8sAuth.ConfigureAuth()
 	if err != nil {
 		return errors.Wrap(err, "failed to configure kubernetes auth")
 	}
 
-	glog.Infoln("kubernetes auth is configured")
+	klog.Infoln("kubernetes auth is configured")
 
-	glog.Infoln("write policy and policy binding for policy controller")
+	klog.Infoln("write policy and policy binding for policy controller")
 
 	err = policy.EnsurePolicyAndPolicyBinding(vc, o.PolicyManagerOptions)
 	if err != nil {
 		return errors.Wrap(err, "failed to write policy and policy binding for policy controller")
 	}
 
-	glog.Infoln("policy for policy and policy binding controller is written")
+	klog.Infoln("policy for policy and policy binding controller is written")
 
 	return nil
 }
