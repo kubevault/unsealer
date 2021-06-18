@@ -3,16 +3,20 @@ module kubevault.dev/unsealer
 go 1.15
 
 require (
-	cloud.google.com/go/storage v1.6.0
+	cloud.google.com/go v0.58.0 // indirect
+	cloud.google.com/go/pubsub v1.3.1 // indirect
+	cloud.google.com/go/storage v1.9.0
 	github.com/Azure/azure-sdk-for-go v43.0.0+incompatible
 	github.com/Azure/go-autorest/autorest v0.11.12
 	github.com/Azure/go-autorest/autorest/adal v0.9.5
 	github.com/Azure/go-autorest/autorest/to v0.3.1-0.20191028180845-3492b2aff503
-	github.com/Azure/go-autorest/autorest/validation v0.1.0 // indirect
+	github.com/Azure/go-autorest/autorest/validation v0.2.0 // indirect
 	github.com/appscode/pat v0.0.0-20170521084856-48ff78925b79
 	github.com/aws/aws-sdk-go v1.38.31
 	github.com/ghodss/yaml v1.0.0
-	github.com/hashicorp/vault/api v1.0.4
+	github.com/google/martian v2.1.1-0.20190517191504-25dcb96d9e51+incompatible // indirect
+	github.com/hashicorp/vault/api v1.1.0
+	github.com/hashicorp/vault/sdk v0.2.0 // indirect
 	github.com/pkg/errors v0.9.1
 	github.com/sirupsen/logrus v1.7.0
 	github.com/spf13/cobra v1.1.3
@@ -22,8 +26,9 @@ require (
 	gomodules.xyz/errors v0.0.0-20201104190405-077f059979fd
 	gomodules.xyz/kglog v0.0.1
 	gomodules.xyz/runtime v0.2.0
+	gomodules.xyz/sets v0.0.0-20210218105342-2efe2fb519a2 // indirect
 	gomodules.xyz/x v0.0.4
-	google.golang.org/api v0.20.0
+	google.golang.org/api v0.26.0
 	k8s.io/api v0.21.0
 	k8s.io/apimachinery v0.21.0
 	k8s.io/client-go v0.21.0

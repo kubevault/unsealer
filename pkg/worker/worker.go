@@ -67,6 +67,7 @@ func (o *WorkerOptions) unsealAndConfigureVault(vc *vaultapi.Client, keyStore kv
 	}
 
 	period := time.Second
+	klog.Infof("Backend name: %s, POD_NAME: %s", o.Backend, o.POD_NAME)
 
 	for {
 		time.Sleep(period)
@@ -94,6 +95,7 @@ func (o *WorkerOptions) unsealAndConfigureVault(vc *vaultapi.Client, keyStore kv
 			}
 		}
 
+		klog.Infoln("vault must be initialized here, initialized value: %v", initialized)
 		klog.Infoln("checking if vault is sealed...")
 
 		sealed, err := unsl.IsSealed()

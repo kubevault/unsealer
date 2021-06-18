@@ -19,6 +19,7 @@ package auth
 import (
 	vaultapi "github.com/hashicorp/vault/api"
 	"github.com/pkg/errors"
+	"k8s.io/klog/v2"
 )
 
 const (
@@ -46,14 +47,17 @@ func NewKubernetesAuthenticator(vc *vaultapi.Client, cf *K8sAuthenticatorOptions
 // EnsureAuth will ensure kubernetes auth
 // it's safe to call multiple times
 func (k *KubernetesAuthenticator) EnsureAuth() error {
+	klog.Info("=== in EnsureAuth for kubernetes ===")
 	if k.vc == nil {
 		return errors.New("vault client is nil")
 	}
+	klog.Info("vault client is not nil")
 
 	authList, err := k.vc.Sys().ListAuth()
 	if err != nil {
 		return err
 	}
+	klog.Info("ListAuth is Passed")
 	for path, auth := range authList {
 		if auth.Type == kubernetesAuthType && path == kubernetesAuthPath {
 			// kubernetes auth already enabled
@@ -64,6 +68,11 @@ func (k *KubernetesAuthenticator) EnsureAuth() error {
 	err = k.vc.Sys().EnableAuthWithOptions(kubernetesAuthPath, &vaultapi.EnableAuthOptions{
 		Type: kubernetesAuthType,
 	})
+	if err != nil {
+		klog.Info("error in Ensure Auth K8s")
+	} else {
+		klog.Info("no error in Ensure Auth k8s")
+	}
 	return err
 }
 
@@ -85,9 +94,15 @@ func (k *KubernetesAuthenticator) ConfigureAuth() error {
 		"token_reviewer_jwt": k.config.Token,
 	}
 	if err := req.SetJSONBody(payload); err != nil {
+		klog.Info("error in configAuth k8s")
 		return err
 	}
 
 	_, err := k.vc.RawRequest(req)
+	if err != nil {
+		klog.Info("error in config Auth K8s")
+	} else {
+		klog.Info("no error in config Auth k8s")
+	}
 	return err
 }

@@ -17,6 +17,7 @@ limitations under the License.
 package worker
 
 import (
+	"os"
 	"time"
 
 	aws "kubevault.dev/unsealer/pkg/kv/aws_kms"
@@ -49,6 +50,12 @@ type WorkerOptions struct {
 
 	// ca cert for vault api client, if vault used a self signed certificate
 	CaCert string
+
+	// Currently enabled Backend Storage name
+	Backend string
+
+	// Current pod name
+	POD_NAME string
 
 	// If InsecureSkipTLSVerify is true, then it will skip tls verification when communicating with vault server
 	InsecureSkipTLSVerify bool
@@ -87,6 +94,7 @@ func NewWorkerOptions() *WorkerOptions {
 }
 
 func (o *WorkerOptions) AddFlags(fs *pflag.FlagSet) {
+	fs.StringVar(&o.Backend, "storage-backend", o.Backend, "Specifies the vault storage backend. raft etc.")
 	fs.StringVar(&o.Address, "vault.address", o.Address, "Specifies the vault address. Address form : scheme://host:port")
 	fs.StringVar(&o.CaCert, "vault.ca-cert", o.CaCert, "Specifies the CA cert that will be used to verify self signed vault server certificate")
 	fs.BoolVar(&o.InsecureSkipTLSVerify, "vault.insecure-skip-tls-verify", o.InsecureSkipTLSVerify, "To skip tls verification when communicating with vault server")
@@ -100,6 +108,10 @@ func (o *WorkerOptions) AddFlags(fs *pflag.FlagSet) {
 	o.AwsOptions.AddFlags(fs)
 	o.AzureOptions.AddFlags(fs)
 	o.KubernetesOptions.AddFlags(fs)
+}
+
+func (o *WorkerOptions) AddEnvVars() {
+	o.POD_NAME = os.Getenv("POD_NAME")
 }
 
 func (o *WorkerOptions) Validate() []error {
