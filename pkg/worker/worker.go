@@ -97,7 +97,7 @@ func (o *WorkerOptions) unsealAndConfigureVault(vc *vaultapi.Client, keyStore kv
 			}
 		}
 
-		klog.Infoln("vault must be initialized here, initialized value: %v", initialized)
+		klog.Infof("vault must be initialized here, initialized value: %v", initialized)
 		klog.Infoln("checking if the vault is sealed or not")
 
 		// checking the sealed status of the vault
