@@ -243,9 +243,6 @@ github.com/ryanuber/go-glob
 github.com/sergi/go-diff/diffmatchpatch
 # github.com/shurcooL/sanitized_anchor_name v1.0.0
 github.com/shurcooL/sanitized_anchor_name
-# github.com/sirupsen/logrus v1.7.0
-## explicit
-github.com/sirupsen/logrus
 # github.com/spf13/cobra v1.1.3
 ## explicit
 github.com/spf13/cobra
