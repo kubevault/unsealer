@@ -73,6 +73,7 @@ func (o *WorkerOptions) unsealAndConfigureVault(vc *vaultapi.Client, keyStore kv
 	for {
 		time.Sleep(period)
 		period = retryPeriod
+		attempt++
 		klog.Infof("unsealAndConfigureVault() attempt: %d", attempt)
 
 		klog.Infoln("checking if the vault is initialized or not.")
