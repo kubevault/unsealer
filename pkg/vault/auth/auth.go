@@ -47,17 +47,14 @@ func NewKubernetesAuthenticator(vc *vaultapi.Client, cf *K8sAuthenticatorOptions
 // EnsureAuth will ensure kubernetes auth
 // it's safe to call multiple times
 func (k *KubernetesAuthenticator) EnsureAuth() error {
-	klog.Info("=== in EnsureAuth for kubernetes ===")
 	if k.vc == nil {
 		return errors.New("vault client is nil")
 	}
-	klog.Info("vault client is not nil")
 
 	authList, err := k.vc.Sys().ListAuth()
 	if err != nil {
 		return err
 	}
-	klog.Info("ListAuth is Passed")
 	for path, auth := range authList {
 		if auth.Type == kubernetesAuthType && path == kubernetesAuthPath {
 			// kubernetes auth already enabled

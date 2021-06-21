@@ -66,12 +66,14 @@ func (o *WorkerOptions) unsealAndConfigureVault(vc *vaultapi.Client, keyStore kv
 		klog.Errorf("failed to create the unsealer client, reason: %s", err.Error())
 	}
 
+	attempt := 0
 	period := time.Second
 	klog.Infof("Backend name: %s, POD_NAME: %s", o.Backend, o.POD_NAME)
 
 	for {
 		time.Sleep(period)
 		period = retryPeriod
+		klog.Infof("unsealAndConfigureVault() attempt: %d", attempt)
 
 		klog.Infoln("checking if the vault is initialized or not.")
 
@@ -86,7 +88,7 @@ func (o *WorkerOptions) unsealAndConfigureVault(vc *vaultapi.Client, keyStore kv
 			klog.Infoln("trying to initialize the vault")
 
 			if err = unsealer.CheckReadWriteAccess(); err != nil {
-				klog.Errorf("failed to check the read/write access to the key store, reason: %s\n", err.Error())
+				klog.Errorf("failed to check the read/write access to the key store, reason: %s", err.Error())
 				continue
 			}
 

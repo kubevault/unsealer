@@ -87,7 +87,7 @@ func (u *unsealer) Unseal() error {
 			return fmt.Errorf("unable to get key with keyID = %s, reason: %s", keyID, err.Error())
 		}
 
-		klog.Info("sending unseal request to the vault with the keyID = %s", keyID)
+		klog.Infof("sending unseal request to the vault with the keyID = %s", keyID)
 		resp, err := u.cl.Sys().Unseal(string(k))
 
 		if err != nil {
