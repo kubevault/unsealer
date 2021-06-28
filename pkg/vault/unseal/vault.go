@@ -59,7 +59,7 @@ func New(k kv.Service, cl *api.Client, config UnsealOptions) (Unsealer, error) {
 func (u *unsealer) IsSealed() (bool, error) {
 	resp, err := u.cl.Sys().SealStatus()
 	if err != nil {
-		return false, fmt.Errorf("error checking IsSealed() status, reason: %s", err.Error())
+		return false, fmt.Errorf("failed to check seal status with %s", err.Error())
 	}
 	return resp.Sealed, nil
 }
@@ -67,7 +67,7 @@ func (u *unsealer) IsSealed() (bool, error) {
 func (u *unsealer) IsInitialized() (bool, error) {
 	resp, err := u.cl.Sys().InitStatus()
 	if err != nil {
-		return false, fmt.Errorf("error checking IsInitialized() status, reason: %s", err.Error())
+		return false, fmt.Errorf("failed to check initilized status with %s", err.Error())
 	}
 	return resp, nil
 }
@@ -80,18 +80,18 @@ func (u *unsealer) Unseal() error {
 	for i := 0; ; i++ {
 		keyID := util.UnsealKeyID(u.config.KeyPrefix, i)
 
-		klog.Infof("retrieving key with keyID = %s, from kms service", keyID)
+		klog.Infof("try to retrieve key with keyID = %s, from kms service", keyID)
 		k, err := u.keyStore.Get(keyID)
 
 		if err != nil {
-			return fmt.Errorf("unable to get key with keyID = %s, reason: %s", keyID, err.Error())
+			return fmt.Errorf("failed to get key = %s with %s", keyID, err.Error())
 		}
 
-		klog.Infof("sending unseal request to the vault with the keyID = %s", keyID)
+		klog.Infof("try to send unseal request to the vault with keyID = %s", keyID)
 		resp, err := u.cl.Sys().Unseal(string(k))
 
 		if err != nil {
-			return fmt.Errorf("failed to send unseal request to the vault, reason: %s", err.Error())
+			return fmt.Errorf("failed to send unseal request to the vault with %s", err.Error())
 		}
 
 		klog.Infof("got an unseal response: %+v", *resp)
@@ -110,7 +110,7 @@ func (u *unsealer) Unseal() error {
 func (u *unsealer) keyStoreNotFound(key string) bool {
 	_, err := u.keyStore.Get(key)
 	if err != nil {
-		klog.Errorf("error response when checking whether key = (%s) exists or not, reason: %v", key, err)
+		klog.Errorf("error while checking whether key (%s) exists or not with %v", key, err)
 	}
 	if _, ok := err.(*kv.NotFoundError); ok {
 		return true
@@ -121,7 +121,7 @@ func (u *unsealer) keyStoreNotFound(key string) bool {
 func (u *unsealer) keyStoreSet(key string, val []byte) error {
 	// We do not want to overwrite the existing keys, but key is already present.
 	if !u.config.OverwriteExisting && !u.keyStoreNotFound(key) {
-		return fmt.Errorf("error setting key = '%s' to keystore, it already exists", key)
+		return fmt.Errorf("error setting key %s to keystore, it already exists", key)
 	}
 	return u.keyStore.Set(key, val)
 }
@@ -130,7 +130,7 @@ func (u *unsealer) Init() error {
 	// test the backend first
 	err := u.keyStore.Test(testKey(u.config.KeyPrefix))
 	if err != nil {
-		return fmt.Errorf("error testing the keystore before Init(), reason: %s", err.Error())
+		return fmt.Errorf("error testing keystore before init with %s", err.Error())
 	}
 
 	// test for an existing key
@@ -147,7 +147,7 @@ func (u *unsealer) Init() error {
 		// test every key
 		for _, key := range keys {
 			if !u.keyStoreNotFound(key) {
-				return fmt.Errorf("error before Init(), keystore value for '%s' already exists", key)
+				return fmt.Errorf("error before init: keystore value for '%s' already exists", key)
 			}
 		}
 	}
@@ -158,7 +158,7 @@ func (u *unsealer) Init() error {
 	})
 
 	if err != nil {
-		return fmt.Errorf("error initialising the vault, reason: %s", err.Error())
+		return fmt.Errorf("failed to initialize the vault with %s", err.Error())
 	}
 
 	for i, k := range resp.Keys {
@@ -166,20 +166,18 @@ func (u *unsealer) Init() error {
 		err := u.keyStoreSet(keyID, []byte(k))
 
 		if err != nil {
-			return fmt.Errorf("error storing the unseal key with keyID = '%s', reason: %s", keyID, err.Error())
+			return fmt.Errorf("failed to store the unseal key = '%s' with %s", keyID, err.Error())
 		}
 	}
-
-	rootToken := resp.RootToken
 
 	if u.config.StoreRootToken {
 		rootTokenID := util.RootTokenID(u.config.KeyPrefix)
 		if err = u.keyStoreSet(rootTokenID, []byte(resp.RootToken)); err != nil {
-			return fmt.Errorf("error storing the root token '%s' in keystore with rootTokenID: '%s'", rootToken, rootTokenID)
+			return fmt.Errorf("failed to store the root token with %v", err)
 		}
-		klog.Infof("root token with rootTokenID = %s, successfully stored in the key store", rootTokenID)
+		klog.Info("successfully stored the root token")
 	} else {
-		klog.Warningf("will not store the rootToken = %s in the key store, this token grants full privileges to vault, so keep this secret", resp.RootToken)
+		klog.Warning("will not store the rootToken in the key store, this token grants full privileges to vault, so keep this secret")
 	}
 
 	return nil
@@ -192,13 +190,11 @@ func testKey(prefix string) string {
 
 // CheckReadWriteAccess will test read write access
 func (u *unsealer) CheckReadWriteAccess() error {
-	klog.Infoln("testing the read/write access")
-
 	err := u.keyStore.CheckWriteAccess()
 	if err != nil {
 		return errors.Wrap(err, "read/write access test failed")
 	}
 
-	klog.Infoln("testing the read/write access is successful")
+	klog.Info("successfully tested the read/write access")
 	return nil
 }

@@ -65,11 +65,6 @@ func (k *KubernetesAuthenticator) EnsureAuth() error {
 	err = k.vc.Sys().EnableAuthWithOptions(kubernetesAuthPath, &vaultapi.EnableAuthOptions{
 		Type: kubernetesAuthType,
 	})
-	if err != nil {
-		klog.Info("error in Ensure Auth K8s")
-	} else {
-		klog.Info("no error in Ensure Auth k8s")
-	}
 	return err
 }
 
@@ -96,10 +91,5 @@ func (k *KubernetesAuthenticator) ConfigureAuth() error {
 	}
 
 	_, err := k.vc.RawRequest(req)
-	if err != nil {
-		klog.Info("error in config Auth K8s")
-	} else {
-		klog.Info("no error in config Auth k8s")
-	}
 	return err
 }
