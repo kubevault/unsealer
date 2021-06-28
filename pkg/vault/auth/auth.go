@@ -19,7 +19,6 @@ package auth
 import (
 	vaultapi "github.com/hashicorp/vault/api"
 	"github.com/pkg/errors"
-	"k8s.io/klog/v2"
 )
 
 const (
@@ -86,7 +85,6 @@ func (k *KubernetesAuthenticator) ConfigureAuth() error {
 		"token_reviewer_jwt": k.config.Token,
 	}
 	if err := req.SetJSONBody(payload); err != nil {
-		klog.Info("error in configAuth k8s")
 		return err
 	}
 

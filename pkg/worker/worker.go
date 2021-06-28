@@ -63,39 +63,35 @@ func (o *WorkerOptions) unsealAndConfigureVault(vc *vaultapi.Client, keyStore kv
 
 	unsealer, err := unseal.New(keyStore, vc, *o.UnsealerOptions)
 	if err != nil {
-		klog.Errorf("failed to create the unsealer client, reason: %s", err.Error())
+		klog.Errorf("failed to create the unsealer client with %s", err.Error())
 	}
 
-	attempt := 0
 	period := time.Second
-	klog.Infof("Backend name: %s, POD_NAME: %s", o.Backend, o.POD_NAME)
 
 	for {
 		time.Sleep(period)
 		period = retryPeriod
-		attempt++
-		klog.Infof("unsealAndConfigureVault() attempt: %d", attempt)
 
-		klog.Infoln("checking if the vault is initialized or not.")
+		klog.Info("checking if the vault is initialized or not.")
 
 		initialized, err := unsealer.IsInitialized()
 		if err != nil {
-			klog.Errorf("failed to get the IsInitialized() status, reason: %s", err.Error())
+			klog.Errorf("failed to get the initialized status with %s", err.Error())
 			continue
 		}
 
 		// the vault is not initialized, check the read/write access & try to initialize the vault
 		if !initialized {
-			klog.Infoln("trying to initialize the vault")
+			klog.Info("trying to initialize the vault")
 
 			if err = unsealer.CheckReadWriteAccess(); err != nil {
-				klog.Errorf("failed to check the read/write access to the key store, reason: %s", err.Error())
+				klog.Errorf("failed to check the read/write access to the key store with %s", err.Error())
 				continue
 			}
 
 			// try to Initialize the vault
 			if err = unsealer.Init(); err != nil {
-				klog.Errorf("error initializing the vault, reason: %s", err.Error())
+				klog.Errorf("failed to initialize the vault with %s", err.Error())
 				continue
 			}
 		}
@@ -106,7 +102,7 @@ func (o *WorkerOptions) unsealAndConfigureVault(vc *vaultapi.Client, keyStore kv
 		// checking the sealed status of the vault
 		sealed, err := unsealer.IsSealed()
 		if err != nil {
-			klog.Errorf("failed to get the IsSealed() status, reason: %s", err.Error())
+			klog.Errorf("failed to get the sealed status with %s", err.Error())
 			continue
 		}
 
@@ -115,15 +111,15 @@ func (o *WorkerOptions) unsealAndConfigureVault(vc *vaultapi.Client, keyStore kv
 			continue
 		}
 
-		klog.Infoln("make the unseal vault request")
+		klog.Infoln("making the unseal vault request")
 
 		if err := unsealer.Unseal(); err != nil {
-			klog.Errorf("failed to unseal the vault, reason: %s", err.Error())
+			klog.Errorf("failed to unseal the vault with %s", err.Error())
 			continue
 		}
 
 		for {
-			klog.Infoln("configure the vault")
+			klog.Infoln("trying to configure the vault")
 
 			err := o.configureVault(vc, keyStore, rootTokenID)
 			if err == nil {
@@ -131,7 +127,7 @@ func (o *WorkerOptions) unsealAndConfigureVault(vc *vaultapi.Client, keyStore kv
 				break
 			}
 
-			klog.Errorf("failed to configure the vault, reason: %s", err.Error())
+			klog.Errorf("failed to configure the vault with %s", err.Error())
 		}
 	}
 }
