@@ -61,9 +61,9 @@ func (o *WorkerOptions) Run() error {
 func (o *WorkerOptions) unsealAndConfigureVault(vc *vaultapi.Client, keyStore kv.Service, retryPeriod time.Duration) {
 	rootTokenID := util.RootTokenID(o.UnsealerOptions.KeyPrefix)
 
-	unsl, err := unseal.New(keyStore, vc, *o.UnsealerOptions)
+	unsealer, err := unseal.New(keyStore, vc, *o.UnsealerOptions)
 	if err != nil {
-		klog.Error("failed create unsealer client:", err)
+		klog.Errorf("failed to create the unsealer client with %s", err.Error())
 	}
 
 	period := time.Second
@@ -72,33 +72,37 @@ func (o *WorkerOptions) unsealAndConfigureVault(vc *vaultapi.Client, keyStore kv
 		time.Sleep(period)
 		period = retryPeriod
 
-		klog.Infoln("checking if vault is initialized...")
+		klog.Info("checking if the vault is initialized or not.")
 
-		initialized, err := unsl.IsInitialized()
+		initialized, err := unsealer.IsInitialized()
 		if err != nil {
-			klog.Error("failed to get initialized status. reason :", err)
+			klog.Errorf("failed to get the initialized status with %s", err.Error())
 			continue
 		}
 
+		// the vault is not initialized, check the read/write access & try to initialize the vault
 		if !initialized {
-			klog.Infoln("initialize vault")
+			klog.Info("trying to initialize the vault")
 
-			if err = unsl.CheckReadWriteAccess(); err != nil {
-				klog.Errorf("Failed to check read/write access to key store. reason: %v\n", err)
+			if err = unsealer.CheckReadWriteAccess(); err != nil {
+				klog.Errorf("failed to check the read/write access to the key store with %s", err.Error())
 				continue
 			}
 
-			if err = unsl.Init(); err != nil {
-				klog.Error("error initializing vault: ", err)
+			// try to Initialize the vault
+			if err = unsealer.Init(); err != nil {
+				klog.Errorf("failed to initialize the vault with %s", err.Error())
 				continue
 			}
 		}
 
-		klog.Infoln("checking if vault is sealed...")
+		klog.Infof("vault must be initialized here, initialized value: %v", initialized)
+		klog.Infoln("checking if the vault is sealed or not")
 
-		sealed, err := unsl.IsSealed()
+		// checking the sealed status of the vault
+		sealed, err := unsealer.IsSealed()
 		if err != nil {
-			klog.Error("failed to get unseal status. reason: ", err)
+			klog.Errorf("failed to get the sealed status with %s", err.Error())
 			continue
 		}
 
@@ -107,15 +111,15 @@ func (o *WorkerOptions) unsealAndConfigureVault(vc *vaultapi.Client, keyStore kv
 			continue
 		}
 
-		klog.Infoln("unseal vault")
+		klog.Infoln("making the unseal vault request")
 
-		if err := unsl.Unseal(); err != nil {
-			klog.Error("failed to unseal vault. reason: ", err)
+		if err := unsealer.Unseal(); err != nil {
+			klog.Errorf("failed to unseal the vault with %s", err.Error())
 			continue
 		}
 
 		for {
-			klog.Infoln("configure vault")
+			klog.Infoln("trying to configure the vault")
 
 			err := o.configureVault(vc, keyStore, rootTokenID)
 			if err == nil {
@@ -123,7 +127,7 @@ func (o *WorkerOptions) unsealAndConfigureVault(vc *vaultapi.Client, keyStore kv
 				break
 			}
 
-			klog.Error("failed to configure vault. reason: ", err)
+			klog.Errorf("failed to configure the vault with %s", err.Error())
 		}
 	}
 }
@@ -134,9 +138,10 @@ func (o *WorkerOptions) unsealAndConfigureVault(vc *vaultapi.Client, keyStore kv
 func (o *WorkerOptions) configureVault(vc *vaultapi.Client, keyStore kv.Service, rootTokenID string) error {
 	rootToken, err := keyStore.Get(rootTokenID)
 	if err != nil {
-		return errors.Wrap(err, "failed to get root token")
+		return errors.Wrap(err, "failed to get the root token")
 	}
 
+	// set the rootToken
 	vc.SetToken(string(rootToken))
 
 	k8sAuth := auth.NewKubernetesAuthenticator(vc, o.AuthenticatorOptions)

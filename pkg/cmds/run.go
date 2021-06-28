@@ -47,6 +47,5 @@ func NewCmdRun() *cobra.Command {
 	}
 
 	opts.AddFlags(cmd.Flags())
-
 	return cmd
 }
