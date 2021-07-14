@@ -1,8 +1,7 @@
 [![Go Report Card](https://goreportcard.com/badge/kubevault.dev/unsealer)](https://goreportcard.com/report/kubevault.dev/unsealer)
 [![Build Status](https://github.com/kubevault/unsealer/workflows/CI/badge.svg)](https://github.com/kubevault/unsealer/actions?workflow=CI)
-[![codecov](https://codecov.io/gh/kubevault/unsealer/branch/master/graph/badge.svg)](https://codecov.io/gh/kubevault/unsealer)
 [![Docker Pulls](https://img.shields.io/docker/pulls/kubevault/vault-unsealer.svg)](https://hub.docker.com/r/kubevault/vault-unsealer/)
-[![Slack](https://slack.appscode.com/badge.svg)](https://slack.appscode.com)
+[![Slack](https://shields.io/badge/Join_Slack-salck?color=4A154B&logo=slack)](https://slack.appscode.com)
 [![Twitter](https://img.shields.io/twitter/follow/kubevault.svg?style=social&logo=twitter&label=Follow)](https://twitter.com/intent/follow?screen_name=KubeVault)
 
 # Vault Unsealer
@@ -17,12 +16,6 @@ Want to learn how to use KubeVault? Please start [here](https://github.com/kubev
 
 ## Contribution guidelines
 Want to help improve KubeVault? Please start [here](https://github.com/kubevault/docs/blob/master/docs/CONTRIBUTING.md).
-
----
-
-**KubeVault binaries collects anonymous usage statistics to help us learn how the software is being used and how we can improve it. To disable stats collection, run the operator with the flag** `--enable-analytics=false`.
-
----
 
 ## Acknowledgement
 This project started as a fork of [jetstack/vault-unsealer](https://github.com/jetstack/vault-unsealer).
