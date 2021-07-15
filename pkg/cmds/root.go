@@ -17,12 +17,8 @@ limitations under the License.
 package cmds
 
 import (
-	"flag"
-
 	"github.com/spf13/cobra"
-	"gomodules.xyz/x/flags"
 	v "gomodules.xyz/x/version"
-	utilruntime "k8s.io/apimachinery/pkg/util/runtime"
 	"kmodules.xyz/client-go/tools/cli"
 )
 
@@ -32,14 +28,8 @@ func NewRootCmd() *cobra.Command {
 		Short:             `Automates initialisation and unsealing of Hashicorp Vault`,
 		DisableAutoGenTag: true,
 		PersistentPreRun: func(c *cobra.Command, args []string) {
-			flags.DumpAll(c.Flags())
-			cli.SendAnalytics(c, v.Version.Version)
 		},
 	}
-	rootCmd.PersistentFlags().AddGoFlagSet(flag.CommandLine)
-	// ref: https://github.com/kubernetes/kubernetes/issues/17162#issuecomment-225596212
-	err := flag.CommandLine.Parse([]string{})
-	utilruntime.Must(err)
 	rootCmd.PersistentFlags().BoolVar(&cli.EnableAnalytics, "enable-analytics", cli.EnableAnalytics, "Send analytical events to Google Analytics")
 
 	rootCmd.AddCommand(v.NewCmdVersion())

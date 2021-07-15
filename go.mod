@@ -3,36 +3,31 @@ module kubevault.dev/unsealer
 go 1.15
 
 require (
-	cloud.google.com/go v0.58.0 // indirect
-	cloud.google.com/go/pubsub v1.3.1 // indirect
-	cloud.google.com/go/storage v1.9.0
+	cloud.google.com/go/storage v1.6.0
 	github.com/Azure/azure-sdk-for-go v43.0.0+incompatible
 	github.com/Azure/go-autorest/autorest v0.11.12
 	github.com/Azure/go-autorest/autorest/adal v0.9.5
-	github.com/Azure/go-autorest/autorest/to v0.3.1-0.20191028180845-3492b2aff503
-	github.com/Azure/go-autorest/autorest/validation v0.2.0 // indirect
+	github.com/Azure/go-autorest/autorest/to v0.0.0-00010101000000-000000000000
+	github.com/Azure/go-autorest/autorest/validation v0.0.0-00010101000000-000000000000 // indirect
 	github.com/appscode/pat v0.0.0-20170521084856-48ff78925b79
-	github.com/aws/aws-sdk-go v1.38.31
+	github.com/aws/aws-sdk-go v1.30.27
 	github.com/ghodss/yaml v1.0.0
-	github.com/google/martian v2.1.1-0.20190517191504-25dcb96d9e51+incompatible // indirect
-	github.com/hashicorp/vault/api v1.1.0
-	github.com/hashicorp/vault/sdk v0.2.0 // indirect
+	github.com/hashicorp/vault/api v1.1.1
 	github.com/pkg/errors v0.9.1
 	github.com/spf13/cobra v1.1.3
 	github.com/spf13/pflag v1.0.5
-	github.com/stretchr/testify v1.6.1
+	github.com/stretchr/testify v1.7.0
 	golang.org/x/crypto v0.0.0-20210220033148-5ea612d1eb83
 	gomodules.xyz/errors v0.0.0-20201104190405-077f059979fd
-	gomodules.xyz/kglog v0.0.1
+	gomodules.xyz/logs v0.0.3
 	gomodules.xyz/runtime v0.2.0
-	gomodules.xyz/sets v0.0.0-20210218105342-2efe2fb519a2 // indirect
-	gomodules.xyz/x v0.0.4
-	google.golang.org/api v0.26.0
-	k8s.io/api v0.21.0
-	k8s.io/apimachinery v0.21.0
-	k8s.io/client-go v0.21.0
+	gomodules.xyz/x v0.0.5
+	google.golang.org/api v0.20.0
+	k8s.io/api v0.21.1
+	k8s.io/apimachinery v0.21.1
+	k8s.io/client-go v0.21.1
 	k8s.io/klog/v2 v2.8.0
-	kmodules.xyz/client-go v0.0.0-20210505231546-fa4fb8e1d04e
+	kmodules.xyz/client-go v0.0.0-20210702123511-a25836cf4332
 )
 
 replace bitbucket.org/ww/goautoneg => gomodules.xyz/goautoneg v0.0.0-20120707110453-a547fc61f48d
@@ -103,8 +98,6 @@ replace github.com/googleapis/gnostic => github.com/googleapis/gnostic v0.4.1
 
 replace github.com/imdario/mergo => github.com/imdario/mergo v0.3.5
 
-replace github.com/jetstack/cert-manager => github.com/kmodules/cert-manager v1.3.1-0.20210429172957-c5436c14ce0e
-
 replace github.com/prometheus-operator/prometheus-operator => github.com/prometheus-operator/prometheus-operator v0.47.0
 
 replace github.com/prometheus-operator/prometheus-operator/pkg/apis/monitoring => github.com/prometheus-operator/prometheus-operator/pkg/apis/monitoring v0.47.0
@@ -119,28 +112,24 @@ replace google.golang.org/genproto => google.golang.org/genproto v0.0.0-20201110
 
 replace google.golang.org/grpc => google.golang.org/grpc v1.27.1
 
-replace gopkg.in/yaml.v2 => gopkg.in/yaml.v2 v2.3.0
-
 replace helm.sh/helm/v3 => github.com/kubepack/helm/v3 v3.1.0-rc.1.0.20210503022716-7e2d4913a125
 
-replace k8s.io/api => k8s.io/api v0.21.0
+replace k8s.io/api => k8s.io/api v0.21.1
 
-replace k8s.io/apimachinery => github.com/kmodules/apimachinery v0.21.1-rc.0.0.20210405112358-ad4c2289ba4c
+replace k8s.io/apimachinery => github.com/kmodules/apimachinery v0.21.2-rc.0.0.20210617231004-332981b97d2d
 
-replace k8s.io/apiserver => github.com/kmodules/apiserver v0.21.1-0.20210427013338-53dee545b83c
+replace k8s.io/apiserver => github.com/kmodules/apiserver v0.21.2-0.20210617231348-daadbf0c8d5e
 
-replace k8s.io/cli-runtime => k8s.io/cli-runtime v0.21.0
+replace k8s.io/cli-runtime => k8s.io/cli-runtime v0.21.1
 
-replace k8s.io/client-go => k8s.io/client-go v0.21.0
+replace k8s.io/client-go => k8s.io/client-go v0.21.1
 
-replace k8s.io/component-base => k8s.io/component-base v0.21.0
+replace k8s.io/component-base => k8s.io/component-base v0.21.1
 
 replace k8s.io/kube-openapi => k8s.io/kube-openapi v0.0.0-20210305001622-591a79e4bda7
 
-replace k8s.io/kubernetes => github.com/kmodules/kubernetes v1.22.0-alpha.0.0.20210427080452-22d2e66bae50
+replace k8s.io/kubernetes => github.com/kmodules/kubernetes v1.22.0-alpha.0.0.20210617232219-a432af45d932
 
 replace k8s.io/utils => k8s.io/utils v0.0.0-20201110183641-67b214c5f920
-
-replace kmodules.xyz/resource-metadata => kmodules.xyz/resource-metadata v0.5.0
 
 replace sigs.k8s.io/application => github.com/kmodules/application v0.8.4-0.20210427030912-90eeee3bc4ad
