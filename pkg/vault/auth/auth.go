@@ -80,9 +80,11 @@ func (k *KubernetesAuthenticator) ConfigureAuth() error {
 
 	req := k.vc.NewRequest("POST", "/v1/auth/kubernetes/config")
 	payload := map[string]interface{}{
-		"kubernetes_host":    k.config.Host,
-		"kubernetes_ca_cert": k.config.CA,
-		"token_reviewer_jwt": k.config.Token,
+		"kubernetes_host":        k.config.Host,
+		"kubernetes_ca_cert":     k.config.CA,
+		"token_reviewer_jwt":     k.config.Token,
+		"disable_iss_validation": true,
+		"disable_local_ca_jwt":   true,
 	}
 	if err := req.SetJSONBody(payload); err != nil {
 		return err
