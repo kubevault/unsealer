@@ -13,21 +13,23 @@ require (
 	github.com/aws/aws-sdk-go v1.35.24
 	github.com/ghodss/yaml v1.0.0
 	github.com/hashicorp/vault/api v1.1.1
+	github.com/json-iterator/go v1.1.11 // indirect
 	github.com/pkg/errors v0.9.1
 	github.com/spf13/cobra v1.1.3
 	github.com/spf13/pflag v1.0.5
 	github.com/stretchr/testify v1.7.0
 	golang.org/x/crypto v0.0.0-20210220033148-5ea612d1eb83
 	gomodules.xyz/errors v0.0.0-20201104190405-077f059979fd
-	gomodules.xyz/logs v0.0.3
+	gomodules.xyz/logs v0.0.4
 	gomodules.xyz/runtime v0.2.0
-	gomodules.xyz/x v0.0.5
+	gomodules.xyz/sets v0.2.0 // indirect
+	gomodules.xyz/x v0.0.7
 	google.golang.org/api v0.20.0
 	k8s.io/api v0.21.1
 	k8s.io/apimachinery v0.21.1
 	k8s.io/client-go v0.21.1
 	k8s.io/klog/v2 v2.8.0
-	kmodules.xyz/client-go v0.0.0-20210719120358-dd0503cf99cf
+	kmodules.xyz/client-go v0.0.0-20210816185215-dc29246d1e2b
 )
 
 replace bitbucket.org/ww/goautoneg => gomodules.xyz/goautoneg v0.0.0-20120707110453-a547fc61f48d
