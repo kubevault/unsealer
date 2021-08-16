@@ -760,7 +760,7 @@ k8s.io/klog/v2
 k8s.io/kube-openapi/pkg/util/proto
 # k8s.io/utils v0.0.0-20210527160623-6fdb442a123b => k8s.io/utils v0.0.0-20201110183641-67b214c5f920
 k8s.io/utils/integer
-# kmodules.xyz/client-go v0.0.0-20210816185215-dc29246d1e2b
+# kmodules.xyz/client-go v0.0.0-20210816193105-1158390a19cd
 ## explicit
 kmodules.xyz/client-go
 kmodules.xyz/client-go/core/v1

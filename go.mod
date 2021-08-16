@@ -29,7 +29,7 @@ require (
 	k8s.io/apimachinery v0.21.1
 	k8s.io/client-go v0.21.1
 	k8s.io/klog/v2 v2.8.0
-	kmodules.xyz/client-go v0.0.0-20210816185215-dc29246d1e2b
+	kmodules.xyz/client-go v0.0.0-20210816193105-1158390a19cd
 )
 
 replace bitbucket.org/ww/goautoneg => gomodules.xyz/goautoneg v0.0.0-20120707110453-a547fc61f48d
