@@ -10,7 +10,7 @@ require (
 	github.com/Azure/go-autorest/autorest/to v0.2.0
 	github.com/Azure/go-autorest/autorest/validation v0.1.0 // indirect
 	github.com/appscode/pat v0.0.0-20170521084856-48ff78925b79
-	github.com/aws/aws-sdk-go v1.35.24
+	github.com/aws/aws-sdk-go v1.38.31
 	github.com/ghodss/yaml v1.0.0
 	github.com/hashicorp/vault/api v1.1.1
 	github.com/json-iterator/go v1.1.11 // indirect
@@ -29,7 +29,7 @@ require (
 	k8s.io/apimachinery v0.21.1
 	k8s.io/client-go v0.21.1
 	k8s.io/klog/v2 v2.8.0
-	kmodules.xyz/client-go v0.0.0-20210816193105-1158390a19cd
+	kmodules.xyz/client-go v0.0.0-20210827153326-54ead9c6225f
 )
 
 replace bitbucket.org/ww/goautoneg => gomodules.xyz/goautoneg v0.0.0-20120707110453-a547fc61f48d
