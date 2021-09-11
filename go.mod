@@ -22,14 +22,13 @@ require (
 	gomodules.xyz/errors v0.0.0-20201104190405-077f059979fd
 	gomodules.xyz/logs v0.0.4
 	gomodules.xyz/runtime v0.2.0
-	gomodules.xyz/sets v0.2.0 // indirect
-	gomodules.xyz/x v0.0.7
+	gomodules.xyz/x v0.0.8
 	google.golang.org/api v0.20.0
 	k8s.io/api v0.21.1
 	k8s.io/apimachinery v0.21.1
 	k8s.io/client-go v0.21.1
 	k8s.io/klog/v2 v2.8.0
-	kmodules.xyz/client-go v0.0.0-20210827153326-54ead9c6225f
+	kmodules.xyz/client-go v0.0.0-20210909114628-15cac6c74063
 )
 
 replace bitbucket.org/ww/goautoneg => gomodules.xyz/goautoneg v0.0.0-20120707110453-a547fc61f48d

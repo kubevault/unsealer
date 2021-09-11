@@ -368,7 +368,7 @@ gomodules.xyz/clock
 gomodules.xyz/errors
 # gomodules.xyz/flags v0.1.2
 gomodules.xyz/flags
-# gomodules.xyz/homedir v0.0.0-20201104190528-bcd4d5d94b84
+# gomodules.xyz/homedir v0.1.0
 gomodules.xyz/homedir
 # gomodules.xyz/jsonpatch/v2 v2.2.0
 gomodules.xyz/jsonpatch/v2
@@ -383,11 +383,10 @@ gomodules.xyz/pointer
 ## explicit
 gomodules.xyz/runtime
 # gomodules.xyz/sets v0.2.0
-## explicit
 gomodules.xyz/sets
 # gomodules.xyz/wait v0.0.0-20210218105358-639bd9211545
 gomodules.xyz/wait
-# gomodules.xyz/x v0.0.7
+# gomodules.xyz/x v0.0.8
 ## explicit
 gomodules.xyz/x/analytics
 gomodules.xyz/x/net/httpclient
@@ -764,7 +763,7 @@ k8s.io/klog/v2
 k8s.io/kube-openapi/pkg/util/proto
 # k8s.io/utils v0.0.0-20210527160623-6fdb442a123b => k8s.io/utils v0.0.0-20201110183641-67b214c5f920
 k8s.io/utils/integer
-# kmodules.xyz/client-go v0.0.0-20210827153326-54ead9c6225f
+# kmodules.xyz/client-go v0.0.0-20210909114628-15cac6c74063
 ## explicit
 kmodules.xyz/client-go
 kmodules.xyz/client-go/core/v1
