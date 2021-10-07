@@ -12,6 +12,7 @@ require (
 	github.com/appscode/pat v0.0.0-20170521084856-48ff78925b79
 	github.com/aws/aws-sdk-go v1.38.31
 	github.com/ghodss/yaml v1.0.0
+	github.com/google/go-cmp v0.5.6 // indirect
 	github.com/google/gofuzz v1.2.0 // indirect
 	github.com/hashicorp/vault/api v1.1.1
 	github.com/json-iterator/go v1.1.11 // indirect
@@ -19,7 +20,7 @@ require (
 	github.com/spf13/cobra v1.1.3
 	github.com/spf13/pflag v1.0.5
 	github.com/stretchr/testify v1.7.0
-	golang.org/x/crypto v0.0.0-20210220033148-5ea612d1eb83
+	golang.org/x/crypto v0.0.0-20210314154223-e6e6c4f2bb5b
 	gomodules.xyz/errors v0.0.0-20201104190405-077f059979fd
 	gomodules.xyz/logs v0.0.4
 	gomodules.xyz/runtime v0.2.0
@@ -29,7 +30,7 @@ require (
 	k8s.io/apimachinery v0.21.1
 	k8s.io/client-go v0.21.1
 	k8s.io/klog/v2 v2.8.0
-	kmodules.xyz/client-go v0.0.0-20210921150324-f005c6dfcb32
+	kmodules.xyz/client-go v0.0.0-20210928133955-8df5bb467db6
 )
 
 replace bitbucket.org/ww/goautoneg => gomodules.xyz/goautoneg v0.0.0-20120707110453-a547fc61f48d
@@ -137,3 +138,5 @@ replace k8s.io/utils => k8s.io/utils v0.0.0-20201110183641-67b214c5f920
 replace sigs.k8s.io/application => github.com/kmodules/application v0.8.4-0.20210427030912-90eeee3bc4ad
 
 replace github.com/satori/go.uuid => github.com/gofrs/uuid v4.0.0+incompatible
+
+replace github.com/dgrijalva/jwt-go => github.com/golang-jwt/jwt v3.2.1+incompatible
