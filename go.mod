@@ -12,10 +12,9 @@ require (
 	github.com/appscode/pat v0.0.0-20170521084856-48ff78925b79
 	github.com/aws/aws-sdk-go v1.38.31
 	github.com/ghodss/yaml v1.0.0
-	github.com/google/go-cmp v0.5.6 // indirect
 	github.com/google/gofuzz v1.2.0 // indirect
 	github.com/hashicorp/vault/api v1.1.1
-	github.com/json-iterator/go v1.1.11 // indirect
+	github.com/k0kubun/colorstring v0.0.0-20150214042306-9440f1994b88 // indirect
 	github.com/pkg/errors v0.9.1
 	github.com/spf13/cobra v1.1.3
 	github.com/spf13/pflag v1.0.5
@@ -30,7 +29,7 @@ require (
 	k8s.io/apimachinery v0.21.1
 	k8s.io/client-go v0.21.1
 	k8s.io/klog/v2 v2.8.0
-	kmodules.xyz/client-go v0.0.0-20210928133955-8df5bb467db6
+	kmodules.xyz/client-go v0.0.0-20211028132207-0cf6ea46b030
 )
 
 replace bitbucket.org/ww/goautoneg => gomodules.xyz/goautoneg v0.0.0-20120707110453-a547fc61f48d
