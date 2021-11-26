@@ -51,6 +51,7 @@ func (o *UnsealOptions) AddFlags(fs *pflag.FlagSet) {
 	fs.BoolVar(&o.OverwriteExisting, "overwrite-existing", o.OverwriteExisting, "overwrite existing unseal keys and root tokens, possibly dangerous!")
 	fs.IntVar(&o.SecretShares, "secret-shares", o.SecretShares, "Total count of secret shares that exist")
 	fs.IntVar(&o.SecretThreshold, "secret-threshold", o.SecretThreshold, "Minimum required secret shares to unseal")
+	fs.StringVar(&o.KeyPrefix, "key-prefix", o.KeyPrefix, "root token and unseal key prefix")
 }
 
 func (o *UnsealOptions) Validate() []error {
