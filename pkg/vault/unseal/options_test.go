@@ -36,7 +36,7 @@ func TestVaultOptions_Validate(t *testing.T) {
 				SecretShares:    1,
 				SecretThreshold: 0,
 			},
-			errors.New("secret threshold must be positive"),
+			errors.New("[secret threshold must be positive, cluster-name flag not set]"),
 		},
 		{
 			"secret threshold > secret shares, validation failed",
@@ -44,7 +44,7 @@ func TestVaultOptions_Validate(t *testing.T) {
 				SecretShares:    1,
 				SecretThreshold: 2,
 			},
-			errors.New("secret threshold must be less than or equal to secret shares"),
+			errors.New("[secret threshold must be less than or equal to secret shares, cluster-name flag not set]"),
 		},
 		{
 			"validation successful",
@@ -52,7 +52,7 @@ func TestVaultOptions_Validate(t *testing.T) {
 				SecretShares:    10,
 				SecretThreshold: 2,
 			},
-			nil,
+			errors.New("cluster-name flag not set"),
 		},
 	}
 
