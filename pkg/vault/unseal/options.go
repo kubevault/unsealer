@@ -46,7 +46,7 @@ func NewUnsealOptions() *UnsealOptions {
 		SecretThreshold: 3,
 		SecretShares:    5,
 		StoreRootToken:  true,
-		ClusterName:     "kubevault.com",
+		ClusterName:     "",
 	}
 }
 
@@ -69,6 +69,9 @@ func (o *UnsealOptions) Validate() []error {
 	}
 	if o.SecretThreshold > o.SecretShares {
 		errs = append(errs, errors.New("secret threshold must be less than or equal to secret shares"))
+	}
+	if len(o.ClusterName) == 0 {
+		errs = append(errs, errors.New("cluster-name flag not set"))
 	}
 	return errs
 }
