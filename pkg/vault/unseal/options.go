@@ -35,6 +35,9 @@ type UnsealOptions struct {
 
 	// overwrite existing tokens
 	OverwriteExisting bool
+
+	// cluster name
+	ClusterName string
 }
 
 func NewUnsealOptions() *UnsealOptions {
@@ -43,6 +46,7 @@ func NewUnsealOptions() *UnsealOptions {
 		SecretThreshold: 3,
 		SecretShares:    5,
 		StoreRootToken:  true,
+		ClusterName:     "kubevault.com",
 	}
 }
 
@@ -52,6 +56,7 @@ func (o *UnsealOptions) AddFlags(fs *pflag.FlagSet) {
 	fs.IntVar(&o.SecretShares, "secret-shares", o.SecretShares, "Total count of secret shares that exist")
 	fs.IntVar(&o.SecretThreshold, "secret-threshold", o.SecretThreshold, "Minimum required secret shares to unseal")
 	fs.StringVar(&o.KeyPrefix, "key-prefix", o.KeyPrefix, "root token and unseal key prefix")
+	fs.StringVar(&o.ClusterName, "cluster-name", o.ClusterName, "cluster name")
 }
 
 func (o *UnsealOptions) Validate() []error {
