@@ -104,7 +104,7 @@ func (k *KVService) Test(key string) error {
 	return nil
 }
 
-//SetSecret will store secret in azure key vault
+// SetSecret will store secret in azure key vault
 func (k *KVService) SetSecret(secretName, value string) error {
 	parameter := azurekv.SecretSetParameters{
 		Value:       to.StringPtr(value),
@@ -119,7 +119,7 @@ func (k *KVService) SetSecret(secretName, value string) error {
 	return nil
 }
 
-//GetSecret will give secret in response
+// GetSecret will give secret in response
 func (k *KVService) GetSecret(secretName string) (*string, error) {
 	version, err := k.GetLatestVersionOfSecret(k.VaultBaseUrl, secretName)
 	if err != nil {
@@ -133,7 +133,7 @@ func (k *KVService) GetSecret(secretName string) (*string, error) {
 	return sr.Value, nil
 }
 
-//GetLatestVersionOfSecret will give latest version of secret according to created time
+// GetLatestVersionOfSecret will give latest version of secret according to created time
 func (k *KVService) GetLatestVersionOfSecret(vaultBaseUrl, secretName string) (string, error) {
 	var version string
 	var createdTime time.Duration

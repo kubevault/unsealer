@@ -35,7 +35,6 @@ type gcsStorage struct {
 
 func New(bucket, prefix string) (kv.Service, error) {
 	cl, err := storage.NewClient(context.Background())
-
 	if err != nil {
 		return nil, fmt.Errorf("error creating gcs client: %s", err.Error())
 	}
@@ -59,7 +58,6 @@ func (g *gcsStorage) Get(key string) ([]byte, error) {
 	n := objectNameWithPrefix(g.prefix, key)
 
 	r, err := g.cl.Bucket(g.bucket).Object(n).NewReader(ctx)
-
 	if err != nil {
 		if err == storage.ErrObjectNotExist {
 			return nil, kv.NewNotFoundError("error getting object for key '%s': %s", n, err.Error())
@@ -68,7 +66,6 @@ func (g *gcsStorage) Get(key string) ([]byte, error) {
 	}
 
 	b, err := ioutil.ReadAll(r)
-
 	if err != nil {
 		return nil, fmt.Errorf("error reading object with key '%s': %s", n, err.Error())
 	}

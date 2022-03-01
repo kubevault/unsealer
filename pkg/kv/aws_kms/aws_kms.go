@@ -87,7 +87,6 @@ func (a *awsKMS) Get(key string) ([]byte, error) {
 }
 
 func (a *awsKMS) encrypt(plainText []byte) ([]byte, error) {
-
 	out, err := a.kmsService.Encrypt(&kms.EncryptInput{
 		KeyId:     aws.String(a.kmsID),
 		Plaintext: plainText,
@@ -101,7 +100,6 @@ func (a *awsKMS) encrypt(plainText []byte) ([]byte, error) {
 
 func (a *awsKMS) Set(key string, val []byte) error {
 	cipherText, err := a.encrypt(val)
-
 	if err != nil {
 		return err
 	}
