@@ -68,5 +68,4 @@ func TestAWSIntegration(t *testing.T) {
 	if exp, act := payloadValue, string(out); exp != act {
 		t.Errorf("Unexpected decrypt output: exp=%s act=%s", exp, act)
 	}
-
 }

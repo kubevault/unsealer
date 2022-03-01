@@ -56,7 +56,6 @@ func (g *googleKms) encrypt(s []byte) ([]byte, error) {
 	resp, err := g.svc.Projects.Locations.KeyRings.CryptoKeys.Encrypt(g.keyPath, &cloudkms.EncryptRequest{
 		Plaintext: base64.StdEncoding.EncodeToString(s),
 	}).Do()
-
 	if err != nil {
 		return nil, fmt.Errorf("error encrypting data: %s", err.Error())
 	}
@@ -68,7 +67,6 @@ func (g *googleKms) decrypt(s []byte) ([]byte, error) {
 	resp, err := g.svc.Projects.Locations.KeyRings.CryptoKeys.Decrypt(g.keyPath, &cloudkms.DecryptRequest{
 		Ciphertext: base64.StdEncoding.EncodeToString(s),
 	}).Do()
-
 	if err != nil {
 		return nil, fmt.Errorf("error decrypting data: %s", err.Error())
 	}
@@ -78,7 +76,6 @@ func (g *googleKms) decrypt(s []byte) ([]byte, error) {
 
 func (g *googleKms) Get(key string) ([]byte, error) {
 	cipherText, err := g.store.Get(key)
-
 	if err != nil {
 		return nil, err
 	}
@@ -88,7 +85,6 @@ func (g *googleKms) Get(key string) ([]byte, error) {
 
 func (g *googleKms) Set(key string, val []byte) error {
 	cipherText, err := g.encrypt(val)
-
 	if err != nil {
 		return err
 	}

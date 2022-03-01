@@ -82,14 +82,12 @@ func (u *unsealer) Unseal() error {
 
 		klog.Infof("try to retrieve key with keyID = %s, from kms service", keyID)
 		k, err := u.keyStore.Get(keyID)
-
 		if err != nil {
 			return fmt.Errorf("failed to get key = %s with %s", keyID, err.Error())
 		}
 
 		klog.Infof("try to send unseal request to the vault with keyID = %s", keyID)
 		resp, err := u.cl.Sys().Unseal(string(k))
-
 		if err != nil {
 			return fmt.Errorf("failed to send unseal request to the vault with %s", err.Error())
 		}
@@ -156,7 +154,6 @@ func (u *unsealer) Init() error {
 		SecretShares:    u.config.SecretShares,
 		SecretThreshold: u.config.SecretThreshold,
 	})
-
 	if err != nil {
 		return fmt.Errorf("failed to initialize the vault with %s", err.Error())
 	}
@@ -164,7 +161,6 @@ func (u *unsealer) Init() error {
 	for i, k := range resp.Keys {
 		keyID := util.UnsealKeyID(u.config.KeyPrefix, i)
 		err := u.keyStoreSet(keyID, []byte(k))
-
 		if err != nil {
 			return fmt.Errorf("failed to store the unseal key = '%s' with %s", keyID, err.Error())
 		}
@@ -181,7 +177,6 @@ func (u *unsealer) Init() error {
 	}
 
 	return nil
-
 }
 
 func testKey(prefix string) string {

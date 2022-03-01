@@ -50,7 +50,6 @@ func (f *fakeKV) Get(key string) ([]byte, error) {
 		return []byte("data"), nil
 	} else if key == "not-found" {
 		return nil, kv.NewNotFoundError("not-found")
-
 	}
 
 	return nil, fmt.Errorf("not-implemented")

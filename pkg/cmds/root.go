@@ -23,7 +23,7 @@ import (
 )
 
 func NewRootCmd() *cobra.Command {
-	var rootCmd = &cobra.Command{
+	rootCmd := &cobra.Command{
 		Use:               "vault-unsealer",
 		Short:             `Automates initialisation and unsealing of Hashicorp Vault`,
 		DisableAutoGenTag: true,

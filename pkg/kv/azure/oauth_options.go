@@ -29,7 +29,7 @@ type AzureAuthConfig struct {
 	Cloud string `json:"cloud"`
 	// The AAD Tenant ID for the Subscription that the cluster is deployed in
 	TenantID string `json:"tenantId"`
-	//The ClientID for an AAD application with RBAC access to talk to Azure RM APIs
+	// The ClientID for an AAD application with RBAC access to talk to Azure RM APIs
 	AADClientID string `json:"aadClientId"`
 	// The ClientSecret for an AAD application with RBAC access to talk to Azure RM APIs
 	AADClientSecret string `json:"aadClientSecret"`
