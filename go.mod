@@ -21,6 +21,7 @@ require (
 	github.com/spf13/pflag v1.0.5
 	github.com/stretchr/testify v1.7.0
 	golang.org/x/crypto v0.0.0-20210314154223-e6e6c4f2bb5b
+	golang.org/x/text v0.3.7
 	gomodules.xyz/errors v0.0.0-20201104190405-077f059979fd
 	gomodules.xyz/logs v0.0.6
 	gomodules.xyz/runtime v0.2.0
