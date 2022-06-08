@@ -23,7 +23,6 @@ import (
 	utilerrors "gomodules.xyz/errors"
 	v "gomodules.xyz/x/version"
 	"k8s.io/klog/v2"
-	"kmodules.xyz/client-go/tools/cli"
 )
 
 func NewCmdRun() *cobra.Command {
@@ -33,9 +32,6 @@ func NewCmdRun() *cobra.Command {
 		Use:               "run",
 		Short:             "Launch Vault unsealer",
 		DisableAutoGenTag: true,
-		PreRun: func(c *cobra.Command, args []string) {
-			cli.SendPeriodicAnalytics(c, v.Version.Version)
-		},
 		RunE: func(cmd *cobra.Command, args []string) error {
 			klog.Infof("Starting operator version %s+%s ...", v.Version.Version, v.Version.CommitHash)
 

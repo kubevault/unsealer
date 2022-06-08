@@ -252,8 +252,7 @@ func (c *Client) Do(req *http.Request, v interface{}) (*http.Response, error) {
 	return resp, err
 }
 
-type status5xx struct {
-}
+type status5xx struct{}
 
 func (r *status5xx) Error() string {
 	return "5xx Server Error"
