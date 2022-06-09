@@ -77,8 +77,7 @@ func EnsurePolicyAndPolicyBinding(vc *vaultapi.Client, config *PolicyManagerOpti
 		return err
 	}
 
-	path := fmt.Sprintf("/v1/auth/kubernetes/role/%s", config.Name)
-	req := vc.NewRequest("POST", path)
+	path := fmt.Sprintf("/auth/kubernetes/role/%s", config.Name)
 	payload := map[string]interface{}{
 		"bound_service_account_names":      config.ServiceAccountName,
 		"bound_service_account_namespaces": config.ServiceAccountNamespace,
@@ -88,11 +87,6 @@ func EnsurePolicyAndPolicyBinding(vc *vaultapi.Client, config *PolicyManagerOpti
 		"period":                           "24h",
 	}
 
-	err = req.SetJSONBody(payload)
-	if err != nil {
-		return err
-	}
-
-	_, err = vc.RawRequest(req)
+	_, err = vc.Logical().Write(path, payload)
 	return err
 }
