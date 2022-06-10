@@ -36,7 +36,7 @@ func NewFakeVaultServer() *httptest.Server {
 	m.Put("/v1/sys/policies/acl/err", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusUnauthorized)
 	}))
-	m.Post("/v1/auth/kubernetes/role/ok", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+	m.Put("/v1/auth/kubernetes/role/ok", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusOK)
 	}))
 

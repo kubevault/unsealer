@@ -52,7 +52,7 @@ const authList = `
 
 func NewFakeVaultServer() *httptest.Server {
 	m := pat.New()
-	m.Post("/v1/auth/kubernetes/config", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+	m.Put("/v1/auth/kubernetes/config", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		var v map[string]interface{}
 		defer r.Body.Close()
 		utilruntime.Must(json.NewDecoder(r.Body).Decode(&v))

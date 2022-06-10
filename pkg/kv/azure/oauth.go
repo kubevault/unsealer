@@ -16,10 +16,10 @@ import (
 	"github.com/Azure/go-autorest/autorest"
 	"github.com/Azure/go-autorest/autorest/adal"
 	"github.com/Azure/go-autorest/autorest/azure"
-	"github.com/ghodss/yaml"
 	"github.com/pkg/errors"
 	"golang.org/x/crypto/pkcs12"
 	"k8s.io/klog/v2"
+	"sigs.k8s.io/yaml"
 )
 
 // OAuthGrantType specifies which grant type to use.

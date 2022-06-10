@@ -19,7 +19,6 @@ package cmds
 import (
 	"github.com/spf13/cobra"
 	v "gomodules.xyz/x/version"
-	"kmodules.xyz/client-go/tools/cli"
 )
 
 func NewRootCmd() *cobra.Command {
@@ -27,10 +26,7 @@ func NewRootCmd() *cobra.Command {
 		Use:               "vault-unsealer",
 		Short:             `Automates initialisation and unsealing of Hashicorp Vault`,
 		DisableAutoGenTag: true,
-		PersistentPreRun: func(c *cobra.Command, args []string) {
-		},
 	}
-	rootCmd.PersistentFlags().BoolVar(&cli.EnableAnalytics, "enable-analytics", cli.EnableAnalytics, "Send analytical events to Google Analytics")
 
 	rootCmd.AddCommand(v.NewCmdVersion())
 	rootCmd.AddCommand(NewCmdRun())

@@ -78,7 +78,6 @@ func (k *KubernetesAuthenticator) ConfigureAuth() error {
 		return errors.New("kubernetes config is nil")
 	}
 
-	req := k.vc.NewRequest("POST", "/v1/auth/kubernetes/config")
 	payload := map[string]interface{}{
 		"kubernetes_host":        k.config.Host,
 		"kubernetes_ca_cert":     k.config.CA,
@@ -86,10 +85,7 @@ func (k *KubernetesAuthenticator) ConfigureAuth() error {
 		"disable_iss_validation": true,
 		"disable_local_ca_jwt":   true,
 	}
-	if err := req.SetJSONBody(payload); err != nil {
-		return err
-	}
 
-	_, err := k.vc.RawRequest(req)
+	_, err := k.vc.Logical().Write("auth/kubernetes/config", payload)
 	return err
 }

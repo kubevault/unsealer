@@ -42,7 +42,7 @@ type KVService struct {
 func NewKVService(c *Options) (*KVService, error) {
 	k := &KVService{
 		SecretName: c.SecretName,
-		Namespace:  meta_util.Namespace(),
+		Namespace:  meta_util.PodNamespace(),
 	}
 
 	config, err := rest.InClusterConfig()
