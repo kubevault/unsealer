@@ -86,6 +86,6 @@ func (k *KubernetesAuthenticator) ConfigureAuth() error {
 		"disable_local_ca_jwt":   true,
 	}
 
-	_, err := k.vc.Logical().Write("/auth/kubernetes/config", payload)
+	_, err := k.vc.Logical().Write("auth/kubernetes/config", payload)
 	return err
 }
