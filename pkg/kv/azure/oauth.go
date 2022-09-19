@@ -10,7 +10,6 @@ import (
 	"crypto/x509"
 	"fmt"
 	"io"
-	"io/ioutil"
 	"os"
 
 	"github.com/Azure/go-autorest/autorest"
@@ -51,7 +50,7 @@ func GetConfigFromFile(configFilePath string) (*AzureAuthConfig, error) {
 
 		defer configFile.Close()
 		configReader = configFile
-		configContents, err := ioutil.ReadAll(configReader)
+		configContents, err := io.ReadAll(configReader)
 		if err != nil {
 			return nil, err
 		}
@@ -113,7 +112,7 @@ func GetServicePrincipalToken(config *AzureAuthConfig, env *azure.Environment, r
 
 	if len(config.AADClientCertPath) > 0 && len(config.AADClientCertPassword) > 0 {
 		klog.V(2).Infoln("azure: using jwt client_assertion (client_cert+client_private_key) to retrieve access token")
-		certData, err := ioutil.ReadFile(config.AADClientCertPath)
+		certData, err := os.ReadFile(config.AADClientCertPath)
 		if err != nil {
 			return nil, fmt.Errorf("reading the client certificate from file %s: %v", config.AADClientCertPath, err)
 		}

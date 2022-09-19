@@ -29,14 +29,13 @@ const opCancelKeyDeletion = "CancelKeyDeletion"
 // This method is useful when you want to inject custom logic or configuration
 // into the SDK's request lifecycle. Such as custom headers, or retry logic.
 //
+//	// Example sending a request using the CancelKeyDeletionRequest method.
+//	req, resp := client.CancelKeyDeletionRequest(params)
 //
-//    // Example sending a request using the CancelKeyDeletionRequest method.
-//    req, resp := client.CancelKeyDeletionRequest(params)
-//
-//    err := req.Send()
-//    if err == nil { // resp is now filled
-//        fmt.Println(resp)
-//    }
+//	err := req.Send()
+//	if err == nil { // resp is now filled
+//	    fmt.Println(resp)
+//	}
 //
 // See also, https://docs.aws.amazon.com/goto/WebAPI/kms-2014-11-01/CancelKeyDeletion
 func (c *KMS) CancelKeyDeletionRequest(input *CancelKeyDeletionInput) (req *request.Request, output *CancelKeyDeletionOutput) {
@@ -84,29 +83,30 @@ func (c *KMS) CancelKeyDeletionRequest(input *CancelKeyDeletionInput) (req *requ
 // API operation CancelKeyDeletion for usage and error information.
 //
 // Returned Error Types:
-//   * NotFoundException
-//   The request was rejected because the specified entity or resource could not
-//   be found.
 //
-//   * InvalidArnException
-//   The request was rejected because a specified ARN, or an ARN in a key policy,
-//   is not valid.
+//   - NotFoundException
+//     The request was rejected because the specified entity or resource could not
+//     be found.
 //
-//   * DependencyTimeoutException
-//   The system timed out while trying to fulfill the request. The request can
-//   be retried.
+//   - InvalidArnException
+//     The request was rejected because a specified ARN, or an ARN in a key policy,
+//     is not valid.
 //
-//   * InternalException
-//   The request was rejected because an internal exception occurred. The request
-//   can be retried.
+//   - DependencyTimeoutException
+//     The system timed out while trying to fulfill the request. The request can
+//     be retried.
 //
-//   * InvalidStateException
-//   The request was rejected because the state of the specified resource is not
-//   valid for this request.
+//   - InternalException
+//     The request was rejected because an internal exception occurred. The request
+//     can be retried.
 //
-//   For more information about how key state affects the use of a KMS key, see
-//   Key states of KMS keys (https://docs.aws.amazon.com/kms/latest/developerguide/key-state.html)
-//   in the Key Management Service Developer Guide .
+//   - InvalidStateException
+//     The request was rejected because the state of the specified resource is not
+//     valid for this request.
+//
+//     For more information about how key state affects the use of a KMS key, see
+//     Key states of KMS keys (https://docs.aws.amazon.com/kms/latest/developerguide/key-state.html)
+//     in the Key Management Service Developer Guide .
 //
 // See also, https://docs.aws.amazon.com/goto/WebAPI/kms-2014-11-01/CancelKeyDeletion
 func (c *KMS) CancelKeyDeletion(input *CancelKeyDeletionInput) (*CancelKeyDeletionOutput, error) {
@@ -146,14 +146,13 @@ const opConnectCustomKeyStore = "ConnectCustomKeyStore"
 // This method is useful when you want to inject custom logic or configuration
 // into the SDK's request lifecycle. Such as custom headers, or retry logic.
 //
+//	// Example sending a request using the ConnectCustomKeyStoreRequest method.
+//	req, resp := client.ConnectCustomKeyStoreRequest(params)
 //
-//    // Example sending a request using the ConnectCustomKeyStoreRequest method.
-//    req, resp := client.ConnectCustomKeyStoreRequest(params)
-//
-//    err := req.Send()
-//    if err == nil { // resp is now filled
-//        fmt.Println(resp)
-//    }
+//	err := req.Send()
+//	if err == nil { // resp is now filled
+//	    fmt.Println(resp)
+//	}
 //
 // See also, https://docs.aws.amazon.com/goto/WebAPI/kms-2014-11-01/ConnectCustomKeyStore
 func (c *KMS) ConnectCustomKeyStoreRequest(input *ConnectCustomKeyStoreInput) (req *request.Request, output *ConnectCustomKeyStoreOutput) {
@@ -223,15 +222,15 @@ func (c *KMS) ConnectCustomKeyStoreRequest(input *ConnectCustomKeyStoreInput) (r
 //
 // Related operations
 //
-//    * CreateCustomKeyStore
+//   - CreateCustomKeyStore
 //
-//    * DeleteCustomKeyStore
+//   - DeleteCustomKeyStore
 //
-//    * DescribeCustomKeyStores
+//   - DescribeCustomKeyStores
 //
-//    * DisconnectCustomKeyStore
+//   - DisconnectCustomKeyStore
 //
-//    * UpdateCustomKeyStore
+//   - UpdateCustomKeyStore
 //
 // Returns awserr.Error for service API and SDK errors. Use runtime type assertions
 // with awserr.Error's Code and Message methods to get detailed information about
@@ -241,70 +240,71 @@ func (c *KMS) ConnectCustomKeyStoreRequest(input *ConnectCustomKeyStoreInput) (r
 // API operation ConnectCustomKeyStore for usage and error information.
 //
 // Returned Error Types:
-//   * CloudHsmClusterNotActiveException
-//   The request was rejected because the CloudHSM cluster that is associated
-//   with the custom key store is not active. Initialize and activate the cluster
-//   and try the command again. For detailed instructions, see Getting Started
-//   (https://docs.aws.amazon.com/cloudhsm/latest/userguide/getting-started.html)
-//   in the CloudHSM User Guide.
 //
-//   * CustomKeyStoreInvalidStateException
-//   The request was rejected because of the ConnectionState of the custom key
-//   store. To get the ConnectionState of a custom key store, use the DescribeCustomKeyStores
-//   operation.
+//   - CloudHsmClusterNotActiveException
+//     The request was rejected because the CloudHSM cluster that is associated
+//     with the custom key store is not active. Initialize and activate the cluster
+//     and try the command again. For detailed instructions, see Getting Started
+//     (https://docs.aws.amazon.com/cloudhsm/latest/userguide/getting-started.html)
+//     in the CloudHSM User Guide.
 //
-//   This exception is thrown under the following conditions:
+//   - CustomKeyStoreInvalidStateException
+//     The request was rejected because of the ConnectionState of the custom key
+//     store. To get the ConnectionState of a custom key store, use the DescribeCustomKeyStores
+//     operation.
 //
-//      * You requested the CreateKey or GenerateRandom operation in a custom
-//      key store that is not connected. These operations are valid only when
-//      the custom key store ConnectionState is CONNECTED.
+//     This exception is thrown under the following conditions:
 //
-//      * You requested the UpdateCustomKeyStore or DeleteCustomKeyStore operation
-//      on a custom key store that is not disconnected. This operation is valid
-//      only when the custom key store ConnectionState is DISCONNECTED.
+//   - You requested the CreateKey or GenerateRandom operation in a custom
+//     key store that is not connected. These operations are valid only when
+//     the custom key store ConnectionState is CONNECTED.
 //
-//      * You requested the ConnectCustomKeyStore operation on a custom key store
-//      with a ConnectionState of DISCONNECTING or FAILED. This operation is valid
-//      for all other ConnectionState values.
+//   - You requested the UpdateCustomKeyStore or DeleteCustomKeyStore operation
+//     on a custom key store that is not disconnected. This operation is valid
+//     only when the custom key store ConnectionState is DISCONNECTED.
 //
-//   * CustomKeyStoreNotFoundException
-//   The request was rejected because KMS cannot find a custom key store with
-//   the specified key store name or ID.
+//   - You requested the ConnectCustomKeyStore operation on a custom key store
+//     with a ConnectionState of DISCONNECTING or FAILED. This operation is valid
+//     for all other ConnectionState values.
 //
-//   * InternalException
-//   The request was rejected because an internal exception occurred. The request
-//   can be retried.
+//   - CustomKeyStoreNotFoundException
+//     The request was rejected because KMS cannot find a custom key store with
+//     the specified key store name or ID.
 //
-//   * CloudHsmClusterInvalidConfigurationException
-//   The request was rejected because the associated CloudHSM cluster did not
-//   meet the configuration requirements for a custom key store.
+//   - InternalException
+//     The request was rejected because an internal exception occurred. The request
+//     can be retried.
 //
-//      * The cluster must be configured with private subnets in at least two
-//      different Availability Zones in the Region.
+//   - CloudHsmClusterInvalidConfigurationException
+//     The request was rejected because the associated CloudHSM cluster did not
+//     meet the configuration requirements for a custom key store.
 //
-//      * The security group for the cluster (https://docs.aws.amazon.com/cloudhsm/latest/userguide/configure-sg.html)
-//      (cloudhsm-cluster-<cluster-id>-sg) must include inbound rules and outbound
-//      rules that allow TCP traffic on ports 2223-2225. The Source in the inbound
-//      rules and the Destination in the outbound rules must match the security
-//      group ID. These rules are set by default when you create the cluster.
-//      Do not delete or change them. To get information about a particular security
-//      group, use the DescribeSecurityGroups (https://docs.aws.amazon.com/AWSEC2/latest/APIReference/API_DescribeSecurityGroups.html)
-//      operation.
+//   - The cluster must be configured with private subnets in at least two
+//     different Availability Zones in the Region.
 //
-//      * The cluster must contain at least as many HSMs as the operation requires.
-//      To add HSMs, use the CloudHSM CreateHsm (https://docs.aws.amazon.com/cloudhsm/latest/APIReference/API_CreateHsm.html)
-//      operation. For the CreateCustomKeyStore, UpdateCustomKeyStore, and CreateKey
-//      operations, the CloudHSM cluster must have at least two active HSMs, each
-//      in a different Availability Zone. For the ConnectCustomKeyStore operation,
-//      the CloudHSM must contain at least one active HSM.
+//   - The security group for the cluster (https://docs.aws.amazon.com/cloudhsm/latest/userguide/configure-sg.html)
+//     (cloudhsm-cluster-<cluster-id>-sg) must include inbound rules and outbound
+//     rules that allow TCP traffic on ports 2223-2225. The Source in the inbound
+//     rules and the Destination in the outbound rules must match the security
+//     group ID. These rules are set by default when you create the cluster.
+//     Do not delete or change them. To get information about a particular security
+//     group, use the DescribeSecurityGroups (https://docs.aws.amazon.com/AWSEC2/latest/APIReference/API_DescribeSecurityGroups.html)
+//     operation.
 //
-//   For information about the requirements for an CloudHSM cluster that is associated
-//   with a custom key store, see Assemble the Prerequisites (https://docs.aws.amazon.com/kms/latest/developerguide/create-keystore.html#before-keystore)
-//   in the Key Management Service Developer Guide. For information about creating
-//   a private subnet for an CloudHSM cluster, see Create a Private Subnet (https://docs.aws.amazon.com/cloudhsm/latest/userguide/create-subnets.html)
-//   in the CloudHSM User Guide. For information about cluster security groups,
-//   see Configure a Default Security Group (https://docs.aws.amazon.com/cloudhsm/latest/userguide/configure-sg.html)
-//   in the CloudHSM User Guide .
+//   - The cluster must contain at least as many HSMs as the operation requires.
+//     To add HSMs, use the CloudHSM CreateHsm (https://docs.aws.amazon.com/cloudhsm/latest/APIReference/API_CreateHsm.html)
+//     operation. For the CreateCustomKeyStore, UpdateCustomKeyStore, and CreateKey
+//     operations, the CloudHSM cluster must have at least two active HSMs, each
+//     in a different Availability Zone. For the ConnectCustomKeyStore operation,
+//     the CloudHSM must contain at least one active HSM.
+//
+//     For information about the requirements for an CloudHSM cluster that is associated
+//     with a custom key store, see Assemble the Prerequisites (https://docs.aws.amazon.com/kms/latest/developerguide/create-keystore.html#before-keystore)
+//     in the Key Management Service Developer Guide. For information about creating
+//     a private subnet for an CloudHSM cluster, see Create a Private Subnet (https://docs.aws.amazon.com/cloudhsm/latest/userguide/create-subnets.html)
+//     in the CloudHSM User Guide. For information about cluster security groups,
+//     see Configure a Default Security Group (https://docs.aws.amazon.com/cloudhsm/latest/userguide/configure-sg.html)
+//     in the CloudHSM User Guide .
 //
 // See also, https://docs.aws.amazon.com/goto/WebAPI/kms-2014-11-01/ConnectCustomKeyStore
 func (c *KMS) ConnectCustomKeyStore(input *ConnectCustomKeyStoreInput) (*ConnectCustomKeyStoreOutput, error) {
@@ -344,14 +344,13 @@ const opCreateAlias = "CreateAlias"
 // This method is useful when you want to inject custom logic or configuration
 // into the SDK's request lifecycle. Such as custom headers, or retry logic.
 //
+//	// Example sending a request using the CreateAliasRequest method.
+//	req, resp := client.CreateAliasRequest(params)
 //
-//    // Example sending a request using the CreateAliasRequest method.
-//    req, resp := client.CreateAliasRequest(params)
-//
-//    err := req.Send()
-//    if err == nil { // resp is now filled
-//        fmt.Println(resp)
-//    }
+//	err := req.Send()
+//	if err == nil { // resp is now filled
+//	    fmt.Println(resp)
+//	}
 //
 // See also, https://docs.aws.amazon.com/goto/WebAPI/kms-2014-11-01/CreateAlias
 func (c *KMS) CreateAliasRequest(input *CreateAliasInput) (req *request.Request, output *CreateAliasOutput) {
@@ -407,22 +406,22 @@ func (c *KMS) CreateAliasRequest(input *CreateAliasInput) (req *request.Request,
 //
 // Required permissions
 //
-//    * kms:CreateAlias (https://docs.aws.amazon.com/kms/latest/developerguide/kms-api-permissions-reference.html)
-//    on the alias (IAM policy).
+//   - kms:CreateAlias (https://docs.aws.amazon.com/kms/latest/developerguide/kms-api-permissions-reference.html)
+//     on the alias (IAM policy).
 //
-//    * kms:CreateAlias (https://docs.aws.amazon.com/kms/latest/developerguide/kms-api-permissions-reference.html)
-//    on the KMS key (key policy).
+//   - kms:CreateAlias (https://docs.aws.amazon.com/kms/latest/developerguide/kms-api-permissions-reference.html)
+//     on the KMS key (key policy).
 //
 // For details, see Controlling access to aliases (https://docs.aws.amazon.com/kms/latest/developerguide/kms-alias.html#alias-access)
 // in the Key Management Service Developer Guide.
 //
 // Related operations:
 //
-//    * DeleteAlias
+//   - DeleteAlias
 //
-//    * ListAliases
+//   - ListAliases
 //
-//    * UpdateAlias
+//   - UpdateAlias
 //
 // Returns awserr.Error for service API and SDK errors. Use runtime type assertions
 // with awserr.Error's Code and Message methods to get detailed information about
@@ -432,37 +431,38 @@ func (c *KMS) CreateAliasRequest(input *CreateAliasInput) (req *request.Request,
 // API operation CreateAlias for usage and error information.
 //
 // Returned Error Types:
-//   * DependencyTimeoutException
-//   The system timed out while trying to fulfill the request. The request can
-//   be retried.
 //
-//   * AlreadyExistsException
-//   The request was rejected because it attempted to create a resource that already
-//   exists.
+//   - DependencyTimeoutException
+//     The system timed out while trying to fulfill the request. The request can
+//     be retried.
 //
-//   * NotFoundException
-//   The request was rejected because the specified entity or resource could not
-//   be found.
+//   - AlreadyExistsException
+//     The request was rejected because it attempted to create a resource that already
+//     exists.
 //
-//   * InvalidAliasNameException
-//   The request was rejected because the specified alias name is not valid.
+//   - NotFoundException
+//     The request was rejected because the specified entity or resource could not
+//     be found.
 //
-//   * InternalException
-//   The request was rejected because an internal exception occurred. The request
-//   can be retried.
+//   - InvalidAliasNameException
+//     The request was rejected because the specified alias name is not valid.
 //
-//   * LimitExceededException
-//   The request was rejected because a quota was exceeded. For more information,
-//   see Quotas (https://docs.aws.amazon.com/kms/latest/developerguide/limits.html)
-//   in the Key Management Service Developer Guide.
+//   - InternalException
+//     The request was rejected because an internal exception occurred. The request
+//     can be retried.
 //
-//   * InvalidStateException
-//   The request was rejected because the state of the specified resource is not
-//   valid for this request.
+//   - LimitExceededException
+//     The request was rejected because a quota was exceeded. For more information,
+//     see Quotas (https://docs.aws.amazon.com/kms/latest/developerguide/limits.html)
+//     in the Key Management Service Developer Guide.
 //
-//   For more information about how key state affects the use of a KMS key, see
-//   Key states of KMS keys (https://docs.aws.amazon.com/kms/latest/developerguide/key-state.html)
-//   in the Key Management Service Developer Guide .
+//   - InvalidStateException
+//     The request was rejected because the state of the specified resource is not
+//     valid for this request.
+//
+//     For more information about how key state affects the use of a KMS key, see
+//     Key states of KMS keys (https://docs.aws.amazon.com/kms/latest/developerguide/key-state.html)
+//     in the Key Management Service Developer Guide .
 //
 // See also, https://docs.aws.amazon.com/goto/WebAPI/kms-2014-11-01/CreateAlias
 func (c *KMS) CreateAlias(input *CreateAliasInput) (*CreateAliasOutput, error) {
@@ -502,14 +502,13 @@ const opCreateCustomKeyStore = "CreateCustomKeyStore"
 // This method is useful when you want to inject custom logic or configuration
 // into the SDK's request lifecycle. Such as custom headers, or retry logic.
 //
+//	// Example sending a request using the CreateCustomKeyStoreRequest method.
+//	req, resp := client.CreateCustomKeyStoreRequest(params)
 //
-//    // Example sending a request using the CreateCustomKeyStoreRequest method.
-//    req, resp := client.CreateCustomKeyStoreRequest(params)
-//
-//    err := req.Send()
-//    if err == nil { // resp is now filled
-//        fmt.Println(resp)
-//    }
+//	err := req.Send()
+//	if err == nil { // resp is now filled
+//	    fmt.Println(resp)
+//	}
 //
 // See also, https://docs.aws.amazon.com/goto/WebAPI/kms-2014-11-01/CreateCustomKeyStore
 func (c *KMS) CreateCustomKeyStoreRequest(input *CreateCustomKeyStoreInput) (req *request.Request, output *CreateCustomKeyStoreOutput) {
@@ -534,7 +533,7 @@ func (c *KMS) CreateCustomKeyStoreRequest(input *CreateCustomKeyStoreInput) (req
 // that is associated with an CloudHSM cluster (https://docs.aws.amazon.com/cloudhsm/latest/userguide/clusters.html)
 // that you own and manage.
 //
-// This operation is part of the Custom Key Store feature (https://docs.aws.amazon.com/kms/latest/developerguide/custom-key-store-overview.html)
+// This operation is part of the custom key store feature (https://docs.aws.amazon.com/kms/latest/developerguide/custom-key-store-overview.html)
 // feature in KMS, which combines the convenience and extensive integration
 // of KMS with the isolation and control of a single-tenant key store.
 //
@@ -562,15 +561,15 @@ func (c *KMS) CreateCustomKeyStoreRequest(input *CreateCustomKeyStoreInput) (req
 //
 // Related operations:
 //
-//    * ConnectCustomKeyStore
+//   - ConnectCustomKeyStore
 //
-//    * DeleteCustomKeyStore
+//   - DeleteCustomKeyStore
 //
-//    * DescribeCustomKeyStores
+//   - DescribeCustomKeyStores
 //
-//    * DisconnectCustomKeyStore
+//   - DisconnectCustomKeyStore
 //
-//    * UpdateCustomKeyStore
+//   - UpdateCustomKeyStore
 //
 // Returns awserr.Error for service API and SDK errors. Use runtime type assertions
 // with awserr.Error's Code and Message methods to get detailed information about
@@ -580,74 +579,75 @@ func (c *KMS) CreateCustomKeyStoreRequest(input *CreateCustomKeyStoreInput) (req
 // API operation CreateCustomKeyStore for usage and error information.
 //
 // Returned Error Types:
-//   * CloudHsmClusterInUseException
-//   The request was rejected because the specified CloudHSM cluster is already
-//   associated with a custom key store or it shares a backup history with a cluster
-//   that is associated with a custom key store. Each custom key store must be
-//   associated with a different CloudHSM cluster.
 //
-//   Clusters that share a backup history have the same cluster certificate. To
-//   view the cluster certificate of a cluster, use the DescribeClusters (https://docs.aws.amazon.com/cloudhsm/latest/APIReference/API_DescribeClusters.html)
-//   operation.
+//   - CloudHsmClusterInUseException
+//     The request was rejected because the specified CloudHSM cluster is already
+//     associated with a custom key store or it shares a backup history with a cluster
+//     that is associated with a custom key store. Each custom key store must be
+//     associated with a different CloudHSM cluster.
 //
-//   * CustomKeyStoreNameInUseException
-//   The request was rejected because the specified custom key store name is already
-//   assigned to another custom key store in the account. Try again with a custom
-//   key store name that is unique in the account.
+//     Clusters that share a backup history have the same cluster certificate. To
+//     view the cluster certificate of a cluster, use the DescribeClusters (https://docs.aws.amazon.com/cloudhsm/latest/APIReference/API_DescribeClusters.html)
+//     operation.
 //
-//   * CloudHsmClusterNotFoundException
-//   The request was rejected because KMS cannot find the CloudHSM cluster with
-//   the specified cluster ID. Retry the request with a different cluster ID.
+//   - CustomKeyStoreNameInUseException
+//     The request was rejected because the specified custom key store name is already
+//     assigned to another custom key store in the account. Try again with a custom
+//     key store name that is unique in the account.
 //
-//   * InternalException
-//   The request was rejected because an internal exception occurred. The request
-//   can be retried.
+//   - CloudHsmClusterNotFoundException
+//     The request was rejected because KMS cannot find the CloudHSM cluster with
+//     the specified cluster ID. Retry the request with a different cluster ID.
 //
-//   * CloudHsmClusterNotActiveException
-//   The request was rejected because the CloudHSM cluster that is associated
-//   with the custom key store is not active. Initialize and activate the cluster
-//   and try the command again. For detailed instructions, see Getting Started
-//   (https://docs.aws.amazon.com/cloudhsm/latest/userguide/getting-started.html)
-//   in the CloudHSM User Guide.
+//   - InternalException
+//     The request was rejected because an internal exception occurred. The request
+//     can be retried.
 //
-//   * IncorrectTrustAnchorException
-//   The request was rejected because the trust anchor certificate in the request
-//   is not the trust anchor certificate for the specified CloudHSM cluster.
+//   - CloudHsmClusterNotActiveException
+//     The request was rejected because the CloudHSM cluster that is associated
+//     with the custom key store is not active. Initialize and activate the cluster
+//     and try the command again. For detailed instructions, see Getting Started
+//     (https://docs.aws.amazon.com/cloudhsm/latest/userguide/getting-started.html)
+//     in the CloudHSM User Guide.
 //
-//   When you initialize the cluster (https://docs.aws.amazon.com/cloudhsm/latest/userguide/initialize-cluster.html#sign-csr),
-//   you create the trust anchor certificate and save it in the customerCA.crt
-//   file.
+//   - IncorrectTrustAnchorException
+//     The request was rejected because the trust anchor certificate in the request
+//     is not the trust anchor certificate for the specified CloudHSM cluster.
 //
-//   * CloudHsmClusterInvalidConfigurationException
-//   The request was rejected because the associated CloudHSM cluster did not
-//   meet the configuration requirements for a custom key store.
+//     When you initialize the cluster (https://docs.aws.amazon.com/cloudhsm/latest/userguide/initialize-cluster.html#sign-csr),
+//     you create the trust anchor certificate and save it in the customerCA.crt
+//     file.
 //
-//      * The cluster must be configured with private subnets in at least two
-//      different Availability Zones in the Region.
+//   - CloudHsmClusterInvalidConfigurationException
+//     The request was rejected because the associated CloudHSM cluster did not
+//     meet the configuration requirements for a custom key store.
 //
-//      * The security group for the cluster (https://docs.aws.amazon.com/cloudhsm/latest/userguide/configure-sg.html)
-//      (cloudhsm-cluster-<cluster-id>-sg) must include inbound rules and outbound
-//      rules that allow TCP traffic on ports 2223-2225. The Source in the inbound
-//      rules and the Destination in the outbound rules must match the security
-//      group ID. These rules are set by default when you create the cluster.
-//      Do not delete or change them. To get information about a particular security
-//      group, use the DescribeSecurityGroups (https://docs.aws.amazon.com/AWSEC2/latest/APIReference/API_DescribeSecurityGroups.html)
-//      operation.
+//   - The cluster must be configured with private subnets in at least two
+//     different Availability Zones in the Region.
 //
-//      * The cluster must contain at least as many HSMs as the operation requires.
-//      To add HSMs, use the CloudHSM CreateHsm (https://docs.aws.amazon.com/cloudhsm/latest/APIReference/API_CreateHsm.html)
-//      operation. For the CreateCustomKeyStore, UpdateCustomKeyStore, and CreateKey
-//      operations, the CloudHSM cluster must have at least two active HSMs, each
-//      in a different Availability Zone. For the ConnectCustomKeyStore operation,
-//      the CloudHSM must contain at least one active HSM.
+//   - The security group for the cluster (https://docs.aws.amazon.com/cloudhsm/latest/userguide/configure-sg.html)
+//     (cloudhsm-cluster-<cluster-id>-sg) must include inbound rules and outbound
+//     rules that allow TCP traffic on ports 2223-2225. The Source in the inbound
+//     rules and the Destination in the outbound rules must match the security
+//     group ID. These rules are set by default when you create the cluster.
+//     Do not delete or change them. To get information about a particular security
+//     group, use the DescribeSecurityGroups (https://docs.aws.amazon.com/AWSEC2/latest/APIReference/API_DescribeSecurityGroups.html)
+//     operation.
 //
-//   For information about the requirements for an CloudHSM cluster that is associated
-//   with a custom key store, see Assemble the Prerequisites (https://docs.aws.amazon.com/kms/latest/developerguide/create-keystore.html#before-keystore)
-//   in the Key Management Service Developer Guide. For information about creating
-//   a private subnet for an CloudHSM cluster, see Create a Private Subnet (https://docs.aws.amazon.com/cloudhsm/latest/userguide/create-subnets.html)
-//   in the CloudHSM User Guide. For information about cluster security groups,
-//   see Configure a Default Security Group (https://docs.aws.amazon.com/cloudhsm/latest/userguide/configure-sg.html)
-//   in the CloudHSM User Guide .
+//   - The cluster must contain at least as many HSMs as the operation requires.
+//     To add HSMs, use the CloudHSM CreateHsm (https://docs.aws.amazon.com/cloudhsm/latest/APIReference/API_CreateHsm.html)
+//     operation. For the CreateCustomKeyStore, UpdateCustomKeyStore, and CreateKey
+//     operations, the CloudHSM cluster must have at least two active HSMs, each
+//     in a different Availability Zone. For the ConnectCustomKeyStore operation,
+//     the CloudHSM must contain at least one active HSM.
+//
+//     For information about the requirements for an CloudHSM cluster that is associated
+//     with a custom key store, see Assemble the Prerequisites (https://docs.aws.amazon.com/kms/latest/developerguide/create-keystore.html#before-keystore)
+//     in the Key Management Service Developer Guide. For information about creating
+//     a private subnet for an CloudHSM cluster, see Create a Private Subnet (https://docs.aws.amazon.com/cloudhsm/latest/userguide/create-subnets.html)
+//     in the CloudHSM User Guide. For information about cluster security groups,
+//     see Configure a Default Security Group (https://docs.aws.amazon.com/cloudhsm/latest/userguide/configure-sg.html)
+//     in the CloudHSM User Guide .
 //
 // See also, https://docs.aws.amazon.com/goto/WebAPI/kms-2014-11-01/CreateCustomKeyStore
 func (c *KMS) CreateCustomKeyStore(input *CreateCustomKeyStoreInput) (*CreateCustomKeyStoreOutput, error) {
@@ -687,14 +687,13 @@ const opCreateGrant = "CreateGrant"
 // This method is useful when you want to inject custom logic or configuration
 // into the SDK's request lifecycle. Such as custom headers, or retry logic.
 //
+//	// Example sending a request using the CreateGrantRequest method.
+//	req, resp := client.CreateGrantRequest(params)
 //
-//    // Example sending a request using the CreateGrantRequest method.
-//    req, resp := client.CreateGrantRequest(params)
-//
-//    err := req.Send()
-//    if err == nil { // resp is now filled
-//        fmt.Println(resp)
-//    }
+//	err := req.Send()
+//	if err == nil { // resp is now filled
+//	    fmt.Println(resp)
+//	}
 //
 // See also, https://docs.aws.amazon.com/goto/WebAPI/kms-2014-11-01/CreateGrant
 func (c *KMS) CreateGrantRequest(input *CreateGrantInput) (req *request.Request, output *CreateGrantOutput) {
@@ -732,19 +731,19 @@ func (c *KMS) CreateGrantRequest(input *CreateGrantInput) (req *request.Request,
 //
 // The CreateGrant operation returns a GrantToken and a GrantId.
 //
-//    * When you create, retire, or revoke a grant, there might be a brief delay,
-//    usually less than five minutes, until the grant is available throughout
-//    KMS. This state is known as eventual consistency. Once the grant has achieved
-//    eventual consistency, the grantee principal can use the permissions in
-//    the grant without identifying the grant. However, to use the permissions
-//    in the grant immediately, use the GrantToken that CreateGrant returns.
-//    For details, see Using a grant token (https://docs.aws.amazon.com/kms/latest/developerguide/grant-manage.html#using-grant-token)
-//    in the Key Management Service Developer Guide .
+//   - When you create, retire, or revoke a grant, there might be a brief delay,
+//     usually less than five minutes, until the grant is available throughout
+//     KMS. This state is known as eventual consistency. Once the grant has achieved
+//     eventual consistency, the grantee principal can use the permissions in
+//     the grant without identifying the grant. However, to use the permissions
+//     in the grant immediately, use the GrantToken that CreateGrant returns.
+//     For details, see Using a grant token (https://docs.aws.amazon.com/kms/latest/developerguide/grant-manage.html#using-grant-token)
+//     in the Key Management Service Developer Guide .
 //
-//    * The CreateGrant operation also returns a GrantId. You can use the GrantId
-//    and a key identifier to identify the grant in the RetireGrant and RevokeGrant
-//    operations. To find the grant ID, use the ListGrants or ListRetirableGrants
-//    operations.
+//   - The CreateGrant operation also returns a GrantId. You can use the GrantId
+//     and a key identifier to identify the grant in the RetireGrant and RevokeGrant
+//     operations. To find the grant ID, use the ListGrants or ListRetirableGrants
+//     operations.
 //
 // The KMS key that you use for this operation must be in a compatible key state.
 // For details, see Key states of KMS keys (https://docs.aws.amazon.com/kms/latest/developerguide/key-state.html)
@@ -759,13 +758,13 @@ func (c *KMS) CreateGrantRequest(input *CreateGrantInput) (req *request.Request,
 //
 // Related operations:
 //
-//    * ListGrants
+//   - ListGrants
 //
-//    * ListRetirableGrants
+//   - ListRetirableGrants
 //
-//    * RetireGrant
+//   - RetireGrant
 //
-//    * RevokeGrant
+//   - RevokeGrant
 //
 // Returns awserr.Error for service API and SDK errors. Use runtime type assertions
 // with awserr.Error's Code and Message methods to get detailed information about
@@ -775,40 +774,41 @@ func (c *KMS) CreateGrantRequest(input *CreateGrantInput) (req *request.Request,
 // API operation CreateGrant for usage and error information.
 //
 // Returned Error Types:
-//   * NotFoundException
-//   The request was rejected because the specified entity or resource could not
-//   be found.
 //
-//   * DisabledException
-//   The request was rejected because the specified KMS key is not enabled.
+//   - NotFoundException
+//     The request was rejected because the specified entity or resource could not
+//     be found.
 //
-//   * DependencyTimeoutException
-//   The system timed out while trying to fulfill the request. The request can
-//   be retried.
+//   - DisabledException
+//     The request was rejected because the specified KMS key is not enabled.
 //
-//   * InvalidArnException
-//   The request was rejected because a specified ARN, or an ARN in a key policy,
-//   is not valid.
+//   - DependencyTimeoutException
+//     The system timed out while trying to fulfill the request. The request can
+//     be retried.
 //
-//   * InternalException
-//   The request was rejected because an internal exception occurred. The request
-//   can be retried.
+//   - InvalidArnException
+//     The request was rejected because a specified ARN, or an ARN in a key policy,
+//     is not valid.
 //
-//   * InvalidGrantTokenException
-//   The request was rejected because the specified grant token is not valid.
+//   - InternalException
+//     The request was rejected because an internal exception occurred. The request
+//     can be retried.
 //
-//   * LimitExceededException
-//   The request was rejected because a quota was exceeded. For more information,
-//   see Quotas (https://docs.aws.amazon.com/kms/latest/developerguide/limits.html)
-//   in the Key Management Service Developer Guide.
+//   - InvalidGrantTokenException
+//     The request was rejected because the specified grant token is not valid.
 //
-//   * InvalidStateException
-//   The request was rejected because the state of the specified resource is not
-//   valid for this request.
+//   - LimitExceededException
+//     The request was rejected because a quota was exceeded. For more information,
+//     see Quotas (https://docs.aws.amazon.com/kms/latest/developerguide/limits.html)
+//     in the Key Management Service Developer Guide.
 //
-//   For more information about how key state affects the use of a KMS key, see
-//   Key states of KMS keys (https://docs.aws.amazon.com/kms/latest/developerguide/key-state.html)
-//   in the Key Management Service Developer Guide .
+//   - InvalidStateException
+//     The request was rejected because the state of the specified resource is not
+//     valid for this request.
+//
+//     For more information about how key state affects the use of a KMS key, see
+//     Key states of KMS keys (https://docs.aws.amazon.com/kms/latest/developerguide/key-state.html)
+//     in the Key Management Service Developer Guide .
 //
 // See also, https://docs.aws.amazon.com/goto/WebAPI/kms-2014-11-01/CreateGrant
 func (c *KMS) CreateGrant(input *CreateGrantInput) (*CreateGrantOutput, error) {
@@ -848,14 +848,13 @@ const opCreateKey = "CreateKey"
 // This method is useful when you want to inject custom logic or configuration
 // into the SDK's request lifecycle. Such as custom headers, or retry logic.
 //
+//	// Example sending a request using the CreateKeyRequest method.
+//	req, resp := client.CreateKeyRequest(params)
 //
-//    // Example sending a request using the CreateKeyRequest method.
-//    req, resp := client.CreateKeyRequest(params)
-//
-//    err := req.Send()
-//    if err == nil { // resp is now filled
-//        fmt.Println(resp)
-//    }
+//	err := req.Send()
+//	if err == nil { // resp is now filled
+//	    fmt.Println(resp)
+//	}
 //
 // See also, https://docs.aws.amazon.com/goto/WebAPI/kms-2014-11-01/CreateKey
 func (c *KMS) CreateKeyRequest(input *CreateKeyInput) (req *request.Request, output *CreateKeyOutput) {
@@ -889,12 +888,13 @@ func (c *KMS) CreateKeyRequest(input *CreateKeyInput) (req *request.Request, out
 //
 // To create different types of KMS keys, use the following guidance:
 //
-// Symmetric encryption KMS key
+// # Symmetric encryption KMS key
 //
 // To create a symmetric encryption KMS key, you aren't required to specify
 // any parameters. The default value for KeySpec, SYMMETRIC_DEFAULT, and the
 // default value for KeyUsage, ENCRYPT_DECRYPT, create a symmetric encryption
-// KMS key.
+// KMS key. For technical details, see SYMMETRIC_DEFAULT key spec (https://docs.aws.amazon.com/kms/latest/developerguide/asymmetric-key-specs.html#key-spec-symmetric-default)
+// in the Key Management Service Developer Guide.
 //
 // If you need a key for basic encryption and decryption or you are creating
 // a KMS key to protect your resources in an Amazon Web Services service, create
@@ -904,23 +904,24 @@ func (c *KMS) CreateKeyRequest(input *CreateKeyInput) (req *request.Request, out
 // used to generate data keys and data keys pairs. For details, see GenerateDataKey
 // and GenerateDataKeyPair.
 //
-// Asymmetric KMS keys
+// # Asymmetric KMS keys
 //
 // To create an asymmetric KMS key, use the KeySpec parameter to specify the
 // type of key material in the KMS key. Then, use the KeyUsage parameter to
 // determine whether the KMS key will be used to encrypt and decrypt or sign
 // and verify. You can't change these properties after the KMS key is created.
 //
-// Asymmetric KMS keys contain an RSA key pair or an Elliptic Curve (ECC) key
-// pair. The private key in an asymmetric KMS key never leaves KMS unencrypted.
-// However, you can use the GetPublicKey operation to download the public key
-// so it can be used outside of KMS. KMS keys with RSA key pairs can be used
-// to encrypt or decrypt data or sign and verify messages (but not both). KMS
-// keys with ECC key pairs can be used only to sign and verify messages. For
-// information about asymmetric KMS keys, see Asymmetric KMS keys (https://docs.aws.amazon.com/kms/latest/developerguide/symmetric-asymmetric.html)
+// Asymmetric KMS keys contain an RSA key pair, Elliptic Curve (ECC) key pair,
+// or an SM2 key pair (China Regions only). The private key in an asymmetric
+// KMS key never leaves KMS unencrypted. However, you can use the GetPublicKey
+// operation to download the public key so it can be used outside of KMS. KMS
+// keys with RSA or SM2 key pairs can be used to encrypt or decrypt data or
+// sign and verify messages (but not both). KMS keys with ECC key pairs can
+// be used only to sign and verify messages. For information about asymmetric
+// KMS keys, see Asymmetric KMS keys (https://docs.aws.amazon.com/kms/latest/developerguide/symmetric-asymmetric.html)
 // in the Key Management Service Developer Guide.
 //
-// HMAC KMS key
+// # HMAC KMS key
 //
 // To create an HMAC KMS key, set the KeySpec parameter to a key spec value
 // for HMAC KMS keys. Then set the KeyUsage parameter to GENERATE_VERIFY_MAC.
@@ -939,9 +940,9 @@ func (c *KMS) CreateKeyRequest(input *CreateKeyInput) (req *request.Request, out
 // in KMS (https://docs.aws.amazon.com/kms/latest/developerguide/hmac.html)
 // in the Key Management Service Developer Guide.
 //
-// Multi-Region primary keys
+// # Multi-Region primary keys
 //
-// Imported key material
+// # Imported key material
 //
 // To create a multi-Region primary key in the local Amazon Web Services Region,
 // use the MultiRegion parameter with a value of True. To create a multi-Region
@@ -983,7 +984,7 @@ func (c *KMS) CreateKeyRequest(input *CreateKeyInput) (req *request.Request, out
 // keys, see Multi-Region keys in KMS (https://docs.aws.amazon.com/kms/latest/developerguide/multi-region-keys-overview.html)
 // in the Key Management Service Developer Guide.
 //
-// Custom key store
+// # Custom key store
 //
 // To create a symmetric encryption KMS key in a custom key store (https://docs.aws.amazon.com/kms/latest/developerguide/custom-key-store-overview.html),
 // use the CustomKeyStoreId parameter to specify the custom key store. You must
@@ -1007,11 +1008,11 @@ func (c *KMS) CreateKeyRequest(input *CreateKeyInput) (req *request.Request, out
 //
 // Related operations:
 //
-//    * DescribeKey
+//   - DescribeKey
 //
-//    * ListKeys
+//   - ListKeys
 //
-//    * ScheduleKeyDeletion
+//   - ScheduleKeyDeletion
 //
 // Returns awserr.Error for service API and SDK errors. Use runtime type assertions
 // with awserr.Error's Code and Message methods to get detailed information about
@@ -1021,87 +1022,88 @@ func (c *KMS) CreateKeyRequest(input *CreateKeyInput) (req *request.Request, out
 // API operation CreateKey for usage and error information.
 //
 // Returned Error Types:
-//   * MalformedPolicyDocumentException
-//   The request was rejected because the specified policy is not syntactically
-//   or semantically correct.
 //
-//   * DependencyTimeoutException
-//   The system timed out while trying to fulfill the request. The request can
-//   be retried.
+//   - MalformedPolicyDocumentException
+//     The request was rejected because the specified policy is not syntactically
+//     or semantically correct.
 //
-//   * InvalidArnException
-//   The request was rejected because a specified ARN, or an ARN in a key policy,
-//   is not valid.
+//   - DependencyTimeoutException
+//     The system timed out while trying to fulfill the request. The request can
+//     be retried.
 //
-//   * UnsupportedOperationException
-//   The request was rejected because a specified parameter is not supported or
-//   a specified resource is not valid for this operation.
+//   - InvalidArnException
+//     The request was rejected because a specified ARN, or an ARN in a key policy,
+//     is not valid.
 //
-//   * InternalException
-//   The request was rejected because an internal exception occurred. The request
-//   can be retried.
+//   - UnsupportedOperationException
+//     The request was rejected because a specified parameter is not supported or
+//     a specified resource is not valid for this operation.
 //
-//   * LimitExceededException
-//   The request was rejected because a quota was exceeded. For more information,
-//   see Quotas (https://docs.aws.amazon.com/kms/latest/developerguide/limits.html)
-//   in the Key Management Service Developer Guide.
+//   - InternalException
+//     The request was rejected because an internal exception occurred. The request
+//     can be retried.
 //
-//   * TagException
-//   The request was rejected because one or more tags are not valid.
+//   - LimitExceededException
+//     The request was rejected because a quota was exceeded. For more information,
+//     see Quotas (https://docs.aws.amazon.com/kms/latest/developerguide/limits.html)
+//     in the Key Management Service Developer Guide.
 //
-//   * CustomKeyStoreNotFoundException
-//   The request was rejected because KMS cannot find a custom key store with
-//   the specified key store name or ID.
+//   - TagException
+//     The request was rejected because one or more tags are not valid.
 //
-//   * CustomKeyStoreInvalidStateException
-//   The request was rejected because of the ConnectionState of the custom key
-//   store. To get the ConnectionState of a custom key store, use the DescribeCustomKeyStores
-//   operation.
+//   - CustomKeyStoreNotFoundException
+//     The request was rejected because KMS cannot find a custom key store with
+//     the specified key store name or ID.
 //
-//   This exception is thrown under the following conditions:
+//   - CustomKeyStoreInvalidStateException
+//     The request was rejected because of the ConnectionState of the custom key
+//     store. To get the ConnectionState of a custom key store, use the DescribeCustomKeyStores
+//     operation.
 //
-//      * You requested the CreateKey or GenerateRandom operation in a custom
-//      key store that is not connected. These operations are valid only when
-//      the custom key store ConnectionState is CONNECTED.
+//     This exception is thrown under the following conditions:
 //
-//      * You requested the UpdateCustomKeyStore or DeleteCustomKeyStore operation
-//      on a custom key store that is not disconnected. This operation is valid
-//      only when the custom key store ConnectionState is DISCONNECTED.
+//   - You requested the CreateKey or GenerateRandom operation in a custom
+//     key store that is not connected. These operations are valid only when
+//     the custom key store ConnectionState is CONNECTED.
 //
-//      * You requested the ConnectCustomKeyStore operation on a custom key store
-//      with a ConnectionState of DISCONNECTING or FAILED. This operation is valid
-//      for all other ConnectionState values.
+//   - You requested the UpdateCustomKeyStore or DeleteCustomKeyStore operation
+//     on a custom key store that is not disconnected. This operation is valid
+//     only when the custom key store ConnectionState is DISCONNECTED.
 //
-//   * CloudHsmClusterInvalidConfigurationException
-//   The request was rejected because the associated CloudHSM cluster did not
-//   meet the configuration requirements for a custom key store.
+//   - You requested the ConnectCustomKeyStore operation on a custom key store
+//     with a ConnectionState of DISCONNECTING or FAILED. This operation is valid
+//     for all other ConnectionState values.
 //
-//      * The cluster must be configured with private subnets in at least two
-//      different Availability Zones in the Region.
+//   - CloudHsmClusterInvalidConfigurationException
+//     The request was rejected because the associated CloudHSM cluster did not
+//     meet the configuration requirements for a custom key store.
 //
-//      * The security group for the cluster (https://docs.aws.amazon.com/cloudhsm/latest/userguide/configure-sg.html)
-//      (cloudhsm-cluster-<cluster-id>-sg) must include inbound rules and outbound
-//      rules that allow TCP traffic on ports 2223-2225. The Source in the inbound
-//      rules and the Destination in the outbound rules must match the security
-//      group ID. These rules are set by default when you create the cluster.
-//      Do not delete or change them. To get information about a particular security
-//      group, use the DescribeSecurityGroups (https://docs.aws.amazon.com/AWSEC2/latest/APIReference/API_DescribeSecurityGroups.html)
-//      operation.
+//   - The cluster must be configured with private subnets in at least two
+//     different Availability Zones in the Region.
 //
-//      * The cluster must contain at least as many HSMs as the operation requires.
-//      To add HSMs, use the CloudHSM CreateHsm (https://docs.aws.amazon.com/cloudhsm/latest/APIReference/API_CreateHsm.html)
-//      operation. For the CreateCustomKeyStore, UpdateCustomKeyStore, and CreateKey
-//      operations, the CloudHSM cluster must have at least two active HSMs, each
-//      in a different Availability Zone. For the ConnectCustomKeyStore operation,
-//      the CloudHSM must contain at least one active HSM.
+//   - The security group for the cluster (https://docs.aws.amazon.com/cloudhsm/latest/userguide/configure-sg.html)
+//     (cloudhsm-cluster-<cluster-id>-sg) must include inbound rules and outbound
+//     rules that allow TCP traffic on ports 2223-2225. The Source in the inbound
+//     rules and the Destination in the outbound rules must match the security
+//     group ID. These rules are set by default when you create the cluster.
+//     Do not delete or change them. To get information about a particular security
+//     group, use the DescribeSecurityGroups (https://docs.aws.amazon.com/AWSEC2/latest/APIReference/API_DescribeSecurityGroups.html)
+//     operation.
 //
-//   For information about the requirements for an CloudHSM cluster that is associated
-//   with a custom key store, see Assemble the Prerequisites (https://docs.aws.amazon.com/kms/latest/developerguide/create-keystore.html#before-keystore)
-//   in the Key Management Service Developer Guide. For information about creating
-//   a private subnet for an CloudHSM cluster, see Create a Private Subnet (https://docs.aws.amazon.com/cloudhsm/latest/userguide/create-subnets.html)
-//   in the CloudHSM User Guide. For information about cluster security groups,
-//   see Configure a Default Security Group (https://docs.aws.amazon.com/cloudhsm/latest/userguide/configure-sg.html)
-//   in the CloudHSM User Guide .
+//   - The cluster must contain at least as many HSMs as the operation requires.
+//     To add HSMs, use the CloudHSM CreateHsm (https://docs.aws.amazon.com/cloudhsm/latest/APIReference/API_CreateHsm.html)
+//     operation. For the CreateCustomKeyStore, UpdateCustomKeyStore, and CreateKey
+//     operations, the CloudHSM cluster must have at least two active HSMs, each
+//     in a different Availability Zone. For the ConnectCustomKeyStore operation,
+//     the CloudHSM must contain at least one active HSM.
+//
+//     For information about the requirements for an CloudHSM cluster that is associated
+//     with a custom key store, see Assemble the Prerequisites (https://docs.aws.amazon.com/kms/latest/developerguide/create-keystore.html#before-keystore)
+//     in the Key Management Service Developer Guide. For information about creating
+//     a private subnet for an CloudHSM cluster, see Create a Private Subnet (https://docs.aws.amazon.com/cloudhsm/latest/userguide/create-subnets.html)
+//     in the CloudHSM User Guide. For information about cluster security groups,
+//     see Configure a Default Security Group (https://docs.aws.amazon.com/cloudhsm/latest/userguide/configure-sg.html)
+//     in the CloudHSM User Guide .
 //
 // See also, https://docs.aws.amazon.com/goto/WebAPI/kms-2014-11-01/CreateKey
 func (c *KMS) CreateKey(input *CreateKeyInput) (*CreateKeyOutput, error) {
@@ -1141,14 +1143,13 @@ const opDecrypt = "Decrypt"
 // This method is useful when you want to inject custom logic or configuration
 // into the SDK's request lifecycle. Such as custom headers, or retry logic.
 //
+//	// Example sending a request using the DecryptRequest method.
+//	req, resp := client.DecryptRequest(params)
 //
-//    // Example sending a request using the DecryptRequest method.
-//    req, resp := client.DecryptRequest(params)
-//
-//    err := req.Send()
-//    if err == nil { // resp is now filled
-//        fmt.Println(resp)
-//    }
+//	err := req.Send()
+//	if err == nil { // resp is now filled
+//	    fmt.Println(resp)
+//	}
 //
 // See also, https://docs.aws.amazon.com/goto/WebAPI/kms-2014-11-01/Decrypt
 func (c *KMS) DecryptRequest(input *DecryptInput) (req *request.Request, output *DecryptOutput) {
@@ -1172,15 +1173,15 @@ func (c *KMS) DecryptRequest(input *DecryptInput) (req *request.Request, output 
 // Decrypts ciphertext that was encrypted by a KMS key using any of the following
 // operations:
 //
-//    * Encrypt
+//   - Encrypt
 //
-//    * GenerateDataKey
+//   - GenerateDataKey
 //
-//    * GenerateDataKeyPair
+//   - GenerateDataKeyPair
 //
-//    * GenerateDataKeyWithoutPlaintext
+//   - GenerateDataKeyWithoutPlaintext
 //
-//    * GenerateDataKeyPairWithoutPlaintext
+//   - GenerateDataKeyPairWithoutPlaintext
 //
 // You can use this operation to decrypt ciphertext that was encrypted under
 // a symmetric encryption KMS key or an asymmetric encryption KMS key. When
@@ -1236,13 +1237,13 @@ func (c *KMS) DecryptRequest(input *DecryptInput) (req *request.Request, output 
 //
 // Related operations:
 //
-//    * Encrypt
+//   - Encrypt
 //
-//    * GenerateDataKey
+//   - GenerateDataKey
 //
-//    * GenerateDataKeyPair
+//   - GenerateDataKeyPair
 //
-//    * ReEncrypt
+//   - ReEncrypt
 //
 // Returns awserr.Error for service API and SDK errors. Use runtime type assertions
 // with awserr.Error's Code and Message methods to get detailed information about
@@ -1252,66 +1253,67 @@ func (c *KMS) DecryptRequest(input *DecryptInput) (req *request.Request, output 
 // API operation Decrypt for usage and error information.
 //
 // Returned Error Types:
-//   * NotFoundException
-//   The request was rejected because the specified entity or resource could not
-//   be found.
 //
-//   * DisabledException
-//   The request was rejected because the specified KMS key is not enabled.
+//   - NotFoundException
+//     The request was rejected because the specified entity or resource could not
+//     be found.
 //
-//   * InvalidCiphertextException
-//   From the Decrypt or ReEncrypt operation, the request was rejected because
-//   the specified ciphertext, or additional authenticated data incorporated into
-//   the ciphertext, such as the encryption context, is corrupted, missing, or
-//   otherwise invalid.
+//   - DisabledException
+//     The request was rejected because the specified KMS key is not enabled.
 //
-//   From the ImportKeyMaterial operation, the request was rejected because KMS
-//   could not decrypt the encrypted (wrapped) key material.
+//   - InvalidCiphertextException
+//     From the Decrypt or ReEncrypt operation, the request was rejected because
+//     the specified ciphertext, or additional authenticated data incorporated into
+//     the ciphertext, such as the encryption context, is corrupted, missing, or
+//     otherwise invalid.
 //
-//   * KeyUnavailableException
-//   The request was rejected because the specified KMS key was not available.
-//   You can retry the request.
+//     From the ImportKeyMaterial operation, the request was rejected because KMS
+//     could not decrypt the encrypted (wrapped) key material.
 //
-//   * IncorrectKeyException
-//   The request was rejected because the specified KMS key cannot decrypt the
-//   data. The KeyId in a Decrypt request and the SourceKeyId in a ReEncrypt request
-//   must identify the same KMS key that was used to encrypt the ciphertext.
+//   - KeyUnavailableException
+//     The request was rejected because the specified KMS key was not available.
+//     You can retry the request.
 //
-//   * InvalidKeyUsageException
-//   The request was rejected for one of the following reasons:
+//   - IncorrectKeyException
+//     The request was rejected because the specified KMS key cannot decrypt the
+//     data. The KeyId in a Decrypt request and the SourceKeyId in a ReEncrypt request
+//     must identify the same KMS key that was used to encrypt the ciphertext.
 //
-//      * The KeyUsage value of the KMS key is incompatible with the API operation.
+//   - InvalidKeyUsageException
+//     The request was rejected for one of the following reasons:
 //
-//      * The encryption algorithm or signing algorithm specified for the operation
-//      is incompatible with the type of key material in the KMS key (KeySpec).
+//   - The KeyUsage value of the KMS key is incompatible with the API operation.
 //
-//   For encrypting, decrypting, re-encrypting, and generating data keys, the
-//   KeyUsage must be ENCRYPT_DECRYPT. For signing and verifying messages, the
-//   KeyUsage must be SIGN_VERIFY. For generating and verifying message authentication
-//   codes (MACs), the KeyUsage must be GENERATE_VERIFY_MAC. To find the KeyUsage
-//   of a KMS key, use the DescribeKey operation.
+//   - The encryption algorithm or signing algorithm specified for the operation
+//     is incompatible with the type of key material in the KMS key (KeySpec).
 //
-//   To find the encryption or signing algorithms supported for a particular KMS
-//   key, use the DescribeKey operation.
+//     For encrypting, decrypting, re-encrypting, and generating data keys, the
+//     KeyUsage must be ENCRYPT_DECRYPT. For signing and verifying messages, the
+//     KeyUsage must be SIGN_VERIFY. For generating and verifying message authentication
+//     codes (MACs), the KeyUsage must be GENERATE_VERIFY_MAC. To find the KeyUsage
+//     of a KMS key, use the DescribeKey operation.
 //
-//   * DependencyTimeoutException
-//   The system timed out while trying to fulfill the request. The request can
-//   be retried.
+//     To find the encryption or signing algorithms supported for a particular KMS
+//     key, use the DescribeKey operation.
 //
-//   * InvalidGrantTokenException
-//   The request was rejected because the specified grant token is not valid.
+//   - DependencyTimeoutException
+//     The system timed out while trying to fulfill the request. The request can
+//     be retried.
 //
-//   * InternalException
-//   The request was rejected because an internal exception occurred. The request
-//   can be retried.
+//   - InvalidGrantTokenException
+//     The request was rejected because the specified grant token is not valid.
 //
-//   * InvalidStateException
-//   The request was rejected because the state of the specified resource is not
-//   valid for this request.
+//   - InternalException
+//     The request was rejected because an internal exception occurred. The request
+//     can be retried.
 //
-//   For more information about how key state affects the use of a KMS key, see
-//   Key states of KMS keys (https://docs.aws.amazon.com/kms/latest/developerguide/key-state.html)
-//   in the Key Management Service Developer Guide .
+//   - InvalidStateException
+//     The request was rejected because the state of the specified resource is not
+//     valid for this request.
+//
+//     For more information about how key state affects the use of a KMS key, see
+//     Key states of KMS keys (https://docs.aws.amazon.com/kms/latest/developerguide/key-state.html)
+//     in the Key Management Service Developer Guide .
 //
 // See also, https://docs.aws.amazon.com/goto/WebAPI/kms-2014-11-01/Decrypt
 func (c *KMS) Decrypt(input *DecryptInput) (*DecryptOutput, error) {
@@ -1351,14 +1353,13 @@ const opDeleteAlias = "DeleteAlias"
 // This method is useful when you want to inject custom logic or configuration
 // into the SDK's request lifecycle. Such as custom headers, or retry logic.
 //
+//	// Example sending a request using the DeleteAliasRequest method.
+//	req, resp := client.DeleteAliasRequest(params)
 //
-//    // Example sending a request using the DeleteAliasRequest method.
-//    req, resp := client.DeleteAliasRequest(params)
-//
-//    err := req.Send()
-//    if err == nil { // resp is now filled
-//        fmt.Println(resp)
-//    }
+//	err := req.Send()
+//	if err == nil { // resp is now filled
+//	    fmt.Println(resp)
+//	}
 //
 // See also, https://docs.aws.amazon.com/goto/WebAPI/kms-2014-11-01/DeleteAlias
 func (c *KMS) DeleteAliasRequest(input *DeleteAliasInput) (req *request.Request, output *DeleteAliasOutput) {
@@ -1400,22 +1401,22 @@ func (c *KMS) DeleteAliasRequest(input *DeleteAliasInput) (req *request.Request,
 //
 // Required permissions
 //
-//    * kms:DeleteAlias (https://docs.aws.amazon.com/kms/latest/developerguide/kms-api-permissions-reference.html)
-//    on the alias (IAM policy).
+//   - kms:DeleteAlias (https://docs.aws.amazon.com/kms/latest/developerguide/kms-api-permissions-reference.html)
+//     on the alias (IAM policy).
 //
-//    * kms:DeleteAlias (https://docs.aws.amazon.com/kms/latest/developerguide/kms-api-permissions-reference.html)
-//    on the KMS key (key policy).
+//   - kms:DeleteAlias (https://docs.aws.amazon.com/kms/latest/developerguide/kms-api-permissions-reference.html)
+//     on the KMS key (key policy).
 //
 // For details, see Controlling access to aliases (https://docs.aws.amazon.com/kms/latest/developerguide/kms-alias.html#alias-access)
 // in the Key Management Service Developer Guide.
 //
 // Related operations:
 //
-//    * CreateAlias
+//   - CreateAlias
 //
-//    * ListAliases
+//   - ListAliases
 //
-//    * UpdateAlias
+//   - UpdateAlias
 //
 // Returns awserr.Error for service API and SDK errors. Use runtime type assertions
 // with awserr.Error's Code and Message methods to get detailed information about
@@ -1425,25 +1426,26 @@ func (c *KMS) DeleteAliasRequest(input *DeleteAliasInput) (req *request.Request,
 // API operation DeleteAlias for usage and error information.
 //
 // Returned Error Types:
-//   * DependencyTimeoutException
-//   The system timed out while trying to fulfill the request. The request can
-//   be retried.
 //
-//   * NotFoundException
-//   The request was rejected because the specified entity or resource could not
-//   be found.
+//   - DependencyTimeoutException
+//     The system timed out while trying to fulfill the request. The request can
+//     be retried.
 //
-//   * InternalException
-//   The request was rejected because an internal exception occurred. The request
-//   can be retried.
+//   - NotFoundException
+//     The request was rejected because the specified entity or resource could not
+//     be found.
 //
-//   * InvalidStateException
-//   The request was rejected because the state of the specified resource is not
-//   valid for this request.
+//   - InternalException
+//     The request was rejected because an internal exception occurred. The request
+//     can be retried.
 //
-//   For more information about how key state affects the use of a KMS key, see
-//   Key states of KMS keys (https://docs.aws.amazon.com/kms/latest/developerguide/key-state.html)
-//   in the Key Management Service Developer Guide .
+//   - InvalidStateException
+//     The request was rejected because the state of the specified resource is not
+//     valid for this request.
+//
+//     For more information about how key state affects the use of a KMS key, see
+//     Key states of KMS keys (https://docs.aws.amazon.com/kms/latest/developerguide/key-state.html)
+//     in the Key Management Service Developer Guide .
 //
 // See also, https://docs.aws.amazon.com/goto/WebAPI/kms-2014-11-01/DeleteAlias
 func (c *KMS) DeleteAlias(input *DeleteAliasInput) (*DeleteAliasOutput, error) {
@@ -1483,14 +1485,13 @@ const opDeleteCustomKeyStore = "DeleteCustomKeyStore"
 // This method is useful when you want to inject custom logic or configuration
 // into the SDK's request lifecycle. Such as custom headers, or retry logic.
 //
+//	// Example sending a request using the DeleteCustomKeyStoreRequest method.
+//	req, resp := client.DeleteCustomKeyStoreRequest(params)
 //
-//    // Example sending a request using the DeleteCustomKeyStoreRequest method.
-//    req, resp := client.DeleteCustomKeyStoreRequest(params)
-//
-//    err := req.Send()
-//    if err == nil { // resp is now filled
-//        fmt.Println(resp)
-//    }
+//	err := req.Send()
+//	if err == nil { // resp is now filled
+//	    fmt.Println(resp)
+//	}
 //
 // See also, https://docs.aws.amazon.com/goto/WebAPI/kms-2014-11-01/DeleteCustomKeyStore
 func (c *KMS) DeleteCustomKeyStoreRequest(input *DeleteCustomKeyStoreInput) (req *request.Request, output *DeleteCustomKeyStoreOutput) {
@@ -1516,7 +1517,7 @@ func (c *KMS) DeleteCustomKeyStoreRequest(input *DeleteCustomKeyStoreInput) (req
 // This operation does not delete the CloudHSM cluster that is associated with
 // the custom key store, or affect any users or keys in the cluster.
 //
-// The custom key store that you delete cannot contain any KMS KMS keys (https://docs.aws.amazon.com/kms/latest/developerguide/concepts.html#kms_keys).
+// The custom key store that you delete cannot contain any KMS keys (https://docs.aws.amazon.com/kms/latest/developerguide/concepts.html#kms_keys).
 // Before deleting the key store, verify that you will never need to use any
 // of the KMS keys in the key store for any cryptographic operations (https://docs.aws.amazon.com/kms/latest/developerguide/concepts.html#cryptographic-operations).
 // Then, use ScheduleKeyDeletion to delete the KMS keys from the key store.
@@ -1536,7 +1537,7 @@ func (c *KMS) DeleteCustomKeyStoreRequest(input *DeleteCustomKeyStoreInput) (req
 //
 // If the operation succeeds, it returns a JSON object with no properties.
 //
-// This operation is part of the Custom Key Store feature (https://docs.aws.amazon.com/kms/latest/developerguide/custom-key-store-overview.html)
+// This operation is part of the custom key store feature (https://docs.aws.amazon.com/kms/latest/developerguide/custom-key-store-overview.html)
 // feature in KMS, which combines the convenience and extensive integration
 // of KMS with the isolation and control of a single-tenant key store.
 //
@@ -1548,15 +1549,15 @@ func (c *KMS) DeleteCustomKeyStoreRequest(input *DeleteCustomKeyStoreInput) (req
 //
 // Related operations:
 //
-//    * ConnectCustomKeyStore
+//   - ConnectCustomKeyStore
 //
-//    * CreateCustomKeyStore
+//   - CreateCustomKeyStore
 //
-//    * DescribeCustomKeyStores
+//   - DescribeCustomKeyStores
 //
-//    * DisconnectCustomKeyStore
+//   - DisconnectCustomKeyStore
 //
-//    * UpdateCustomKeyStore
+//   - UpdateCustomKeyStore
 //
 // Returns awserr.Error for service API and SDK errors. Use runtime type assertions
 // with awserr.Error's Code and Message methods to get detailed information about
@@ -1566,38 +1567,39 @@ func (c *KMS) DeleteCustomKeyStoreRequest(input *DeleteCustomKeyStoreInput) (req
 // API operation DeleteCustomKeyStore for usage and error information.
 //
 // Returned Error Types:
-//   * CustomKeyStoreHasCMKsException
-//   The request was rejected because the custom key store contains KMS keys.
-//   After verifying that you do not need to use the KMS keys, use the ScheduleKeyDeletion
-//   operation to delete the KMS keys. After they are deleted, you can delete
-//   the custom key store.
 //
-//   * CustomKeyStoreInvalidStateException
-//   The request was rejected because of the ConnectionState of the custom key
-//   store. To get the ConnectionState of a custom key store, use the DescribeCustomKeyStores
-//   operation.
+//   - CustomKeyStoreHasCMKsException
+//     The request was rejected because the custom key store contains KMS keys.
+//     After verifying that you do not need to use the KMS keys, use the ScheduleKeyDeletion
+//     operation to delete the KMS keys. After they are deleted, you can delete
+//     the custom key store.
 //
-//   This exception is thrown under the following conditions:
+//   - CustomKeyStoreInvalidStateException
+//     The request was rejected because of the ConnectionState of the custom key
+//     store. To get the ConnectionState of a custom key store, use the DescribeCustomKeyStores
+//     operation.
 //
-//      * You requested the CreateKey or GenerateRandom operation in a custom
-//      key store that is not connected. These operations are valid only when
-//      the custom key store ConnectionState is CONNECTED.
+//     This exception is thrown under the following conditions:
 //
-//      * You requested the UpdateCustomKeyStore or DeleteCustomKeyStore operation
-//      on a custom key store that is not disconnected. This operation is valid
-//      only when the custom key store ConnectionState is DISCONNECTED.
+//   - You requested the CreateKey or GenerateRandom operation in a custom
+//     key store that is not connected. These operations are valid only when
+//     the custom key store ConnectionState is CONNECTED.
 //
-//      * You requested the ConnectCustomKeyStore operation on a custom key store
-//      with a ConnectionState of DISCONNECTING or FAILED. This operation is valid
-//      for all other ConnectionState values.
+//   - You requested the UpdateCustomKeyStore or DeleteCustomKeyStore operation
+//     on a custom key store that is not disconnected. This operation is valid
+//     only when the custom key store ConnectionState is DISCONNECTED.
 //
-//   * CustomKeyStoreNotFoundException
-//   The request was rejected because KMS cannot find a custom key store with
-//   the specified key store name or ID.
+//   - You requested the ConnectCustomKeyStore operation on a custom key store
+//     with a ConnectionState of DISCONNECTING or FAILED. This operation is valid
+//     for all other ConnectionState values.
 //
-//   * InternalException
-//   The request was rejected because an internal exception occurred. The request
-//   can be retried.
+//   - CustomKeyStoreNotFoundException
+//     The request was rejected because KMS cannot find a custom key store with
+//     the specified key store name or ID.
+//
+//   - InternalException
+//     The request was rejected because an internal exception occurred. The request
+//     can be retried.
 //
 // See also, https://docs.aws.amazon.com/goto/WebAPI/kms-2014-11-01/DeleteCustomKeyStore
 func (c *KMS) DeleteCustomKeyStore(input *DeleteCustomKeyStoreInput) (*DeleteCustomKeyStoreOutput, error) {
@@ -1637,14 +1639,13 @@ const opDeleteImportedKeyMaterial = "DeleteImportedKeyMaterial"
 // This method is useful when you want to inject custom logic or configuration
 // into the SDK's request lifecycle. Such as custom headers, or retry logic.
 //
+//	// Example sending a request using the DeleteImportedKeyMaterialRequest method.
+//	req, resp := client.DeleteImportedKeyMaterialRequest(params)
 //
-//    // Example sending a request using the DeleteImportedKeyMaterialRequest method.
-//    req, resp := client.DeleteImportedKeyMaterialRequest(params)
-//
-//    err := req.Send()
-//    if err == nil { // resp is now filled
-//        fmt.Println(resp)
-//    }
+//	err := req.Send()
+//	if err == nil { // resp is now filled
+//	    fmt.Println(resp)
+//	}
 //
 // See also, https://docs.aws.amazon.com/goto/WebAPI/kms-2014-11-01/DeleteImportedKeyMaterial
 func (c *KMS) DeleteImportedKeyMaterialRequest(input *DeleteImportedKeyMaterialInput) (req *request.Request, output *DeleteImportedKeyMaterialOutput) {
@@ -1690,9 +1691,9 @@ func (c *KMS) DeleteImportedKeyMaterialRequest(input *DeleteImportedKeyMaterialI
 //
 // Related operations:
 //
-//    * GetParametersForImport
+//   - GetParametersForImport
 //
-//    * ImportKeyMaterial
+//   - ImportKeyMaterial
 //
 // Returns awserr.Error for service API and SDK errors. Use runtime type assertions
 // with awserr.Error's Code and Message methods to get detailed information about
@@ -1702,33 +1703,34 @@ func (c *KMS) DeleteImportedKeyMaterialRequest(input *DeleteImportedKeyMaterialI
 // API operation DeleteImportedKeyMaterial for usage and error information.
 //
 // Returned Error Types:
-//   * InvalidArnException
-//   The request was rejected because a specified ARN, or an ARN in a key policy,
-//   is not valid.
 //
-//   * UnsupportedOperationException
-//   The request was rejected because a specified parameter is not supported or
-//   a specified resource is not valid for this operation.
+//   - InvalidArnException
+//     The request was rejected because a specified ARN, or an ARN in a key policy,
+//     is not valid.
 //
-//   * DependencyTimeoutException
-//   The system timed out while trying to fulfill the request. The request can
-//   be retried.
+//   - UnsupportedOperationException
+//     The request was rejected because a specified parameter is not supported or
+//     a specified resource is not valid for this operation.
 //
-//   * NotFoundException
-//   The request was rejected because the specified entity or resource could not
-//   be found.
+//   - DependencyTimeoutException
+//     The system timed out while trying to fulfill the request. The request can
+//     be retried.
 //
-//   * InternalException
-//   The request was rejected because an internal exception occurred. The request
-//   can be retried.
+//   - NotFoundException
+//     The request was rejected because the specified entity or resource could not
+//     be found.
 //
-//   * InvalidStateException
-//   The request was rejected because the state of the specified resource is not
-//   valid for this request.
+//   - InternalException
+//     The request was rejected because an internal exception occurred. The request
+//     can be retried.
 //
-//   For more information about how key state affects the use of a KMS key, see
-//   Key states of KMS keys (https://docs.aws.amazon.com/kms/latest/developerguide/key-state.html)
-//   in the Key Management Service Developer Guide .
+//   - InvalidStateException
+//     The request was rejected because the state of the specified resource is not
+//     valid for this request.
+//
+//     For more information about how key state affects the use of a KMS key, see
+//     Key states of KMS keys (https://docs.aws.amazon.com/kms/latest/developerguide/key-state.html)
+//     in the Key Management Service Developer Guide .
 //
 // See also, https://docs.aws.amazon.com/goto/WebAPI/kms-2014-11-01/DeleteImportedKeyMaterial
 func (c *KMS) DeleteImportedKeyMaterial(input *DeleteImportedKeyMaterialInput) (*DeleteImportedKeyMaterialOutput, error) {
@@ -1768,14 +1770,13 @@ const opDescribeCustomKeyStores = "DescribeCustomKeyStores"
 // This method is useful when you want to inject custom logic or configuration
 // into the SDK's request lifecycle. Such as custom headers, or retry logic.
 //
+//	// Example sending a request using the DescribeCustomKeyStoresRequest method.
+//	req, resp := client.DescribeCustomKeyStoresRequest(params)
 //
-//    // Example sending a request using the DescribeCustomKeyStoresRequest method.
-//    req, resp := client.DescribeCustomKeyStoresRequest(params)
-//
-//    err := req.Send()
-//    if err == nil { // resp is now filled
-//        fmt.Println(resp)
-//    }
+//	err := req.Send()
+//	if err == nil { // resp is now filled
+//	    fmt.Println(resp)
+//	}
 //
 // See also, https://docs.aws.amazon.com/goto/WebAPI/kms-2014-11-01/DescribeCustomKeyStores
 func (c *KMS) DescribeCustomKeyStoresRequest(input *DescribeCustomKeyStoresInput) (req *request.Request, output *DescribeCustomKeyStoresOutput) {
@@ -1783,6 +1784,12 @@ func (c *KMS) DescribeCustomKeyStoresRequest(input *DescribeCustomKeyStoresInput
 		Name:       opDescribeCustomKeyStores,
 		HTTPMethod: "POST",
 		HTTPPath:   "/",
+		Paginator: &request.Paginator{
+			InputTokens:     []string{"Marker"},
+			OutputTokens:    []string{"NextMarker"},
+			LimitToken:      "Limit",
+			TruncationToken: "Truncated",
+		},
 	}
 
 	if input == nil {
@@ -1799,7 +1806,7 @@ func (c *KMS) DescribeCustomKeyStoresRequest(input *DescribeCustomKeyStoresInput
 // Gets information about custom key stores (https://docs.aws.amazon.com/kms/latest/developerguide/custom-key-store-overview.html)
 // in the account and Region.
 //
-// This operation is part of the Custom Key Store feature (https://docs.aws.amazon.com/kms/latest/developerguide/custom-key-store-overview.html)
+// This operation is part of the custom key store feature (https://docs.aws.amazon.com/kms/latest/developerguide/custom-key-store-overview.html)
 // feature in KMS, which combines the convenience and extensive integration
 // of KMS with the isolation and control of a single-tenant key store.
 //
@@ -1832,15 +1839,15 @@ func (c *KMS) DescribeCustomKeyStoresRequest(input *DescribeCustomKeyStoresInput
 //
 // Related operations:
 //
-//    * ConnectCustomKeyStore
+//   - ConnectCustomKeyStore
 //
-//    * CreateCustomKeyStore
+//   - CreateCustomKeyStore
 //
-//    * DeleteCustomKeyStore
+//   - DeleteCustomKeyStore
 //
-//    * DisconnectCustomKeyStore
+//   - DisconnectCustomKeyStore
 //
-//    * UpdateCustomKeyStore
+//   - UpdateCustomKeyStore
 //
 // Returns awserr.Error for service API and SDK errors. Use runtime type assertions
 // with awserr.Error's Code and Message methods to get detailed information about
@@ -1850,17 +1857,18 @@ func (c *KMS) DescribeCustomKeyStoresRequest(input *DescribeCustomKeyStoresInput
 // API operation DescribeCustomKeyStores for usage and error information.
 //
 // Returned Error Types:
-//   * CustomKeyStoreNotFoundException
-//   The request was rejected because KMS cannot find a custom key store with
-//   the specified key store name or ID.
 //
-//   * InvalidMarkerException
-//   The request was rejected because the marker that specifies where pagination
-//   should next begin is not valid.
+//   - CustomKeyStoreNotFoundException
+//     The request was rejected because KMS cannot find a custom key store with
+//     the specified key store name or ID.
 //
-//   * InternalException
-//   The request was rejected because an internal exception occurred. The request
-//   can be retried.
+//   - InvalidMarkerException
+//     The request was rejected because the marker that specifies where pagination
+//     should next begin is not valid.
+//
+//   - InternalException
+//     The request was rejected because an internal exception occurred. The request
+//     can be retried.
 //
 // See also, https://docs.aws.amazon.com/goto/WebAPI/kms-2014-11-01/DescribeCustomKeyStores
 func (c *KMS) DescribeCustomKeyStores(input *DescribeCustomKeyStoresInput) (*DescribeCustomKeyStoresOutput, error) {
@@ -1884,6 +1892,57 @@ func (c *KMS) DescribeCustomKeyStoresWithContext(ctx aws.Context, input *Describ
 	return out, req.Send()
 }
 
+// DescribeCustomKeyStoresPages iterates over the pages of a DescribeCustomKeyStores operation,
+// calling the "fn" function with the response data for each page. To stop
+// iterating, return false from the fn function.
+//
+// See DescribeCustomKeyStores method for more information on how to use this operation.
+//
+// Note: This operation can generate multiple requests to a service.
+//
+//	// Example iterating over at most 3 pages of a DescribeCustomKeyStores operation.
+//	pageNum := 0
+//	err := client.DescribeCustomKeyStoresPages(params,
+//	    func(page *kms.DescribeCustomKeyStoresOutput, lastPage bool) bool {
+//	        pageNum++
+//	        fmt.Println(page)
+//	        return pageNum <= 3
+//	    })
+func (c *KMS) DescribeCustomKeyStoresPages(input *DescribeCustomKeyStoresInput, fn func(*DescribeCustomKeyStoresOutput, bool) bool) error {
+	return c.DescribeCustomKeyStoresPagesWithContext(aws.BackgroundContext(), input, fn)
+}
+
+// DescribeCustomKeyStoresPagesWithContext same as DescribeCustomKeyStoresPages except
+// it takes a Context and allows setting request options on the pages.
+//
+// The context must be non-nil and will be used for request cancellation. If
+// the context is nil a panic will occur. In the future the SDK may create
+// sub-contexts for http.Requests. See https://golang.org/pkg/context/
+// for more information on using Contexts.
+func (c *KMS) DescribeCustomKeyStoresPagesWithContext(ctx aws.Context, input *DescribeCustomKeyStoresInput, fn func(*DescribeCustomKeyStoresOutput, bool) bool, opts ...request.Option) error {
+	p := request.Pagination{
+		NewRequest: func() (*request.Request, error) {
+			var inCpy *DescribeCustomKeyStoresInput
+			if input != nil {
+				tmp := *input
+				inCpy = &tmp
+			}
+			req, _ := c.DescribeCustomKeyStoresRequest(inCpy)
+			req.SetContext(ctx)
+			req.ApplyOptions(opts...)
+			return req, nil
+		},
+	}
+
+	for p.Next() {
+		if !fn(p.Page().(*DescribeCustomKeyStoresOutput), !p.HasNextPage()) {
+			break
+		}
+	}
+
+	return p.Err()
+}
+
 const opDescribeKey = "DescribeKey"
 
 // DescribeKeyRequest generates a "aws/request.Request" representing the
@@ -1900,14 +1959,13 @@ const opDescribeKey = "DescribeKey"
 // This method is useful when you want to inject custom logic or configuration
 // into the SDK's request lifecycle. Such as custom headers, or retry logic.
 //
+//	// Example sending a request using the DescribeKeyRequest method.
+//	req, resp := client.DescribeKeyRequest(params)
 //
-//    // Example sending a request using the DescribeKeyRequest method.
-//    req, resp := client.DescribeKeyRequest(params)
-//
-//    err := req.Send()
-//    if err == nil { // resp is now filled
-//        fmt.Println(resp)
-//    }
+//	err := req.Send()
+//	if err == nil { // resp is now filled
+//	    fmt.Println(resp)
+//	}
 //
 // See also, https://docs.aws.amazon.com/goto/WebAPI/kms-2014-11-01/DescribeKey
 func (c *KMS) DescribeKeyRequest(input *DescribeKeyInput) (req *request.Request, output *DescribeKeyOutput) {
@@ -1944,18 +2002,18 @@ func (c *KMS) DescribeKeyRequest(input *DescribeKeyInput) (req *request.Request,
 //
 // DescribeKey does not return the following information:
 //
-//    * Aliases associated with the KMS key. To get this information, use ListAliases.
+//   - Aliases associated with the KMS key. To get this information, use ListAliases.
 //
-//    * Whether automatic key rotation is enabled on the KMS key. To get this
-//    information, use GetKeyRotationStatus. Also, some key states prevent a
-//    KMS key from being automatically rotated. For details, see How Automatic
-//    Key Rotation Works (https://docs.aws.amazon.com/kms/latest/developerguide/rotate-keys.html#rotate-keys-how-it-works)
-//    in Key Management Service Developer Guide.
+//   - Whether automatic key rotation is enabled on the KMS key. To get this
+//     information, use GetKeyRotationStatus. Also, some key states prevent a
+//     KMS key from being automatically rotated. For details, see How Automatic
+//     Key Rotation Works (https://docs.aws.amazon.com/kms/latest/developerguide/rotate-keys.html#rotate-keys-how-it-works)
+//     in the Key Management Service Developer Guide.
 //
-//    * Tags on the KMS key. To get this information, use ListResourceTags.
+//   - Tags on the KMS key. To get this information, use ListResourceTags.
 //
-//    * Key policies and grants on the KMS key. To get this information, use
-//    GetKeyPolicy and ListGrants.
+//   - Key policies and grants on the KMS key. To get this information, use
+//     GetKeyPolicy and ListGrants.
 //
 // In general, DescribeKey is a non-mutating operation. It returns data about
 // KMS keys, but doesn't change them. However, Amazon Web Services services
@@ -1971,19 +2029,19 @@ func (c *KMS) DescribeKeyRequest(input *DescribeKeyInput) (req *request.Request,
 //
 // Related operations:
 //
-//    * GetKeyPolicy
+//   - GetKeyPolicy
 //
-//    * GetKeyRotationStatus
+//   - GetKeyRotationStatus
 //
-//    * ListAliases
+//   - ListAliases
 //
-//    * ListGrants
+//   - ListGrants
 //
-//    * ListKeys
+//   - ListKeys
 //
-//    * ListResourceTags
+//   - ListResourceTags
 //
-//    * ListRetirableGrants
+//   - ListRetirableGrants
 //
 // Returns awserr.Error for service API and SDK errors. Use runtime type assertions
 // with awserr.Error's Code and Message methods to get detailed information about
@@ -1993,21 +2051,22 @@ func (c *KMS) DescribeKeyRequest(input *DescribeKeyInput) (req *request.Request,
 // API operation DescribeKey for usage and error information.
 //
 // Returned Error Types:
-//   * NotFoundException
-//   The request was rejected because the specified entity or resource could not
-//   be found.
 //
-//   * InvalidArnException
-//   The request was rejected because a specified ARN, or an ARN in a key policy,
-//   is not valid.
+//   - NotFoundException
+//     The request was rejected because the specified entity or resource could not
+//     be found.
 //
-//   * DependencyTimeoutException
-//   The system timed out while trying to fulfill the request. The request can
-//   be retried.
+//   - InvalidArnException
+//     The request was rejected because a specified ARN, or an ARN in a key policy,
+//     is not valid.
 //
-//   * InternalException
-//   The request was rejected because an internal exception occurred. The request
-//   can be retried.
+//   - DependencyTimeoutException
+//     The system timed out while trying to fulfill the request. The request can
+//     be retried.
+//
+//   - InternalException
+//     The request was rejected because an internal exception occurred. The request
+//     can be retried.
 //
 // See also, https://docs.aws.amazon.com/goto/WebAPI/kms-2014-11-01/DescribeKey
 func (c *KMS) DescribeKey(input *DescribeKeyInput) (*DescribeKeyOutput, error) {
@@ -2047,14 +2106,13 @@ const opDisableKey = "DisableKey"
 // This method is useful when you want to inject custom logic or configuration
 // into the SDK's request lifecycle. Such as custom headers, or retry logic.
 //
+//	// Example sending a request using the DisableKeyRequest method.
+//	req, resp := client.DisableKeyRequest(params)
 //
-//    // Example sending a request using the DisableKeyRequest method.
-//    req, resp := client.DisableKeyRequest(params)
-//
-//    err := req.Send()
-//    if err == nil { // resp is now filled
-//        fmt.Println(resp)
-//    }
+//	err := req.Send()
+//	if err == nil { // resp is now filled
+//	    fmt.Println(resp)
+//	}
 //
 // See also, https://docs.aws.amazon.com/goto/WebAPI/kms-2014-11-01/DisableKey
 func (c *KMS) DisableKeyRequest(input *DisableKeyInput) (req *request.Request, output *DisableKeyOutput) {
@@ -2103,29 +2161,30 @@ func (c *KMS) DisableKeyRequest(input *DisableKeyInput) (req *request.Request, o
 // API operation DisableKey for usage and error information.
 //
 // Returned Error Types:
-//   * NotFoundException
-//   The request was rejected because the specified entity or resource could not
-//   be found.
 //
-//   * InvalidArnException
-//   The request was rejected because a specified ARN, or an ARN in a key policy,
-//   is not valid.
+//   - NotFoundException
+//     The request was rejected because the specified entity or resource could not
+//     be found.
 //
-//   * DependencyTimeoutException
-//   The system timed out while trying to fulfill the request. The request can
-//   be retried.
+//   - InvalidArnException
+//     The request was rejected because a specified ARN, or an ARN in a key policy,
+//     is not valid.
 //
-//   * InternalException
-//   The request was rejected because an internal exception occurred. The request
-//   can be retried.
+//   - DependencyTimeoutException
+//     The system timed out while trying to fulfill the request. The request can
+//     be retried.
 //
-//   * InvalidStateException
-//   The request was rejected because the state of the specified resource is not
-//   valid for this request.
+//   - InternalException
+//     The request was rejected because an internal exception occurred. The request
+//     can be retried.
 //
-//   For more information about how key state affects the use of a KMS key, see
-//   Key states of KMS keys (https://docs.aws.amazon.com/kms/latest/developerguide/key-state.html)
-//   in the Key Management Service Developer Guide .
+//   - InvalidStateException
+//     The request was rejected because the state of the specified resource is not
+//     valid for this request.
+//
+//     For more information about how key state affects the use of a KMS key, see
+//     Key states of KMS keys (https://docs.aws.amazon.com/kms/latest/developerguide/key-state.html)
+//     in the Key Management Service Developer Guide .
 //
 // See also, https://docs.aws.amazon.com/goto/WebAPI/kms-2014-11-01/DisableKey
 func (c *KMS) DisableKey(input *DisableKeyInput) (*DisableKeyOutput, error) {
@@ -2165,14 +2224,13 @@ const opDisableKeyRotation = "DisableKeyRotation"
 // This method is useful when you want to inject custom logic or configuration
 // into the SDK's request lifecycle. Such as custom headers, or retry logic.
 //
+//	// Example sending a request using the DisableKeyRotationRequest method.
+//	req, resp := client.DisableKeyRotationRequest(params)
 //
-//    // Example sending a request using the DisableKeyRotationRequest method.
-//    req, resp := client.DisableKeyRotationRequest(params)
-//
-//    err := req.Send()
-//    if err == nil { // resp is now filled
-//        fmt.Println(resp)
-//    }
+//	err := req.Send()
+//	if err == nil { // resp is now filled
+//	    fmt.Println(resp)
+//	}
 //
 // See also, https://docs.aws.amazon.com/goto/WebAPI/kms-2014-11-01/DisableKeyRotation
 func (c *KMS) DisableKeyRotationRequest(input *DisableKeyRotationInput) (req *request.Request, output *DisableKeyRotationOutput) {
@@ -2228,9 +2286,9 @@ func (c *KMS) DisableKeyRotationRequest(input *DisableKeyRotationInput) (req *re
 //
 // Related operations:
 //
-//    * EnableKeyRotation
+//   - EnableKeyRotation
 //
-//    * GetKeyRotationStatus
+//   - GetKeyRotationStatus
 //
 // Returns awserr.Error for service API and SDK errors. Use runtime type assertions
 // with awserr.Error's Code and Message methods to get detailed information about
@@ -2240,36 +2298,37 @@ func (c *KMS) DisableKeyRotationRequest(input *DisableKeyRotationInput) (req *re
 // API operation DisableKeyRotation for usage and error information.
 //
 // Returned Error Types:
-//   * NotFoundException
-//   The request was rejected because the specified entity or resource could not
-//   be found.
 //
-//   * DisabledException
-//   The request was rejected because the specified KMS key is not enabled.
+//   - NotFoundException
+//     The request was rejected because the specified entity or resource could not
+//     be found.
 //
-//   * InvalidArnException
-//   The request was rejected because a specified ARN, or an ARN in a key policy,
-//   is not valid.
+//   - DisabledException
+//     The request was rejected because the specified KMS key is not enabled.
 //
-//   * DependencyTimeoutException
-//   The system timed out while trying to fulfill the request. The request can
-//   be retried.
+//   - InvalidArnException
+//     The request was rejected because a specified ARN, or an ARN in a key policy,
+//     is not valid.
 //
-//   * InternalException
-//   The request was rejected because an internal exception occurred. The request
-//   can be retried.
+//   - DependencyTimeoutException
+//     The system timed out while trying to fulfill the request. The request can
+//     be retried.
 //
-//   * InvalidStateException
-//   The request was rejected because the state of the specified resource is not
-//   valid for this request.
+//   - InternalException
+//     The request was rejected because an internal exception occurred. The request
+//     can be retried.
 //
-//   For more information about how key state affects the use of a KMS key, see
-//   Key states of KMS keys (https://docs.aws.amazon.com/kms/latest/developerguide/key-state.html)
-//   in the Key Management Service Developer Guide .
+//   - InvalidStateException
+//     The request was rejected because the state of the specified resource is not
+//     valid for this request.
 //
-//   * UnsupportedOperationException
-//   The request was rejected because a specified parameter is not supported or
-//   a specified resource is not valid for this operation.
+//     For more information about how key state affects the use of a KMS key, see
+//     Key states of KMS keys (https://docs.aws.amazon.com/kms/latest/developerguide/key-state.html)
+//     in the Key Management Service Developer Guide .
+//
+//   - UnsupportedOperationException
+//     The request was rejected because a specified parameter is not supported or
+//     a specified resource is not valid for this operation.
 //
 // See also, https://docs.aws.amazon.com/goto/WebAPI/kms-2014-11-01/DisableKeyRotation
 func (c *KMS) DisableKeyRotation(input *DisableKeyRotationInput) (*DisableKeyRotationOutput, error) {
@@ -2309,14 +2368,13 @@ const opDisconnectCustomKeyStore = "DisconnectCustomKeyStore"
 // This method is useful when you want to inject custom logic or configuration
 // into the SDK's request lifecycle. Such as custom headers, or retry logic.
 //
+//	// Example sending a request using the DisconnectCustomKeyStoreRequest method.
+//	req, resp := client.DisconnectCustomKeyStoreRequest(params)
 //
-//    // Example sending a request using the DisconnectCustomKeyStoreRequest method.
-//    req, resp := client.DisconnectCustomKeyStoreRequest(params)
-//
-//    err := req.Send()
-//    if err == nil { // resp is now filled
-//        fmt.Println(resp)
-//    }
+//	err := req.Send()
+//	if err == nil { // resp is now filled
+//	    fmt.Println(resp)
+//	}
 //
 // See also, https://docs.aws.amazon.com/goto/WebAPI/kms-2014-11-01/DisconnectCustomKeyStore
 func (c *KMS) DisconnectCustomKeyStoreRequest(input *DisconnectCustomKeyStoreInput) (req *request.Request, output *DisconnectCustomKeyStoreOutput) {
@@ -2356,7 +2414,7 @@ func (c *KMS) DisconnectCustomKeyStoreRequest(input *DisconnectCustomKeyStoreInp
 //
 // If the operation succeeds, it returns a JSON object with no properties.
 //
-// This operation is part of the Custom Key Store feature (https://docs.aws.amazon.com/kms/latest/developerguide/custom-key-store-overview.html)
+// This operation is part of the custom key store feature (https://docs.aws.amazon.com/kms/latest/developerguide/custom-key-store-overview.html)
 // feature in KMS, which combines the convenience and extensive integration
 // of KMS with the isolation and control of a single-tenant key store.
 //
@@ -2368,15 +2426,15 @@ func (c *KMS) DisconnectCustomKeyStoreRequest(input *DisconnectCustomKeyStoreInp
 //
 // Related operations:
 //
-//    * ConnectCustomKeyStore
+//   - ConnectCustomKeyStore
 //
-//    * CreateCustomKeyStore
+//   - CreateCustomKeyStore
 //
-//    * DeleteCustomKeyStore
+//   - DeleteCustomKeyStore
 //
-//    * DescribeCustomKeyStores
+//   - DescribeCustomKeyStores
 //
-//    * UpdateCustomKeyStore
+//   - UpdateCustomKeyStore
 //
 // Returns awserr.Error for service API and SDK errors. Use runtime type assertions
 // with awserr.Error's Code and Message methods to get detailed information about
@@ -2386,32 +2444,33 @@ func (c *KMS) DisconnectCustomKeyStoreRequest(input *DisconnectCustomKeyStoreInp
 // API operation DisconnectCustomKeyStore for usage and error information.
 //
 // Returned Error Types:
-//   * CustomKeyStoreInvalidStateException
-//   The request was rejected because of the ConnectionState of the custom key
-//   store. To get the ConnectionState of a custom key store, use the DescribeCustomKeyStores
-//   operation.
 //
-//   This exception is thrown under the following conditions:
+//   - CustomKeyStoreInvalidStateException
+//     The request was rejected because of the ConnectionState of the custom key
+//     store. To get the ConnectionState of a custom key store, use the DescribeCustomKeyStores
+//     operation.
 //
-//      * You requested the CreateKey or GenerateRandom operation in a custom
-//      key store that is not connected. These operations are valid only when
-//      the custom key store ConnectionState is CONNECTED.
+//     This exception is thrown under the following conditions:
 //
-//      * You requested the UpdateCustomKeyStore or DeleteCustomKeyStore operation
-//      on a custom key store that is not disconnected. This operation is valid
-//      only when the custom key store ConnectionState is DISCONNECTED.
+//   - You requested the CreateKey or GenerateRandom operation in a custom
+//     key store that is not connected. These operations are valid only when
+//     the custom key store ConnectionState is CONNECTED.
 //
-//      * You requested the ConnectCustomKeyStore operation on a custom key store
-//      with a ConnectionState of DISCONNECTING or FAILED. This operation is valid
-//      for all other ConnectionState values.
+//   - You requested the UpdateCustomKeyStore or DeleteCustomKeyStore operation
+//     on a custom key store that is not disconnected. This operation is valid
+//     only when the custom key store ConnectionState is DISCONNECTED.
 //
-//   * CustomKeyStoreNotFoundException
-//   The request was rejected because KMS cannot find a custom key store with
-//   the specified key store name or ID.
+//   - You requested the ConnectCustomKeyStore operation on a custom key store
+//     with a ConnectionState of DISCONNECTING or FAILED. This operation is valid
+//     for all other ConnectionState values.
 //
-//   * InternalException
-//   The request was rejected because an internal exception occurred. The request
-//   can be retried.
+//   - CustomKeyStoreNotFoundException
+//     The request was rejected because KMS cannot find a custom key store with
+//     the specified key store name or ID.
+//
+//   - InternalException
+//     The request was rejected because an internal exception occurred. The request
+//     can be retried.
 //
 // See also, https://docs.aws.amazon.com/goto/WebAPI/kms-2014-11-01/DisconnectCustomKeyStore
 func (c *KMS) DisconnectCustomKeyStore(input *DisconnectCustomKeyStoreInput) (*DisconnectCustomKeyStoreOutput, error) {
@@ -2451,14 +2510,13 @@ const opEnableKey = "EnableKey"
 // This method is useful when you want to inject custom logic or configuration
 // into the SDK's request lifecycle. Such as custom headers, or retry logic.
 //
+//	// Example sending a request using the EnableKeyRequest method.
+//	req, resp := client.EnableKeyRequest(params)
 //
-//    // Example sending a request using the EnableKeyRequest method.
-//    req, resp := client.EnableKeyRequest(params)
-//
-//    err := req.Send()
-//    if err == nil { // resp is now filled
-//        fmt.Println(resp)
-//    }
+//	err := req.Send()
+//	if err == nil { // resp is now filled
+//	    fmt.Println(resp)
+//	}
 //
 // See also, https://docs.aws.amazon.com/goto/WebAPI/kms-2014-11-01/EnableKey
 func (c *KMS) EnableKeyRequest(input *EnableKeyInput) (req *request.Request, output *EnableKeyOutput) {
@@ -2503,34 +2561,35 @@ func (c *KMS) EnableKeyRequest(input *EnableKeyInput) (req *request.Request, out
 // API operation EnableKey for usage and error information.
 //
 // Returned Error Types:
-//   * NotFoundException
-//   The request was rejected because the specified entity or resource could not
-//   be found.
 //
-//   * InvalidArnException
-//   The request was rejected because a specified ARN, or an ARN in a key policy,
-//   is not valid.
+//   - NotFoundException
+//     The request was rejected because the specified entity or resource could not
+//     be found.
 //
-//   * DependencyTimeoutException
-//   The system timed out while trying to fulfill the request. The request can
-//   be retried.
+//   - InvalidArnException
+//     The request was rejected because a specified ARN, or an ARN in a key policy,
+//     is not valid.
 //
-//   * InternalException
-//   The request was rejected because an internal exception occurred. The request
-//   can be retried.
+//   - DependencyTimeoutException
+//     The system timed out while trying to fulfill the request. The request can
+//     be retried.
 //
-//   * LimitExceededException
-//   The request was rejected because a quota was exceeded. For more information,
-//   see Quotas (https://docs.aws.amazon.com/kms/latest/developerguide/limits.html)
-//   in the Key Management Service Developer Guide.
+//   - InternalException
+//     The request was rejected because an internal exception occurred. The request
+//     can be retried.
 //
-//   * InvalidStateException
-//   The request was rejected because the state of the specified resource is not
-//   valid for this request.
+//   - LimitExceededException
+//     The request was rejected because a quota was exceeded. For more information,
+//     see Quotas (https://docs.aws.amazon.com/kms/latest/developerguide/limits.html)
+//     in the Key Management Service Developer Guide.
 //
-//   For more information about how key state affects the use of a KMS key, see
-//   Key states of KMS keys (https://docs.aws.amazon.com/kms/latest/developerguide/key-state.html)
-//   in the Key Management Service Developer Guide .
+//   - InvalidStateException
+//     The request was rejected because the state of the specified resource is not
+//     valid for this request.
+//
+//     For more information about how key state affects the use of a KMS key, see
+//     Key states of KMS keys (https://docs.aws.amazon.com/kms/latest/developerguide/key-state.html)
+//     in the Key Management Service Developer Guide .
 //
 // See also, https://docs.aws.amazon.com/goto/WebAPI/kms-2014-11-01/EnableKey
 func (c *KMS) EnableKey(input *EnableKeyInput) (*EnableKeyOutput, error) {
@@ -2570,14 +2629,13 @@ const opEnableKeyRotation = "EnableKeyRotation"
 // This method is useful when you want to inject custom logic or configuration
 // into the SDK's request lifecycle. Such as custom headers, or retry logic.
 //
+//	// Example sending a request using the EnableKeyRotationRequest method.
+//	req, resp := client.EnableKeyRotationRequest(params)
 //
-//    // Example sending a request using the EnableKeyRotationRequest method.
-//    req, resp := client.EnableKeyRotationRequest(params)
-//
-//    err := req.Send()
-//    if err == nil { // resp is now filled
-//        fmt.Println(resp)
-//    }
+//	err := req.Send()
+//	if err == nil { // resp is now filled
+//	    fmt.Println(resp)
+//	}
 //
 // See also, https://docs.aws.amazon.com/goto/WebAPI/kms-2014-11-01/EnableKeyRotation
 func (c *KMS) EnableKeyRotationRequest(input *EnableKeyRotationInput) (req *request.Request, output *EnableKeyRotationOutput) {
@@ -2647,9 +2705,9 @@ func (c *KMS) EnableKeyRotationRequest(input *EnableKeyRotationInput) (req *requ
 //
 // Related operations:
 //
-//    * DisableKeyRotation
+//   - DisableKeyRotation
 //
-//    * GetKeyRotationStatus
+//   - GetKeyRotationStatus
 //
 // Returns awserr.Error for service API and SDK errors. Use runtime type assertions
 // with awserr.Error's Code and Message methods to get detailed information about
@@ -2659,36 +2717,37 @@ func (c *KMS) EnableKeyRotationRequest(input *EnableKeyRotationInput) (req *requ
 // API operation EnableKeyRotation for usage and error information.
 //
 // Returned Error Types:
-//   * NotFoundException
-//   The request was rejected because the specified entity or resource could not
-//   be found.
 //
-//   * DisabledException
-//   The request was rejected because the specified KMS key is not enabled.
+//   - NotFoundException
+//     The request was rejected because the specified entity or resource could not
+//     be found.
 //
-//   * InvalidArnException
-//   The request was rejected because a specified ARN, or an ARN in a key policy,
-//   is not valid.
+//   - DisabledException
+//     The request was rejected because the specified KMS key is not enabled.
 //
-//   * DependencyTimeoutException
-//   The system timed out while trying to fulfill the request. The request can
-//   be retried.
+//   - InvalidArnException
+//     The request was rejected because a specified ARN, or an ARN in a key policy,
+//     is not valid.
 //
-//   * InternalException
-//   The request was rejected because an internal exception occurred. The request
-//   can be retried.
+//   - DependencyTimeoutException
+//     The system timed out while trying to fulfill the request. The request can
+//     be retried.
 //
-//   * InvalidStateException
-//   The request was rejected because the state of the specified resource is not
-//   valid for this request.
+//   - InternalException
+//     The request was rejected because an internal exception occurred. The request
+//     can be retried.
 //
-//   For more information about how key state affects the use of a KMS key, see
-//   Key states of KMS keys (https://docs.aws.amazon.com/kms/latest/developerguide/key-state.html)
-//   in the Key Management Service Developer Guide .
+//   - InvalidStateException
+//     The request was rejected because the state of the specified resource is not
+//     valid for this request.
 //
-//   * UnsupportedOperationException
-//   The request was rejected because a specified parameter is not supported or
-//   a specified resource is not valid for this operation.
+//     For more information about how key state affects the use of a KMS key, see
+//     Key states of KMS keys (https://docs.aws.amazon.com/kms/latest/developerguide/key-state.html)
+//     in the Key Management Service Developer Guide .
+//
+//   - UnsupportedOperationException
+//     The request was rejected because a specified parameter is not supported or
+//     a specified resource is not valid for this operation.
 //
 // See also, https://docs.aws.amazon.com/goto/WebAPI/kms-2014-11-01/EnableKeyRotation
 func (c *KMS) EnableKeyRotation(input *EnableKeyRotationInput) (*EnableKeyRotationOutput, error) {
@@ -2728,14 +2787,13 @@ const opEncrypt = "Encrypt"
 // This method is useful when you want to inject custom logic or configuration
 // into the SDK's request lifecycle. Such as custom headers, or retry logic.
 //
+//	// Example sending a request using the EncryptRequest method.
+//	req, resp := client.EncryptRequest(params)
 //
-//    // Example sending a request using the EncryptRequest method.
-//    req, resp := client.EncryptRequest(params)
-//
-//    err := req.Send()
-//    if err == nil { // resp is now filled
-//        fmt.Println(resp)
-//    }
+//	err := req.Send()
+//	if err == nil { // resp is now filled
+//	    fmt.Println(resp)
+//	}
 //
 // See also, https://docs.aws.amazon.com/goto/WebAPI/kms-2014-11-01/Encrypt
 func (c *KMS) EncryptRequest(input *EncryptInput) (req *request.Request, output *EncryptOutput) {
@@ -2774,7 +2832,7 @@ func (c *KMS) EncryptRequest(input *EncryptInput) (req *request.Request, output 
 // in the Key Management Service Developer Guide.
 //
 // If you specify an asymmetric KMS key, you must also specify the encryption
-// algorithm. The algorithm must be compatible with the KMS key type.
+// algorithm. The algorithm must be compatible with the KMS key spec.
 //
 // When you use an asymmetric KMS key to encrypt or reencrypt data, be sure
 // to record the KMS key and encryption algorithm that you choose. You will
@@ -2791,13 +2849,15 @@ func (c *KMS) EncryptRequest(input *EncryptInput) (req *request.Request, output 
 // The maximum size of the data that you can encrypt varies with the type of
 // KMS key and the encryption algorithm that you choose.
 //
-//    * Symmetric encryption KMS keys SYMMETRIC_DEFAULT: 4096 bytes
+//   - Symmetric encryption KMS keys SYMMETRIC_DEFAULT: 4096 bytes
 //
-//    * RSA_2048 RSAES_OAEP_SHA_1: 214 bytes RSAES_OAEP_SHA_256: 190 bytes
+//   - RSA_2048 RSAES_OAEP_SHA_1: 214 bytes RSAES_OAEP_SHA_256: 190 bytes
 //
-//    * RSA_3072 RSAES_OAEP_SHA_1: 342 bytes RSAES_OAEP_SHA_256: 318 bytes
+//   - RSA_3072 RSAES_OAEP_SHA_1: 342 bytes RSAES_OAEP_SHA_256: 318 bytes
 //
-//    * RSA_4096 RSAES_OAEP_SHA_1: 470 bytes RSAES_OAEP_SHA_256: 446 bytes
+//   - RSA_4096 RSAES_OAEP_SHA_1: 470 bytes RSAES_OAEP_SHA_256: 446 bytes
+//
+//   - SM2PKE: 1024 bytes (China Regions only)
 //
 // The KMS key that you use for this operation must be in a compatible key state.
 // For details, see Key states of KMS keys (https://docs.aws.amazon.com/kms/latest/developerguide/key-state.html)
@@ -2812,11 +2872,11 @@ func (c *KMS) EncryptRequest(input *EncryptInput) (req *request.Request, output 
 //
 // Related operations:
 //
-//    * Decrypt
+//   - Decrypt
 //
-//    * GenerateDataKey
+//   - GenerateDataKey
 //
-//    * GenerateDataKeyPair
+//   - GenerateDataKeyPair
 //
 // Returns awserr.Error for service API and SDK errors. Use runtime type assertions
 // with awserr.Error's Code and Message methods to get detailed information about
@@ -2826,52 +2886,53 @@ func (c *KMS) EncryptRequest(input *EncryptInput) (req *request.Request, output 
 // API operation Encrypt for usage and error information.
 //
 // Returned Error Types:
-//   * NotFoundException
-//   The request was rejected because the specified entity or resource could not
-//   be found.
 //
-//   * DisabledException
-//   The request was rejected because the specified KMS key is not enabled.
+//   - NotFoundException
+//     The request was rejected because the specified entity or resource could not
+//     be found.
 //
-//   * KeyUnavailableException
-//   The request was rejected because the specified KMS key was not available.
-//   You can retry the request.
+//   - DisabledException
+//     The request was rejected because the specified KMS key is not enabled.
 //
-//   * DependencyTimeoutException
-//   The system timed out while trying to fulfill the request. The request can
-//   be retried.
+//   - KeyUnavailableException
+//     The request was rejected because the specified KMS key was not available.
+//     You can retry the request.
 //
-//   * InvalidKeyUsageException
-//   The request was rejected for one of the following reasons:
+//   - DependencyTimeoutException
+//     The system timed out while trying to fulfill the request. The request can
+//     be retried.
 //
-//      * The KeyUsage value of the KMS key is incompatible with the API operation.
+//   - InvalidKeyUsageException
+//     The request was rejected for one of the following reasons:
 //
-//      * The encryption algorithm or signing algorithm specified for the operation
-//      is incompatible with the type of key material in the KMS key (KeySpec).
+//   - The KeyUsage value of the KMS key is incompatible with the API operation.
 //
-//   For encrypting, decrypting, re-encrypting, and generating data keys, the
-//   KeyUsage must be ENCRYPT_DECRYPT. For signing and verifying messages, the
-//   KeyUsage must be SIGN_VERIFY. For generating and verifying message authentication
-//   codes (MACs), the KeyUsage must be GENERATE_VERIFY_MAC. To find the KeyUsage
-//   of a KMS key, use the DescribeKey operation.
+//   - The encryption algorithm or signing algorithm specified for the operation
+//     is incompatible with the type of key material in the KMS key (KeySpec).
 //
-//   To find the encryption or signing algorithms supported for a particular KMS
-//   key, use the DescribeKey operation.
+//     For encrypting, decrypting, re-encrypting, and generating data keys, the
+//     KeyUsage must be ENCRYPT_DECRYPT. For signing and verifying messages, the
+//     KeyUsage must be SIGN_VERIFY. For generating and verifying message authentication
+//     codes (MACs), the KeyUsage must be GENERATE_VERIFY_MAC. To find the KeyUsage
+//     of a KMS key, use the DescribeKey operation.
 //
-//   * InvalidGrantTokenException
-//   The request was rejected because the specified grant token is not valid.
+//     To find the encryption or signing algorithms supported for a particular KMS
+//     key, use the DescribeKey operation.
 //
-//   * InternalException
-//   The request was rejected because an internal exception occurred. The request
-//   can be retried.
+//   - InvalidGrantTokenException
+//     The request was rejected because the specified grant token is not valid.
 //
-//   * InvalidStateException
-//   The request was rejected because the state of the specified resource is not
-//   valid for this request.
+//   - InternalException
+//     The request was rejected because an internal exception occurred. The request
+//     can be retried.
 //
-//   For more information about how key state affects the use of a KMS key, see
-//   Key states of KMS keys (https://docs.aws.amazon.com/kms/latest/developerguide/key-state.html)
-//   in the Key Management Service Developer Guide .
+//   - InvalidStateException
+//     The request was rejected because the state of the specified resource is not
+//     valid for this request.
+//
+//     For more information about how key state affects the use of a KMS key, see
+//     Key states of KMS keys (https://docs.aws.amazon.com/kms/latest/developerguide/key-state.html)
+//     in the Key Management Service Developer Guide .
 //
 // See also, https://docs.aws.amazon.com/goto/WebAPI/kms-2014-11-01/Encrypt
 func (c *KMS) Encrypt(input *EncryptInput) (*EncryptOutput, error) {
@@ -2911,14 +2972,13 @@ const opGenerateDataKey = "GenerateDataKey"
 // This method is useful when you want to inject custom logic or configuration
 // into the SDK's request lifecycle. Such as custom headers, or retry logic.
 //
+//	// Example sending a request using the GenerateDataKeyRequest method.
+//	req, resp := client.GenerateDataKeyRequest(params)
 //
-//    // Example sending a request using the GenerateDataKeyRequest method.
-//    req, resp := client.GenerateDataKeyRequest(params)
-//
-//    err := req.Send()
-//    if err == nil { // resp is now filled
-//        fmt.Println(resp)
-//    }
+//	err := req.Send()
+//	if err == nil { // resp is now filled
+//	    fmt.Println(resp)
+//	}
 //
 // See also, https://docs.aws.amazon.com/goto/WebAPI/kms-2014-11-01/GenerateDataKey
 func (c *KMS) GenerateDataKeyRequest(input *GenerateDataKeyInput) (req *request.Request, output *GenerateDataKeyOutput) {
@@ -2949,9 +3009,14 @@ func (c *KMS) GenerateDataKeyRequest(input *GenerateDataKeyInput) (req *request.
 // To generate a data key, specify the symmetric encryption KMS key that will
 // be used to encrypt the data key. You cannot use an asymmetric KMS key to
 // encrypt data keys. To get the type of your KMS key, use the DescribeKey operation.
+//
 // You must also specify the length of the data key. Use either the KeySpec
 // or NumberOfBytes parameters (but not both). For 128-bit and 256-bit data
 // keys, use the KeySpec parameter.
+//
+// To generate an SM4 data key (China Regions only), specify a KeySpec value
+// of AES_128 or NumberOfBytes value of 128. The symmetric encryption key used
+// in China Regions to encrypt your data key is an SM4 encryption key.
 //
 // To get only an encrypted copy of the data key, use GenerateDataKeyWithoutPlaintext.
 // To generate an asymmetric data key pair, use the GenerateDataKeyPair or GenerateDataKeyPairWithoutPlaintext
@@ -2974,7 +3039,7 @@ func (c *KMS) GenerateDataKeyRequest(input *GenerateDataKeyInput) (req *request.
 // For details, see Key states of KMS keys (https://docs.aws.amazon.com/kms/latest/developerguide/key-state.html)
 // in the Key Management Service Developer Guide.
 //
-// How to use your data key
+// # How to use your data key
 //
 // We recommend that you use the following pattern to encrypt data locally in
 // your application. You can write your own code or use a client-side encryption
@@ -3010,15 +3075,15 @@ func (c *KMS) GenerateDataKeyRequest(input *GenerateDataKeyInput) (req *request.
 //
 // Related operations:
 //
-//    * Decrypt
+//   - Decrypt
 //
-//    * Encrypt
+//   - Encrypt
 //
-//    * GenerateDataKeyPair
+//   - GenerateDataKeyPair
 //
-//    * GenerateDataKeyPairWithoutPlaintext
+//   - GenerateDataKeyPairWithoutPlaintext
 //
-//    * GenerateDataKeyWithoutPlaintext
+//   - GenerateDataKeyWithoutPlaintext
 //
 // Returns awserr.Error for service API and SDK errors. Use runtime type assertions
 // with awserr.Error's Code and Message methods to get detailed information about
@@ -3028,52 +3093,53 @@ func (c *KMS) GenerateDataKeyRequest(input *GenerateDataKeyInput) (req *request.
 // API operation GenerateDataKey for usage and error information.
 //
 // Returned Error Types:
-//   * NotFoundException
-//   The request was rejected because the specified entity or resource could not
-//   be found.
 //
-//   * DisabledException
-//   The request was rejected because the specified KMS key is not enabled.
+//   - NotFoundException
+//     The request was rejected because the specified entity or resource could not
+//     be found.
 //
-//   * KeyUnavailableException
-//   The request was rejected because the specified KMS key was not available.
-//   You can retry the request.
+//   - DisabledException
+//     The request was rejected because the specified KMS key is not enabled.
 //
-//   * DependencyTimeoutException
-//   The system timed out while trying to fulfill the request. The request can
-//   be retried.
+//   - KeyUnavailableException
+//     The request was rejected because the specified KMS key was not available.
+//     You can retry the request.
 //
-//   * InvalidKeyUsageException
-//   The request was rejected for one of the following reasons:
+//   - DependencyTimeoutException
+//     The system timed out while trying to fulfill the request. The request can
+//     be retried.
 //
-//      * The KeyUsage value of the KMS key is incompatible with the API operation.
+//   - InvalidKeyUsageException
+//     The request was rejected for one of the following reasons:
 //
-//      * The encryption algorithm or signing algorithm specified for the operation
-//      is incompatible with the type of key material in the KMS key (KeySpec).
+//   - The KeyUsage value of the KMS key is incompatible with the API operation.
 //
-//   For encrypting, decrypting, re-encrypting, and generating data keys, the
-//   KeyUsage must be ENCRYPT_DECRYPT. For signing and verifying messages, the
-//   KeyUsage must be SIGN_VERIFY. For generating and verifying message authentication
-//   codes (MACs), the KeyUsage must be GENERATE_VERIFY_MAC. To find the KeyUsage
-//   of a KMS key, use the DescribeKey operation.
+//   - The encryption algorithm or signing algorithm specified for the operation
+//     is incompatible with the type of key material in the KMS key (KeySpec).
 //
-//   To find the encryption or signing algorithms supported for a particular KMS
-//   key, use the DescribeKey operation.
+//     For encrypting, decrypting, re-encrypting, and generating data keys, the
+//     KeyUsage must be ENCRYPT_DECRYPT. For signing and verifying messages, the
+//     KeyUsage must be SIGN_VERIFY. For generating and verifying message authentication
+//     codes (MACs), the KeyUsage must be GENERATE_VERIFY_MAC. To find the KeyUsage
+//     of a KMS key, use the DescribeKey operation.
 //
-//   * InvalidGrantTokenException
-//   The request was rejected because the specified grant token is not valid.
+//     To find the encryption or signing algorithms supported for a particular KMS
+//     key, use the DescribeKey operation.
 //
-//   * InternalException
-//   The request was rejected because an internal exception occurred. The request
-//   can be retried.
+//   - InvalidGrantTokenException
+//     The request was rejected because the specified grant token is not valid.
 //
-//   * InvalidStateException
-//   The request was rejected because the state of the specified resource is not
-//   valid for this request.
+//   - InternalException
+//     The request was rejected because an internal exception occurred. The request
+//     can be retried.
 //
-//   For more information about how key state affects the use of a KMS key, see
-//   Key states of KMS keys (https://docs.aws.amazon.com/kms/latest/developerguide/key-state.html)
-//   in the Key Management Service Developer Guide .
+//   - InvalidStateException
+//     The request was rejected because the state of the specified resource is not
+//     valid for this request.
+//
+//     For more information about how key state affects the use of a KMS key, see
+//     Key states of KMS keys (https://docs.aws.amazon.com/kms/latest/developerguide/key-state.html)
+//     in the Key Management Service Developer Guide .
 //
 // See also, https://docs.aws.amazon.com/goto/WebAPI/kms-2014-11-01/GenerateDataKey
 func (c *KMS) GenerateDataKey(input *GenerateDataKeyInput) (*GenerateDataKeyOutput, error) {
@@ -3113,14 +3179,13 @@ const opGenerateDataKeyPair = "GenerateDataKeyPair"
 // This method is useful when you want to inject custom logic or configuration
 // into the SDK's request lifecycle. Such as custom headers, or retry logic.
 //
+//	// Example sending a request using the GenerateDataKeyPairRequest method.
+//	req, resp := client.GenerateDataKeyPairRequest(params)
 //
-//    // Example sending a request using the GenerateDataKeyPairRequest method.
-//    req, resp := client.GenerateDataKeyPairRequest(params)
-//
-//    err := req.Send()
-//    if err == nil { // resp is now filled
-//        fmt.Println(resp)
-//    }
+//	err := req.Send()
+//	if err == nil { // resp is now filled
+//	    fmt.Println(resp)
+//	}
 //
 // See also, https://docs.aws.amazon.com/goto/WebAPI/kms-2014-11-01/GenerateDataKeyPair
 func (c *KMS) GenerateDataKeyPairRequest(input *GenerateDataKeyPairInput) (req *request.Request, output *GenerateDataKeyPairOutput) {
@@ -3160,9 +3225,10 @@ func (c *KMS) GenerateDataKeyPairRequest(input *GenerateDataKeyPairInput) (req *
 // your KMS key, use the DescribeKey operation.
 //
 // Use the KeyPairSpec parameter to choose an RSA or Elliptic Curve (ECC) data
-// key pair. KMS recommends that your use ECC key pairs for signing, and use
-// RSA key pairs for either encryption or signing, but not both. However, KMS
-// cannot enforce any restrictions on the use of data key pairs outside of KMS.
+// key pair. In China Regions, you can also choose an SM2 data key pair. KMS
+// recommends that you use ECC key pairs for signing, and use RSA and SM2 key
+// pairs for either encryption or signing, but not both. However, KMS cannot
+// enforce any restrictions on the use of data key pairs outside of KMS.
 //
 // If you are using the data key pair to encrypt data, or for any operation
 // where you don't immediately need a private key, consider using the GenerateDataKeyPairWithoutPlaintext
@@ -3199,15 +3265,15 @@ func (c *KMS) GenerateDataKeyPairRequest(input *GenerateDataKeyPairInput) (req *
 //
 // Related operations:
 //
-//    * Decrypt
+//   - Decrypt
 //
-//    * Encrypt
+//   - Encrypt
 //
-//    * GenerateDataKey
+//   - GenerateDataKey
 //
-//    * GenerateDataKeyPairWithoutPlaintext
+//   - GenerateDataKeyPairWithoutPlaintext
 //
-//    * GenerateDataKeyWithoutPlaintext
+//   - GenerateDataKeyWithoutPlaintext
 //
 // Returns awserr.Error for service API and SDK errors. Use runtime type assertions
 // with awserr.Error's Code and Message methods to get detailed information about
@@ -3217,56 +3283,57 @@ func (c *KMS) GenerateDataKeyPairRequest(input *GenerateDataKeyPairInput) (req *
 // API operation GenerateDataKeyPair for usage and error information.
 //
 // Returned Error Types:
-//   * NotFoundException
-//   The request was rejected because the specified entity or resource could not
-//   be found.
 //
-//   * DisabledException
-//   The request was rejected because the specified KMS key is not enabled.
+//   - NotFoundException
+//     The request was rejected because the specified entity or resource could not
+//     be found.
 //
-//   * KeyUnavailableException
-//   The request was rejected because the specified KMS key was not available.
-//   You can retry the request.
+//   - DisabledException
+//     The request was rejected because the specified KMS key is not enabled.
 //
-//   * DependencyTimeoutException
-//   The system timed out while trying to fulfill the request. The request can
-//   be retried.
+//   - KeyUnavailableException
+//     The request was rejected because the specified KMS key was not available.
+//     You can retry the request.
 //
-//   * InvalidKeyUsageException
-//   The request was rejected for one of the following reasons:
+//   - DependencyTimeoutException
+//     The system timed out while trying to fulfill the request. The request can
+//     be retried.
 //
-//      * The KeyUsage value of the KMS key is incompatible with the API operation.
+//   - InvalidKeyUsageException
+//     The request was rejected for one of the following reasons:
 //
-//      * The encryption algorithm or signing algorithm specified for the operation
-//      is incompatible with the type of key material in the KMS key (KeySpec).
+//   - The KeyUsage value of the KMS key is incompatible with the API operation.
 //
-//   For encrypting, decrypting, re-encrypting, and generating data keys, the
-//   KeyUsage must be ENCRYPT_DECRYPT. For signing and verifying messages, the
-//   KeyUsage must be SIGN_VERIFY. For generating and verifying message authentication
-//   codes (MACs), the KeyUsage must be GENERATE_VERIFY_MAC. To find the KeyUsage
-//   of a KMS key, use the DescribeKey operation.
+//   - The encryption algorithm or signing algorithm specified for the operation
+//     is incompatible with the type of key material in the KMS key (KeySpec).
 //
-//   To find the encryption or signing algorithms supported for a particular KMS
-//   key, use the DescribeKey operation.
+//     For encrypting, decrypting, re-encrypting, and generating data keys, the
+//     KeyUsage must be ENCRYPT_DECRYPT. For signing and verifying messages, the
+//     KeyUsage must be SIGN_VERIFY. For generating and verifying message authentication
+//     codes (MACs), the KeyUsage must be GENERATE_VERIFY_MAC. To find the KeyUsage
+//     of a KMS key, use the DescribeKey operation.
 //
-//   * InvalidGrantTokenException
-//   The request was rejected because the specified grant token is not valid.
+//     To find the encryption or signing algorithms supported for a particular KMS
+//     key, use the DescribeKey operation.
 //
-//   * InternalException
-//   The request was rejected because an internal exception occurred. The request
-//   can be retried.
+//   - InvalidGrantTokenException
+//     The request was rejected because the specified grant token is not valid.
 //
-//   * InvalidStateException
-//   The request was rejected because the state of the specified resource is not
-//   valid for this request.
+//   - InternalException
+//     The request was rejected because an internal exception occurred. The request
+//     can be retried.
 //
-//   For more information about how key state affects the use of a KMS key, see
-//   Key states of KMS keys (https://docs.aws.amazon.com/kms/latest/developerguide/key-state.html)
-//   in the Key Management Service Developer Guide .
+//   - InvalidStateException
+//     The request was rejected because the state of the specified resource is not
+//     valid for this request.
 //
-//   * UnsupportedOperationException
-//   The request was rejected because a specified parameter is not supported or
-//   a specified resource is not valid for this operation.
+//     For more information about how key state affects the use of a KMS key, see
+//     Key states of KMS keys (https://docs.aws.amazon.com/kms/latest/developerguide/key-state.html)
+//     in the Key Management Service Developer Guide .
+//
+//   - UnsupportedOperationException
+//     The request was rejected because a specified parameter is not supported or
+//     a specified resource is not valid for this operation.
 //
 // See also, https://docs.aws.amazon.com/goto/WebAPI/kms-2014-11-01/GenerateDataKeyPair
 func (c *KMS) GenerateDataKeyPair(input *GenerateDataKeyPairInput) (*GenerateDataKeyPairOutput, error) {
@@ -3306,14 +3373,13 @@ const opGenerateDataKeyPairWithoutPlaintext = "GenerateDataKeyPairWithoutPlainte
 // This method is useful when you want to inject custom logic or configuration
 // into the SDK's request lifecycle. Such as custom headers, or retry logic.
 //
+//	// Example sending a request using the GenerateDataKeyPairWithoutPlaintextRequest method.
+//	req, resp := client.GenerateDataKeyPairWithoutPlaintextRequest(params)
 //
-//    // Example sending a request using the GenerateDataKeyPairWithoutPlaintextRequest method.
-//    req, resp := client.GenerateDataKeyPairWithoutPlaintextRequest(params)
-//
-//    err := req.Send()
-//    if err == nil { // resp is now filled
-//        fmt.Println(resp)
-//    }
+//	err := req.Send()
+//	if err == nil { // resp is now filled
+//	    fmt.Println(resp)
+//	}
 //
 // See also, https://docs.aws.amazon.com/goto/WebAPI/kms-2014-11-01/GenerateDataKeyPairWithoutPlaintext
 func (c *KMS) GenerateDataKeyPairWithoutPlaintextRequest(input *GenerateDataKeyPairWithoutPlaintextInput) (req *request.Request, output *GenerateDataKeyPairWithoutPlaintextOutput) {
@@ -3352,9 +3418,10 @@ func (c *KMS) GenerateDataKeyPairWithoutPlaintextRequest(input *GenerateDataKeyP
 // your KMS key, use the DescribeKey operation.
 //
 // Use the KeyPairSpec parameter to choose an RSA or Elliptic Curve (ECC) data
-// key pair. KMS recommends that your use ECC key pairs for signing, and use
-// RSA key pairs for either encryption or signing, but not both. However, KMS
-// cannot enforce any restrictions on the use of data key pairs outside of KMS.
+// key pair. In China Regions, you can also choose an SM2 data key pair. KMS
+// recommends that you use ECC key pairs for signing, and use RSA and SM2 key
+// pairs for either encryption or signing, but not both. However, KMS cannot
+// enforce any restrictions on the use of data key pairs outside of KMS.
 //
 // GenerateDataKeyPairWithoutPlaintext returns a unique data key pair for each
 // request. The bytes in the key are not related to the caller or KMS key that
@@ -3381,15 +3448,15 @@ func (c *KMS) GenerateDataKeyPairWithoutPlaintextRequest(input *GenerateDataKeyP
 //
 // Related operations:
 //
-//    * Decrypt
+//   - Decrypt
 //
-//    * Encrypt
+//   - Encrypt
 //
-//    * GenerateDataKey
+//   - GenerateDataKey
 //
-//    * GenerateDataKeyPair
+//   - GenerateDataKeyPair
 //
-//    * GenerateDataKeyWithoutPlaintext
+//   - GenerateDataKeyWithoutPlaintext
 //
 // Returns awserr.Error for service API and SDK errors. Use runtime type assertions
 // with awserr.Error's Code and Message methods to get detailed information about
@@ -3399,56 +3466,57 @@ func (c *KMS) GenerateDataKeyPairWithoutPlaintextRequest(input *GenerateDataKeyP
 // API operation GenerateDataKeyPairWithoutPlaintext for usage and error information.
 //
 // Returned Error Types:
-//   * NotFoundException
-//   The request was rejected because the specified entity or resource could not
-//   be found.
 //
-//   * DisabledException
-//   The request was rejected because the specified KMS key is not enabled.
+//   - NotFoundException
+//     The request was rejected because the specified entity or resource could not
+//     be found.
 //
-//   * KeyUnavailableException
-//   The request was rejected because the specified KMS key was not available.
-//   You can retry the request.
+//   - DisabledException
+//     The request was rejected because the specified KMS key is not enabled.
 //
-//   * DependencyTimeoutException
-//   The system timed out while trying to fulfill the request. The request can
-//   be retried.
+//   - KeyUnavailableException
+//     The request was rejected because the specified KMS key was not available.
+//     You can retry the request.
 //
-//   * InvalidKeyUsageException
-//   The request was rejected for one of the following reasons:
+//   - DependencyTimeoutException
+//     The system timed out while trying to fulfill the request. The request can
+//     be retried.
 //
-//      * The KeyUsage value of the KMS key is incompatible with the API operation.
+//   - InvalidKeyUsageException
+//     The request was rejected for one of the following reasons:
 //
-//      * The encryption algorithm or signing algorithm specified for the operation
-//      is incompatible with the type of key material in the KMS key (KeySpec).
+//   - The KeyUsage value of the KMS key is incompatible with the API operation.
 //
-//   For encrypting, decrypting, re-encrypting, and generating data keys, the
-//   KeyUsage must be ENCRYPT_DECRYPT. For signing and verifying messages, the
-//   KeyUsage must be SIGN_VERIFY. For generating and verifying message authentication
-//   codes (MACs), the KeyUsage must be GENERATE_VERIFY_MAC. To find the KeyUsage
-//   of a KMS key, use the DescribeKey operation.
+//   - The encryption algorithm or signing algorithm specified for the operation
+//     is incompatible with the type of key material in the KMS key (KeySpec).
 //
-//   To find the encryption or signing algorithms supported for a particular KMS
-//   key, use the DescribeKey operation.
+//     For encrypting, decrypting, re-encrypting, and generating data keys, the
+//     KeyUsage must be ENCRYPT_DECRYPT. For signing and verifying messages, the
+//     KeyUsage must be SIGN_VERIFY. For generating and verifying message authentication
+//     codes (MACs), the KeyUsage must be GENERATE_VERIFY_MAC. To find the KeyUsage
+//     of a KMS key, use the DescribeKey operation.
 //
-//   * InvalidGrantTokenException
-//   The request was rejected because the specified grant token is not valid.
+//     To find the encryption or signing algorithms supported for a particular KMS
+//     key, use the DescribeKey operation.
 //
-//   * InternalException
-//   The request was rejected because an internal exception occurred. The request
-//   can be retried.
+//   - InvalidGrantTokenException
+//     The request was rejected because the specified grant token is not valid.
 //
-//   * InvalidStateException
-//   The request was rejected because the state of the specified resource is not
-//   valid for this request.
+//   - InternalException
+//     The request was rejected because an internal exception occurred. The request
+//     can be retried.
 //
-//   For more information about how key state affects the use of a KMS key, see
-//   Key states of KMS keys (https://docs.aws.amazon.com/kms/latest/developerguide/key-state.html)
-//   in the Key Management Service Developer Guide .
+//   - InvalidStateException
+//     The request was rejected because the state of the specified resource is not
+//     valid for this request.
 //
-//   * UnsupportedOperationException
-//   The request was rejected because a specified parameter is not supported or
-//   a specified resource is not valid for this operation.
+//     For more information about how key state affects the use of a KMS key, see
+//     Key states of KMS keys (https://docs.aws.amazon.com/kms/latest/developerguide/key-state.html)
+//     in the Key Management Service Developer Guide .
+//
+//   - UnsupportedOperationException
+//     The request was rejected because a specified parameter is not supported or
+//     a specified resource is not valid for this operation.
 //
 // See also, https://docs.aws.amazon.com/goto/WebAPI/kms-2014-11-01/GenerateDataKeyPairWithoutPlaintext
 func (c *KMS) GenerateDataKeyPairWithoutPlaintext(input *GenerateDataKeyPairWithoutPlaintextInput) (*GenerateDataKeyPairWithoutPlaintextOutput, error) {
@@ -3488,14 +3556,13 @@ const opGenerateDataKeyWithoutPlaintext = "GenerateDataKeyWithoutPlaintext"
 // This method is useful when you want to inject custom logic or configuration
 // into the SDK's request lifecycle. Such as custom headers, or retry logic.
 //
+//	// Example sending a request using the GenerateDataKeyWithoutPlaintextRequest method.
+//	req, resp := client.GenerateDataKeyWithoutPlaintextRequest(params)
 //
-//    // Example sending a request using the GenerateDataKeyWithoutPlaintextRequest method.
-//    req, resp := client.GenerateDataKeyWithoutPlaintextRequest(params)
-//
-//    err := req.Send()
-//    if err == nil { // resp is now filled
-//        fmt.Println(resp)
-//    }
+//	err := req.Send()
+//	if err == nil { // resp is now filled
+//	    fmt.Println(resp)
+//	}
 //
 // See also, https://docs.aws.amazon.com/goto/WebAPI/kms-2014-11-01/GenerateDataKeyWithoutPlaintext
 func (c *KMS) GenerateDataKeyWithoutPlaintextRequest(input *GenerateDataKeyWithoutPlaintextInput) (req *request.Request, output *GenerateDataKeyWithoutPlaintextOutput) {
@@ -3568,15 +3635,15 @@ func (c *KMS) GenerateDataKeyWithoutPlaintextRequest(input *GenerateDataKeyWitho
 //
 // Related operations:
 //
-//    * Decrypt
+//   - Decrypt
 //
-//    * Encrypt
+//   - Encrypt
 //
-//    * GenerateDataKey
+//   - GenerateDataKey
 //
-//    * GenerateDataKeyPair
+//   - GenerateDataKeyPair
 //
-//    * GenerateDataKeyPairWithoutPlaintext
+//   - GenerateDataKeyPairWithoutPlaintext
 //
 // Returns awserr.Error for service API and SDK errors. Use runtime type assertions
 // with awserr.Error's Code and Message methods to get detailed information about
@@ -3586,52 +3653,53 @@ func (c *KMS) GenerateDataKeyWithoutPlaintextRequest(input *GenerateDataKeyWitho
 // API operation GenerateDataKeyWithoutPlaintext for usage and error information.
 //
 // Returned Error Types:
-//   * NotFoundException
-//   The request was rejected because the specified entity or resource could not
-//   be found.
 //
-//   * DisabledException
-//   The request was rejected because the specified KMS key is not enabled.
+//   - NotFoundException
+//     The request was rejected because the specified entity or resource could not
+//     be found.
 //
-//   * KeyUnavailableException
-//   The request was rejected because the specified KMS key was not available.
-//   You can retry the request.
+//   - DisabledException
+//     The request was rejected because the specified KMS key is not enabled.
 //
-//   * DependencyTimeoutException
-//   The system timed out while trying to fulfill the request. The request can
-//   be retried.
+//   - KeyUnavailableException
+//     The request was rejected because the specified KMS key was not available.
+//     You can retry the request.
 //
-//   * InvalidKeyUsageException
-//   The request was rejected for one of the following reasons:
+//   - DependencyTimeoutException
+//     The system timed out while trying to fulfill the request. The request can
+//     be retried.
 //
-//      * The KeyUsage value of the KMS key is incompatible with the API operation.
+//   - InvalidKeyUsageException
+//     The request was rejected for one of the following reasons:
 //
-//      * The encryption algorithm or signing algorithm specified for the operation
-//      is incompatible with the type of key material in the KMS key (KeySpec).
+//   - The KeyUsage value of the KMS key is incompatible with the API operation.
 //
-//   For encrypting, decrypting, re-encrypting, and generating data keys, the
-//   KeyUsage must be ENCRYPT_DECRYPT. For signing and verifying messages, the
-//   KeyUsage must be SIGN_VERIFY. For generating and verifying message authentication
-//   codes (MACs), the KeyUsage must be GENERATE_VERIFY_MAC. To find the KeyUsage
-//   of a KMS key, use the DescribeKey operation.
+//   - The encryption algorithm or signing algorithm specified for the operation
+//     is incompatible with the type of key material in the KMS key (KeySpec).
 //
-//   To find the encryption or signing algorithms supported for a particular KMS
-//   key, use the DescribeKey operation.
+//     For encrypting, decrypting, re-encrypting, and generating data keys, the
+//     KeyUsage must be ENCRYPT_DECRYPT. For signing and verifying messages, the
+//     KeyUsage must be SIGN_VERIFY. For generating and verifying message authentication
+//     codes (MACs), the KeyUsage must be GENERATE_VERIFY_MAC. To find the KeyUsage
+//     of a KMS key, use the DescribeKey operation.
 //
-//   * InvalidGrantTokenException
-//   The request was rejected because the specified grant token is not valid.
+//     To find the encryption or signing algorithms supported for a particular KMS
+//     key, use the DescribeKey operation.
 //
-//   * InternalException
-//   The request was rejected because an internal exception occurred. The request
-//   can be retried.
+//   - InvalidGrantTokenException
+//     The request was rejected because the specified grant token is not valid.
 //
-//   * InvalidStateException
-//   The request was rejected because the state of the specified resource is not
-//   valid for this request.
+//   - InternalException
+//     The request was rejected because an internal exception occurred. The request
+//     can be retried.
 //
-//   For more information about how key state affects the use of a KMS key, see
-//   Key states of KMS keys (https://docs.aws.amazon.com/kms/latest/developerguide/key-state.html)
-//   in the Key Management Service Developer Guide .
+//   - InvalidStateException
+//     The request was rejected because the state of the specified resource is not
+//     valid for this request.
+//
+//     For more information about how key state affects the use of a KMS key, see
+//     Key states of KMS keys (https://docs.aws.amazon.com/kms/latest/developerguide/key-state.html)
+//     in the Key Management Service Developer Guide .
 //
 // See also, https://docs.aws.amazon.com/goto/WebAPI/kms-2014-11-01/GenerateDataKeyWithoutPlaintext
 func (c *KMS) GenerateDataKeyWithoutPlaintext(input *GenerateDataKeyWithoutPlaintextInput) (*GenerateDataKeyWithoutPlaintextOutput, error) {
@@ -3671,14 +3739,13 @@ const opGenerateMac = "GenerateMac"
 // This method is useful when you want to inject custom logic or configuration
 // into the SDK's request lifecycle. Such as custom headers, or retry logic.
 //
+//	// Example sending a request using the GenerateMacRequest method.
+//	req, resp := client.GenerateMacRequest(params)
 //
-//    // Example sending a request using the GenerateMacRequest method.
-//    req, resp := client.GenerateMacRequest(params)
-//
-//    err := req.Send()
-//    if err == nil { // resp is now filled
-//        fmt.Println(resp)
-//    }
+//	err := req.Send()
+//	if err == nil { // resp is now filled
+//	    fmt.Println(resp)
+//	}
 //
 // See also, https://docs.aws.amazon.com/goto/WebAPI/kms-2014-11-01/GenerateMac
 func (c *KMS) GenerateMacRequest(input *GenerateMacInput) (req *request.Request, output *GenerateMacOutput) {
@@ -3738,48 +3805,49 @@ func (c *KMS) GenerateMacRequest(input *GenerateMacInput) (req *request.Request,
 // API operation GenerateMac for usage and error information.
 //
 // Returned Error Types:
-//   * NotFoundException
-//   The request was rejected because the specified entity or resource could not
-//   be found.
 //
-//   * DisabledException
-//   The request was rejected because the specified KMS key is not enabled.
+//   - NotFoundException
+//     The request was rejected because the specified entity or resource could not
+//     be found.
 //
-//   * KeyUnavailableException
-//   The request was rejected because the specified KMS key was not available.
-//   You can retry the request.
+//   - DisabledException
+//     The request was rejected because the specified KMS key is not enabled.
 //
-//   * InvalidKeyUsageException
-//   The request was rejected for one of the following reasons:
+//   - KeyUnavailableException
+//     The request was rejected because the specified KMS key was not available.
+//     You can retry the request.
 //
-//      * The KeyUsage value of the KMS key is incompatible with the API operation.
+//   - InvalidKeyUsageException
+//     The request was rejected for one of the following reasons:
 //
-//      * The encryption algorithm or signing algorithm specified for the operation
-//      is incompatible with the type of key material in the KMS key (KeySpec).
+//   - The KeyUsage value of the KMS key is incompatible with the API operation.
 //
-//   For encrypting, decrypting, re-encrypting, and generating data keys, the
-//   KeyUsage must be ENCRYPT_DECRYPT. For signing and verifying messages, the
-//   KeyUsage must be SIGN_VERIFY. For generating and verifying message authentication
-//   codes (MACs), the KeyUsage must be GENERATE_VERIFY_MAC. To find the KeyUsage
-//   of a KMS key, use the DescribeKey operation.
+//   - The encryption algorithm or signing algorithm specified for the operation
+//     is incompatible with the type of key material in the KMS key (KeySpec).
 //
-//   To find the encryption or signing algorithms supported for a particular KMS
-//   key, use the DescribeKey operation.
+//     For encrypting, decrypting, re-encrypting, and generating data keys, the
+//     KeyUsage must be ENCRYPT_DECRYPT. For signing and verifying messages, the
+//     KeyUsage must be SIGN_VERIFY. For generating and verifying message authentication
+//     codes (MACs), the KeyUsage must be GENERATE_VERIFY_MAC. To find the KeyUsage
+//     of a KMS key, use the DescribeKey operation.
 //
-//   * InvalidGrantTokenException
-//   The request was rejected because the specified grant token is not valid.
+//     To find the encryption or signing algorithms supported for a particular KMS
+//     key, use the DescribeKey operation.
 //
-//   * InternalException
-//   The request was rejected because an internal exception occurred. The request
-//   can be retried.
+//   - InvalidGrantTokenException
+//     The request was rejected because the specified grant token is not valid.
 //
-//   * InvalidStateException
-//   The request was rejected because the state of the specified resource is not
-//   valid for this request.
+//   - InternalException
+//     The request was rejected because an internal exception occurred. The request
+//     can be retried.
 //
-//   For more information about how key state affects the use of a KMS key, see
-//   Key states of KMS keys (https://docs.aws.amazon.com/kms/latest/developerguide/key-state.html)
-//   in the Key Management Service Developer Guide .
+//   - InvalidStateException
+//     The request was rejected because the state of the specified resource is not
+//     valid for this request.
+//
+//     For more information about how key state affects the use of a KMS key, see
+//     Key states of KMS keys (https://docs.aws.amazon.com/kms/latest/developerguide/key-state.html)
+//     in the Key Management Service Developer Guide .
 //
 // See also, https://docs.aws.amazon.com/goto/WebAPI/kms-2014-11-01/GenerateMac
 func (c *KMS) GenerateMac(input *GenerateMacInput) (*GenerateMacOutput, error) {
@@ -3819,14 +3887,13 @@ const opGenerateRandom = "GenerateRandom"
 // This method is useful when you want to inject custom logic or configuration
 // into the SDK's request lifecycle. Such as custom headers, or retry logic.
 //
+//	// Example sending a request using the GenerateRandomRequest method.
+//	req, resp := client.GenerateRandomRequest(params)
 //
-//    // Example sending a request using the GenerateRandomRequest method.
-//    req, resp := client.GenerateRandomRequest(params)
-//
-//    err := req.Send()
-//    if err == nil { // resp is now filled
-//        fmt.Println(resp)
-//    }
+//	err := req.Send()
+//	if err == nil { // resp is now filled
+//	    fmt.Println(resp)
+//	}
 //
 // See also, https://docs.aws.amazon.com/goto/WebAPI/kms-2014-11-01/GenerateRandom
 func (c *KMS) GenerateRandomRequest(input *GenerateRandomInput) (req *request.Request, output *GenerateRandomOutput) {
@@ -3849,6 +3916,9 @@ func (c *KMS) GenerateRandomRequest(input *GenerateRandomInput) (req *request.Re
 //
 // Returns a random byte string that is cryptographically secure.
 //
+// You must use the NumberOfBytes parameter to specify the length of the random
+// byte string. There is no default value for string length.
+//
 // By default, the random byte string is generated in KMS. To generate the byte
 // string in the CloudHSM cluster that is associated with a custom key store
 // (https://docs.aws.amazon.com/kms/latest/developerguide/custom-key-store-overview.html),
@@ -3863,6 +3933,9 @@ func (c *KMS) GenerateRandomRequest(input *GenerateRandomInput) (req *request.Re
 // For more information about entropy and random number generation, see Key
 // Management Service Cryptographic Details (https://docs.aws.amazon.com/kms/latest/cryptographic-details/).
 //
+// Cross-account use: Not applicable. GenerateRandom does not use any account-specific
+// resources, such as KMS keys.
+//
 // Required permissions: kms:GenerateRandom (https://docs.aws.amazon.com/kms/latest/developerguide/kms-api-permissions-reference.html)
 // (IAM policy)
 //
@@ -3874,36 +3947,37 @@ func (c *KMS) GenerateRandomRequest(input *GenerateRandomInput) (req *request.Re
 // API operation GenerateRandom for usage and error information.
 //
 // Returned Error Types:
-//   * DependencyTimeoutException
-//   The system timed out while trying to fulfill the request. The request can
-//   be retried.
 //
-//   * InternalException
-//   The request was rejected because an internal exception occurred. The request
-//   can be retried.
+//   - DependencyTimeoutException
+//     The system timed out while trying to fulfill the request. The request can
+//     be retried.
 //
-//   * CustomKeyStoreNotFoundException
-//   The request was rejected because KMS cannot find a custom key store with
-//   the specified key store name or ID.
+//   - InternalException
+//     The request was rejected because an internal exception occurred. The request
+//     can be retried.
 //
-//   * CustomKeyStoreInvalidStateException
-//   The request was rejected because of the ConnectionState of the custom key
-//   store. To get the ConnectionState of a custom key store, use the DescribeCustomKeyStores
-//   operation.
+//   - CustomKeyStoreNotFoundException
+//     The request was rejected because KMS cannot find a custom key store with
+//     the specified key store name or ID.
 //
-//   This exception is thrown under the following conditions:
+//   - CustomKeyStoreInvalidStateException
+//     The request was rejected because of the ConnectionState of the custom key
+//     store. To get the ConnectionState of a custom key store, use the DescribeCustomKeyStores
+//     operation.
 //
-//      * You requested the CreateKey or GenerateRandom operation in a custom
-//      key store that is not connected. These operations are valid only when
-//      the custom key store ConnectionState is CONNECTED.
+//     This exception is thrown under the following conditions:
 //
-//      * You requested the UpdateCustomKeyStore or DeleteCustomKeyStore operation
-//      on a custom key store that is not disconnected. This operation is valid
-//      only when the custom key store ConnectionState is DISCONNECTED.
+//   - You requested the CreateKey or GenerateRandom operation in a custom
+//     key store that is not connected. These operations are valid only when
+//     the custom key store ConnectionState is CONNECTED.
 //
-//      * You requested the ConnectCustomKeyStore operation on a custom key store
-//      with a ConnectionState of DISCONNECTING or FAILED. This operation is valid
-//      for all other ConnectionState values.
+//   - You requested the UpdateCustomKeyStore or DeleteCustomKeyStore operation
+//     on a custom key store that is not disconnected. This operation is valid
+//     only when the custom key store ConnectionState is DISCONNECTED.
+//
+//   - You requested the ConnectCustomKeyStore operation on a custom key store
+//     with a ConnectionState of DISCONNECTING or FAILED. This operation is valid
+//     for all other ConnectionState values.
 //
 // See also, https://docs.aws.amazon.com/goto/WebAPI/kms-2014-11-01/GenerateRandom
 func (c *KMS) GenerateRandom(input *GenerateRandomInput) (*GenerateRandomOutput, error) {
@@ -3943,14 +4017,13 @@ const opGetKeyPolicy = "GetKeyPolicy"
 // This method is useful when you want to inject custom logic or configuration
 // into the SDK's request lifecycle. Such as custom headers, or retry logic.
 //
+//	// Example sending a request using the GetKeyPolicyRequest method.
+//	req, resp := client.GetKeyPolicyRequest(params)
 //
-//    // Example sending a request using the GetKeyPolicyRequest method.
-//    req, resp := client.GetKeyPolicyRequest(params)
-//
-//    err := req.Send()
-//    if err == nil { // resp is now filled
-//        fmt.Println(resp)
-//    }
+//	err := req.Send()
+//	if err == nil { // resp is now filled
+//	    fmt.Println(resp)
+//	}
 //
 // See also, https://docs.aws.amazon.com/goto/WebAPI/kms-2014-11-01/GetKeyPolicy
 func (c *KMS) GetKeyPolicyRequest(input *GetKeyPolicyInput) (req *request.Request, output *GetKeyPolicyOutput) {
@@ -3989,29 +4062,30 @@ func (c *KMS) GetKeyPolicyRequest(input *GetKeyPolicyInput) (req *request.Reques
 // API operation GetKeyPolicy for usage and error information.
 //
 // Returned Error Types:
-//   * NotFoundException
-//   The request was rejected because the specified entity or resource could not
-//   be found.
 //
-//   * InvalidArnException
-//   The request was rejected because a specified ARN, or an ARN in a key policy,
-//   is not valid.
+//   - NotFoundException
+//     The request was rejected because the specified entity or resource could not
+//     be found.
 //
-//   * DependencyTimeoutException
-//   The system timed out while trying to fulfill the request. The request can
-//   be retried.
+//   - InvalidArnException
+//     The request was rejected because a specified ARN, or an ARN in a key policy,
+//     is not valid.
 //
-//   * InternalException
-//   The request was rejected because an internal exception occurred. The request
-//   can be retried.
+//   - DependencyTimeoutException
+//     The system timed out while trying to fulfill the request. The request can
+//     be retried.
 //
-//   * InvalidStateException
-//   The request was rejected because the state of the specified resource is not
-//   valid for this request.
+//   - InternalException
+//     The request was rejected because an internal exception occurred. The request
+//     can be retried.
 //
-//   For more information about how key state affects the use of a KMS key, see
-//   Key states of KMS keys (https://docs.aws.amazon.com/kms/latest/developerguide/key-state.html)
-//   in the Key Management Service Developer Guide .
+//   - InvalidStateException
+//     The request was rejected because the state of the specified resource is not
+//     valid for this request.
+//
+//     For more information about how key state affects the use of a KMS key, see
+//     Key states of KMS keys (https://docs.aws.amazon.com/kms/latest/developerguide/key-state.html)
+//     in the Key Management Service Developer Guide .
 //
 // See also, https://docs.aws.amazon.com/goto/WebAPI/kms-2014-11-01/GetKeyPolicy
 func (c *KMS) GetKeyPolicy(input *GetKeyPolicyInput) (*GetKeyPolicyOutput, error) {
@@ -4051,14 +4125,13 @@ const opGetKeyRotationStatus = "GetKeyRotationStatus"
 // This method is useful when you want to inject custom logic or configuration
 // into the SDK's request lifecycle. Such as custom headers, or retry logic.
 //
+//	// Example sending a request using the GetKeyRotationStatusRequest method.
+//	req, resp := client.GetKeyRotationStatusRequest(params)
 //
-//    // Example sending a request using the GetKeyRotationStatusRequest method.
-//    req, resp := client.GetKeyRotationStatusRequest(params)
-//
-//    err := req.Send()
-//    if err == nil { // resp is now filled
-//        fmt.Println(resp)
-//    }
+//	err := req.Send()
+//	if err == nil { // resp is now filled
+//	    fmt.Println(resp)
+//	}
 //
 // See also, https://docs.aws.amazon.com/goto/WebAPI/kms-2014-11-01/GetKeyRotationStatus
 func (c *KMS) GetKeyRotationStatusRequest(input *GetKeyRotationStatusInput) (req *request.Request, output *GetKeyRotationStatusOutput) {
@@ -4112,17 +4185,17 @@ func (c *KMS) GetKeyRotationStatusRequest(input *GetKeyRotationStatusInput) (req
 // For details, see Key states of KMS keys (https://docs.aws.amazon.com/kms/latest/developerguide/key-state.html)
 // in the Key Management Service Developer Guide.
 //
-//    * Disabled: The key rotation status does not change when you disable a
-//    KMS key. However, while the KMS key is disabled, KMS does not rotate the
-//    key material. When you re-enable the KMS key, rotation resumes. If the
-//    key material in the re-enabled KMS key hasn't been rotated in one year,
-//    KMS rotates it immediately, and every year thereafter. If it's been less
-//    than a year since the key material in the re-enabled KMS key was rotated,
-//    the KMS key resumes its prior rotation schedule.
+//   - Disabled: The key rotation status does not change when you disable a
+//     KMS key. However, while the KMS key is disabled, KMS does not rotate the
+//     key material. When you re-enable the KMS key, rotation resumes. If the
+//     key material in the re-enabled KMS key hasn't been rotated in one year,
+//     KMS rotates it immediately, and every year thereafter. If it's been less
+//     than a year since the key material in the re-enabled KMS key was rotated,
+//     the KMS key resumes its prior rotation schedule.
 //
-//    * Pending deletion: While a KMS key is pending deletion, its key rotation
-//    status is false and KMS does not rotate the key material. If you cancel
-//    the deletion, the original key rotation status returns to true.
+//   - Pending deletion: While a KMS key is pending deletion, its key rotation
+//     status is false and KMS does not rotate the key material. If you cancel
+//     the deletion, the original key rotation status returns to true.
 //
 // Cross-account use: Yes. To perform this operation on a KMS key in a different
 // Amazon Web Services account, specify the key ARN in the value of the KeyId
@@ -4133,9 +4206,9 @@ func (c *KMS) GetKeyRotationStatusRequest(input *GetKeyRotationStatusInput) (req
 //
 // Related operations:
 //
-//    * DisableKeyRotation
+//   - DisableKeyRotation
 //
-//    * EnableKeyRotation
+//   - EnableKeyRotation
 //
 // Returns awserr.Error for service API and SDK errors. Use runtime type assertions
 // with awserr.Error's Code and Message methods to get detailed information about
@@ -4145,33 +4218,34 @@ func (c *KMS) GetKeyRotationStatusRequest(input *GetKeyRotationStatusInput) (req
 // API operation GetKeyRotationStatus for usage and error information.
 //
 // Returned Error Types:
-//   * NotFoundException
-//   The request was rejected because the specified entity or resource could not
-//   be found.
 //
-//   * InvalidArnException
-//   The request was rejected because a specified ARN, or an ARN in a key policy,
-//   is not valid.
+//   - NotFoundException
+//     The request was rejected because the specified entity or resource could not
+//     be found.
 //
-//   * DependencyTimeoutException
-//   The system timed out while trying to fulfill the request. The request can
-//   be retried.
+//   - InvalidArnException
+//     The request was rejected because a specified ARN, or an ARN in a key policy,
+//     is not valid.
 //
-//   * InternalException
-//   The request was rejected because an internal exception occurred. The request
-//   can be retried.
+//   - DependencyTimeoutException
+//     The system timed out while trying to fulfill the request. The request can
+//     be retried.
 //
-//   * InvalidStateException
-//   The request was rejected because the state of the specified resource is not
-//   valid for this request.
+//   - InternalException
+//     The request was rejected because an internal exception occurred. The request
+//     can be retried.
 //
-//   For more information about how key state affects the use of a KMS key, see
-//   Key states of KMS keys (https://docs.aws.amazon.com/kms/latest/developerguide/key-state.html)
-//   in the Key Management Service Developer Guide .
+//   - InvalidStateException
+//     The request was rejected because the state of the specified resource is not
+//     valid for this request.
 //
-//   * UnsupportedOperationException
-//   The request was rejected because a specified parameter is not supported or
-//   a specified resource is not valid for this operation.
+//     For more information about how key state affects the use of a KMS key, see
+//     Key states of KMS keys (https://docs.aws.amazon.com/kms/latest/developerguide/key-state.html)
+//     in the Key Management Service Developer Guide .
+//
+//   - UnsupportedOperationException
+//     The request was rejected because a specified parameter is not supported or
+//     a specified resource is not valid for this operation.
 //
 // See also, https://docs.aws.amazon.com/goto/WebAPI/kms-2014-11-01/GetKeyRotationStatus
 func (c *KMS) GetKeyRotationStatus(input *GetKeyRotationStatusInput) (*GetKeyRotationStatusOutput, error) {
@@ -4211,14 +4285,13 @@ const opGetParametersForImport = "GetParametersForImport"
 // This method is useful when you want to inject custom logic or configuration
 // into the SDK's request lifecycle. Such as custom headers, or retry logic.
 //
+//	// Example sending a request using the GetParametersForImportRequest method.
+//	req, resp := client.GetParametersForImportRequest(params)
 //
-//    // Example sending a request using the GetParametersForImportRequest method.
-//    req, resp := client.GetParametersForImportRequest(params)
-//
-//    err := req.Send()
-//    if err == nil { // resp is now filled
-//        fmt.Println(resp)
-//    }
+//	err := req.Send()
+//	if err == nil { // resp is now filled
+//	    fmt.Println(resp)
+//	}
 //
 // See also, https://docs.aws.amazon.com/goto/WebAPI/kms-2014-11-01/GetParametersForImport
 func (c *KMS) GetParametersForImportRequest(input *GetParametersForImportInput) (req *request.Request, output *GetParametersForImportOutput) {
@@ -4273,9 +4346,9 @@ func (c *KMS) GetParametersForImportRequest(input *GetParametersForImportInput) 
 //
 // Related operations:
 //
-//    * ImportKeyMaterial
+//   - ImportKeyMaterial
 //
-//    * DeleteImportedKeyMaterial
+//   - DeleteImportedKeyMaterial
 //
 // Returns awserr.Error for service API and SDK errors. Use runtime type assertions
 // with awserr.Error's Code and Message methods to get detailed information about
@@ -4285,33 +4358,34 @@ func (c *KMS) GetParametersForImportRequest(input *GetParametersForImportInput) 
 // API operation GetParametersForImport for usage and error information.
 //
 // Returned Error Types:
-//   * InvalidArnException
-//   The request was rejected because a specified ARN, or an ARN in a key policy,
-//   is not valid.
 //
-//   * UnsupportedOperationException
-//   The request was rejected because a specified parameter is not supported or
-//   a specified resource is not valid for this operation.
+//   - InvalidArnException
+//     The request was rejected because a specified ARN, or an ARN in a key policy,
+//     is not valid.
 //
-//   * DependencyTimeoutException
-//   The system timed out while trying to fulfill the request. The request can
-//   be retried.
+//   - UnsupportedOperationException
+//     The request was rejected because a specified parameter is not supported or
+//     a specified resource is not valid for this operation.
 //
-//   * NotFoundException
-//   The request was rejected because the specified entity or resource could not
-//   be found.
+//   - DependencyTimeoutException
+//     The system timed out while trying to fulfill the request. The request can
+//     be retried.
 //
-//   * InternalException
-//   The request was rejected because an internal exception occurred. The request
-//   can be retried.
+//   - NotFoundException
+//     The request was rejected because the specified entity or resource could not
+//     be found.
 //
-//   * InvalidStateException
-//   The request was rejected because the state of the specified resource is not
-//   valid for this request.
+//   - InternalException
+//     The request was rejected because an internal exception occurred. The request
+//     can be retried.
 //
-//   For more information about how key state affects the use of a KMS key, see
-//   Key states of KMS keys (https://docs.aws.amazon.com/kms/latest/developerguide/key-state.html)
-//   in the Key Management Service Developer Guide .
+//   - InvalidStateException
+//     The request was rejected because the state of the specified resource is not
+//     valid for this request.
+//
+//     For more information about how key state affects the use of a KMS key, see
+//     Key states of KMS keys (https://docs.aws.amazon.com/kms/latest/developerguide/key-state.html)
+//     in the Key Management Service Developer Guide .
 //
 // See also, https://docs.aws.amazon.com/goto/WebAPI/kms-2014-11-01/GetParametersForImport
 func (c *KMS) GetParametersForImport(input *GetParametersForImportInput) (*GetParametersForImportOutput, error) {
@@ -4351,14 +4425,13 @@ const opGetPublicKey = "GetPublicKey"
 // This method is useful when you want to inject custom logic or configuration
 // into the SDK's request lifecycle. Such as custom headers, or retry logic.
 //
+//	// Example sending a request using the GetPublicKeyRequest method.
+//	req, resp := client.GetPublicKeyRequest(params)
 //
-//    // Example sending a request using the GetPublicKeyRequest method.
-//    req, resp := client.GetPublicKeyRequest(params)
-//
-//    err := req.Send()
-//    if err == nil { // resp is now filled
-//        fmt.Println(resp)
-//    }
+//	err := req.Send()
+//	if err == nil { // resp is now filled
+//	    fmt.Println(resp)
+//	}
 //
 // See also, https://docs.aws.amazon.com/goto/WebAPI/kms-2014-11-01/GetPublicKey
 func (c *KMS) GetPublicKeyRequest(input *GetPublicKeyInput) (req *request.Request, output *GetPublicKeyOutput) {
@@ -4393,21 +4466,25 @@ func (c *KMS) GetPublicKeyRequest(input *GetPublicKeyInput) (req *request.Reques
 // KMS, you benefit from the authentication, authorization, and logging that
 // are part of every KMS operation. You also reduce of risk of encrypting data
 // that cannot be decrypted. These features are not effective outside of KMS.
-// For details, see Special Considerations for Downloading Public Keys (https://docs.aws.amazon.com/kms/latest/developerguide/download-public-key.html#download-public-key-considerations).
+//
+// To verify a signature outside of KMS with an SM2 public key (China Regions
+// only), you must specify the distinguishing ID. By default, KMS uses 1234567812345678
+// as the distinguishing ID. For more information, see Offline verification
+// with SM2 key pairs (https://docs.aws.amazon.com/kms/latest/developerguide/asymmetric-key-specs.html#key-spec-sm-offline-verification).
 //
 // To help you use the public key safely outside of KMS, GetPublicKey returns
 // important information about the public key in the response, including:
 //
-//    * KeySpec (https://docs.aws.amazon.com/kms/latest/APIReference/API_GetPublicKey.html#KMS-GetPublicKey-response-KeySpec):
-//    The type of key material in the public key, such as RSA_4096 or ECC_NIST_P521.
+//   - KeySpec (https://docs.aws.amazon.com/kms/latest/APIReference/API_GetPublicKey.html#KMS-GetPublicKey-response-KeySpec):
+//     The type of key material in the public key, such as RSA_4096 or ECC_NIST_P521.
 //
-//    * KeyUsage (https://docs.aws.amazon.com/kms/latest/APIReference/API_GetPublicKey.html#KMS-GetPublicKey-response-KeyUsage):
-//    Whether the key is used for encryption or signing.
+//   - KeyUsage (https://docs.aws.amazon.com/kms/latest/APIReference/API_GetPublicKey.html#KMS-GetPublicKey-response-KeyUsage):
+//     Whether the key is used for encryption or signing.
 //
-//    * EncryptionAlgorithms (https://docs.aws.amazon.com/kms/latest/APIReference/API_GetPublicKey.html#KMS-GetPublicKey-response-EncryptionAlgorithms)
-//    or SigningAlgorithms (https://docs.aws.amazon.com/kms/latest/APIReference/API_GetPublicKey.html#KMS-GetPublicKey-response-SigningAlgorithms):
-//    A list of the encryption algorithms or the signing algorithms for the
-//    key.
+//   - EncryptionAlgorithms (https://docs.aws.amazon.com/kms/latest/APIReference/API_GetPublicKey.html#KMS-GetPublicKey-response-EncryptionAlgorithms)
+//     or SigningAlgorithms (https://docs.aws.amazon.com/kms/latest/APIReference/API_GetPublicKey.html#KMS-GetPublicKey-response-SigningAlgorithms):
+//     A list of the encryption algorithms or the signing algorithms for the
+//     key.
 //
 // Although KMS cannot enforce these restrictions on external operations, it
 // is crucial that you use this information to prevent the public key from being
@@ -4437,60 +4514,61 @@ func (c *KMS) GetPublicKeyRequest(input *GetPublicKeyInput) (req *request.Reques
 // API operation GetPublicKey for usage and error information.
 //
 // Returned Error Types:
-//   * NotFoundException
-//   The request was rejected because the specified entity or resource could not
-//   be found.
 //
-//   * DisabledException
-//   The request was rejected because the specified KMS key is not enabled.
+//   - NotFoundException
+//     The request was rejected because the specified entity or resource could not
+//     be found.
 //
-//   * KeyUnavailableException
-//   The request was rejected because the specified KMS key was not available.
-//   You can retry the request.
+//   - DisabledException
+//     The request was rejected because the specified KMS key is not enabled.
 //
-//   * DependencyTimeoutException
-//   The system timed out while trying to fulfill the request. The request can
-//   be retried.
+//   - KeyUnavailableException
+//     The request was rejected because the specified KMS key was not available.
+//     You can retry the request.
 //
-//   * UnsupportedOperationException
-//   The request was rejected because a specified parameter is not supported or
-//   a specified resource is not valid for this operation.
+//   - DependencyTimeoutException
+//     The system timed out while trying to fulfill the request. The request can
+//     be retried.
 //
-//   * InvalidArnException
-//   The request was rejected because a specified ARN, or an ARN in a key policy,
-//   is not valid.
+//   - UnsupportedOperationException
+//     The request was rejected because a specified parameter is not supported or
+//     a specified resource is not valid for this operation.
 //
-//   * InvalidGrantTokenException
-//   The request was rejected because the specified grant token is not valid.
+//   - InvalidArnException
+//     The request was rejected because a specified ARN, or an ARN in a key policy,
+//     is not valid.
 //
-//   * InvalidKeyUsageException
-//   The request was rejected for one of the following reasons:
+//   - InvalidGrantTokenException
+//     The request was rejected because the specified grant token is not valid.
 //
-//      * The KeyUsage value of the KMS key is incompatible with the API operation.
+//   - InvalidKeyUsageException
+//     The request was rejected for one of the following reasons:
 //
-//      * The encryption algorithm or signing algorithm specified for the operation
-//      is incompatible with the type of key material in the KMS key (KeySpec).
+//   - The KeyUsage value of the KMS key is incompatible with the API operation.
 //
-//   For encrypting, decrypting, re-encrypting, and generating data keys, the
-//   KeyUsage must be ENCRYPT_DECRYPT. For signing and verifying messages, the
-//   KeyUsage must be SIGN_VERIFY. For generating and verifying message authentication
-//   codes (MACs), the KeyUsage must be GENERATE_VERIFY_MAC. To find the KeyUsage
-//   of a KMS key, use the DescribeKey operation.
+//   - The encryption algorithm or signing algorithm specified for the operation
+//     is incompatible with the type of key material in the KMS key (KeySpec).
 //
-//   To find the encryption or signing algorithms supported for a particular KMS
-//   key, use the DescribeKey operation.
+//     For encrypting, decrypting, re-encrypting, and generating data keys, the
+//     KeyUsage must be ENCRYPT_DECRYPT. For signing and verifying messages, the
+//     KeyUsage must be SIGN_VERIFY. For generating and verifying message authentication
+//     codes (MACs), the KeyUsage must be GENERATE_VERIFY_MAC. To find the KeyUsage
+//     of a KMS key, use the DescribeKey operation.
 //
-//   * InternalException
-//   The request was rejected because an internal exception occurred. The request
-//   can be retried.
+//     To find the encryption or signing algorithms supported for a particular KMS
+//     key, use the DescribeKey operation.
 //
-//   * InvalidStateException
-//   The request was rejected because the state of the specified resource is not
-//   valid for this request.
+//   - InternalException
+//     The request was rejected because an internal exception occurred. The request
+//     can be retried.
 //
-//   For more information about how key state affects the use of a KMS key, see
-//   Key states of KMS keys (https://docs.aws.amazon.com/kms/latest/developerguide/key-state.html)
-//   in the Key Management Service Developer Guide .
+//   - InvalidStateException
+//     The request was rejected because the state of the specified resource is not
+//     valid for this request.
+//
+//     For more information about how key state affects the use of a KMS key, see
+//     Key states of KMS keys (https://docs.aws.amazon.com/kms/latest/developerguide/key-state.html)
+//     in the Key Management Service Developer Guide .
 //
 // See also, https://docs.aws.amazon.com/goto/WebAPI/kms-2014-11-01/GetPublicKey
 func (c *KMS) GetPublicKey(input *GetPublicKeyInput) (*GetPublicKeyOutput, error) {
@@ -4530,14 +4608,13 @@ const opImportKeyMaterial = "ImportKeyMaterial"
 // This method is useful when you want to inject custom logic or configuration
 // into the SDK's request lifecycle. Such as custom headers, or retry logic.
 //
+//	// Example sending a request using the ImportKeyMaterialRequest method.
+//	req, resp := client.ImportKeyMaterialRequest(params)
 //
-//    // Example sending a request using the ImportKeyMaterialRequest method.
-//    req, resp := client.ImportKeyMaterialRequest(params)
-//
-//    err := req.Send()
-//    if err == nil { // resp is now filled
-//        fmt.Println(resp)
-//    }
+//	err := req.Send()
+//	if err == nil { // resp is now filled
+//	    fmt.Println(resp)
+//	}
 //
 // See also, https://docs.aws.amazon.com/goto/WebAPI/kms-2014-11-01/ImportKeyMaterial
 func (c *KMS) ImportKeyMaterialRequest(input *ImportKeyMaterialInput) (req *request.Request, output *ImportKeyMaterialOutput) {
@@ -4576,22 +4653,22 @@ func (c *KMS) ImportKeyMaterialRequest(input *ImportKeyMaterialInput) (req *requ
 //
 // When calling this operation, you must specify the following values:
 //
-//    * The key ID or key ARN of a KMS key with no key material. Its Origin
-//    must be EXTERNAL. To create a KMS key with no key material, call CreateKey
-//    and set the value of its Origin parameter to EXTERNAL. To get the Origin
-//    of a KMS key, call DescribeKey.)
+//   - The key ID or key ARN of a KMS key with no key material. Its Origin
+//     must be EXTERNAL. To create a KMS key with no key material, call CreateKey
+//     and set the value of its Origin parameter to EXTERNAL. To get the Origin
+//     of a KMS key, call DescribeKey.)
 //
-//    * The encrypted key material. To get the public key to encrypt the key
-//    material, call GetParametersForImport.
+//   - The encrypted key material. To get the public key to encrypt the key
+//     material, call GetParametersForImport.
 //
-//    * The import token that GetParametersForImport returned. You must use
-//    a public key and token from the same GetParametersForImport response.
+//   - The import token that GetParametersForImport returned. You must use
+//     a public key and token from the same GetParametersForImport response.
 //
-//    * Whether the key material expires and if so, when. If you set an expiration
-//    date, KMS deletes the key material from the KMS key on the specified date,
-//    and the KMS key becomes unusable. To use the KMS key again, you must reimport
-//    the same key material. The only way to change an expiration date is by
-//    reimporting the same key material and specifying a new expiration date.
+//   - Whether the key material expires and if so, when. If you set an expiration
+//     date, KMS deletes the key material from the KMS key on the specified date,
+//     and the KMS key becomes unusable. To use the KMS key again, you must reimport
+//     the same key material. The only way to change an expiration date is by
+//     reimporting the same key material and specifying a new expiration date.
 //
 // When this operation is successful, the key state of the KMS key changes from
 // PendingImport to Enabled, and you can use the KMS key.
@@ -4615,9 +4692,9 @@ func (c *KMS) ImportKeyMaterialRequest(input *ImportKeyMaterialInput) (req *requ
 //
 // Related operations:
 //
-//    * DeleteImportedKeyMaterial
+//   - DeleteImportedKeyMaterial
 //
-//    * GetParametersForImport
+//   - GetParametersForImport
 //
 // Returns awserr.Error for service API and SDK errors. Use runtime type assertions
 // with awserr.Error's Code and Message methods to get detailed information about
@@ -4627,56 +4704,57 @@ func (c *KMS) ImportKeyMaterialRequest(input *ImportKeyMaterialInput) (req *requ
 // API operation ImportKeyMaterial for usage and error information.
 //
 // Returned Error Types:
-//   * InvalidArnException
-//   The request was rejected because a specified ARN, or an ARN in a key policy,
-//   is not valid.
 //
-//   * UnsupportedOperationException
-//   The request was rejected because a specified parameter is not supported or
-//   a specified resource is not valid for this operation.
+//   - InvalidArnException
+//     The request was rejected because a specified ARN, or an ARN in a key policy,
+//     is not valid.
 //
-//   * DependencyTimeoutException
-//   The system timed out while trying to fulfill the request. The request can
-//   be retried.
+//   - UnsupportedOperationException
+//     The request was rejected because a specified parameter is not supported or
+//     a specified resource is not valid for this operation.
 //
-//   * NotFoundException
-//   The request was rejected because the specified entity or resource could not
-//   be found.
+//   - DependencyTimeoutException
+//     The system timed out while trying to fulfill the request. The request can
+//     be retried.
 //
-//   * InternalException
-//   The request was rejected because an internal exception occurred. The request
-//   can be retried.
+//   - NotFoundException
+//     The request was rejected because the specified entity or resource could not
+//     be found.
 //
-//   * InvalidStateException
-//   The request was rejected because the state of the specified resource is not
-//   valid for this request.
+//   - InternalException
+//     The request was rejected because an internal exception occurred. The request
+//     can be retried.
 //
-//   For more information about how key state affects the use of a KMS key, see
-//   Key states of KMS keys (https://docs.aws.amazon.com/kms/latest/developerguide/key-state.html)
-//   in the Key Management Service Developer Guide .
+//   - InvalidStateException
+//     The request was rejected because the state of the specified resource is not
+//     valid for this request.
 //
-//   * InvalidCiphertextException
-//   From the Decrypt or ReEncrypt operation, the request was rejected because
-//   the specified ciphertext, or additional authenticated data incorporated into
-//   the ciphertext, such as the encryption context, is corrupted, missing, or
-//   otherwise invalid.
+//     For more information about how key state affects the use of a KMS key, see
+//     Key states of KMS keys (https://docs.aws.amazon.com/kms/latest/developerguide/key-state.html)
+//     in the Key Management Service Developer Guide .
 //
-//   From the ImportKeyMaterial operation, the request was rejected because KMS
-//   could not decrypt the encrypted (wrapped) key material.
+//   - InvalidCiphertextException
+//     From the Decrypt or ReEncrypt operation, the request was rejected because
+//     the specified ciphertext, or additional authenticated data incorporated into
+//     the ciphertext, such as the encryption context, is corrupted, missing, or
+//     otherwise invalid.
 //
-//   * IncorrectKeyMaterialException
-//   The request was rejected because the key material in the request is, expired,
-//   invalid, or is not the same key material that was previously imported into
-//   this KMS key.
+//     From the ImportKeyMaterial operation, the request was rejected because KMS
+//     could not decrypt the encrypted (wrapped) key material.
 //
-//   * ExpiredImportTokenException
-//   The request was rejected because the specified import token is expired. Use
-//   GetParametersForImport to get a new import token and public key, use the
-//   new public key to encrypt the key material, and then try the request again.
+//   - IncorrectKeyMaterialException
+//     The request was rejected because the key material in the request is, expired,
+//     invalid, or is not the same key material that was previously imported into
+//     this KMS key.
 //
-//   * InvalidImportTokenException
-//   The request was rejected because the provided import token is invalid or
-//   is associated with a different KMS key.
+//   - ExpiredImportTokenException
+//     The request was rejected because the specified import token is expired. Use
+//     GetParametersForImport to get a new import token and public key, use the
+//     new public key to encrypt the key material, and then try the request again.
+//
+//   - InvalidImportTokenException
+//     The request was rejected because the provided import token is invalid or
+//     is associated with a different KMS key.
 //
 // See also, https://docs.aws.amazon.com/goto/WebAPI/kms-2014-11-01/ImportKeyMaterial
 func (c *KMS) ImportKeyMaterial(input *ImportKeyMaterialInput) (*ImportKeyMaterialOutput, error) {
@@ -4716,14 +4794,13 @@ const opListAliases = "ListAliases"
 // This method is useful when you want to inject custom logic or configuration
 // into the SDK's request lifecycle. Such as custom headers, or retry logic.
 //
+//	// Example sending a request using the ListAliasesRequest method.
+//	req, resp := client.ListAliasesRequest(params)
 //
-//    // Example sending a request using the ListAliasesRequest method.
-//    req, resp := client.ListAliasesRequest(params)
-//
-//    err := req.Send()
-//    if err == nil { // resp is now filled
-//        fmt.Println(resp)
-//    }
+//	err := req.Send()
+//	if err == nil { // resp is now filled
+//	    fmt.Println(resp)
+//	}
 //
 // See also, https://docs.aws.amazon.com/goto/WebAPI/kms-2014-11-01/ListAliases
 func (c *KMS) ListAliasesRequest(input *ListAliasesInput) (req *request.Request, output *ListAliasesOutput) {
@@ -4780,11 +4857,11 @@ func (c *KMS) ListAliasesRequest(input *ListAliasesInput) (req *request.Request,
 //
 // Related operations:
 //
-//    * CreateAlias
+//   - CreateAlias
 //
-//    * DeleteAlias
+//   - DeleteAlias
 //
-//    * UpdateAlias
+//   - UpdateAlias
 //
 // Returns awserr.Error for service API and SDK errors. Use runtime type assertions
 // with awserr.Error's Code and Message methods to get detailed information about
@@ -4794,25 +4871,26 @@ func (c *KMS) ListAliasesRequest(input *ListAliasesInput) (req *request.Request,
 // API operation ListAliases for usage and error information.
 //
 // Returned Error Types:
-//   * DependencyTimeoutException
-//   The system timed out while trying to fulfill the request. The request can
-//   be retried.
 //
-//   * InvalidMarkerException
-//   The request was rejected because the marker that specifies where pagination
-//   should next begin is not valid.
+//   - DependencyTimeoutException
+//     The system timed out while trying to fulfill the request. The request can
+//     be retried.
 //
-//   * InternalException
-//   The request was rejected because an internal exception occurred. The request
-//   can be retried.
+//   - InvalidMarkerException
+//     The request was rejected because the marker that specifies where pagination
+//     should next begin is not valid.
 //
-//   * InvalidArnException
-//   The request was rejected because a specified ARN, or an ARN in a key policy,
-//   is not valid.
+//   - InternalException
+//     The request was rejected because an internal exception occurred. The request
+//     can be retried.
 //
-//   * NotFoundException
-//   The request was rejected because the specified entity or resource could not
-//   be found.
+//   - InvalidArnException
+//     The request was rejected because a specified ARN, or an ARN in a key policy,
+//     is not valid.
+//
+//   - NotFoundException
+//     The request was rejected because the specified entity or resource could not
+//     be found.
 //
 // See also, https://docs.aws.amazon.com/goto/WebAPI/kms-2014-11-01/ListAliases
 func (c *KMS) ListAliases(input *ListAliasesInput) (*ListAliasesOutput, error) {
@@ -4844,15 +4922,14 @@ func (c *KMS) ListAliasesWithContext(ctx aws.Context, input *ListAliasesInput, o
 //
 // Note: This operation can generate multiple requests to a service.
 //
-//    // Example iterating over at most 3 pages of a ListAliases operation.
-//    pageNum := 0
-//    err := client.ListAliasesPages(params,
-//        func(page *kms.ListAliasesOutput, lastPage bool) bool {
-//            pageNum++
-//            fmt.Println(page)
-//            return pageNum <= 3
-//        })
-//
+//	// Example iterating over at most 3 pages of a ListAliases operation.
+//	pageNum := 0
+//	err := client.ListAliasesPages(params,
+//	    func(page *kms.ListAliasesOutput, lastPage bool) bool {
+//	        pageNum++
+//	        fmt.Println(page)
+//	        return pageNum <= 3
+//	    })
 func (c *KMS) ListAliasesPages(input *ListAliasesInput, fn func(*ListAliasesOutput, bool) bool) error {
 	return c.ListAliasesPagesWithContext(aws.BackgroundContext(), input, fn)
 }
@@ -4904,14 +4981,13 @@ const opListGrants = "ListGrants"
 // This method is useful when you want to inject custom logic or configuration
 // into the SDK's request lifecycle. Such as custom headers, or retry logic.
 //
+//	// Example sending a request using the ListGrantsRequest method.
+//	req, resp := client.ListGrantsRequest(params)
 //
-//    // Example sending a request using the ListGrantsRequest method.
-//    req, resp := client.ListGrantsRequest(params)
-//
-//    err := req.Send()
-//    if err == nil { // resp is now filled
-//        fmt.Println(resp)
-//    }
+//	err := req.Send()
+//	if err == nil { // resp is now filled
+//	    fmt.Println(resp)
+//	}
 //
 // See also, https://docs.aws.amazon.com/goto/WebAPI/kms-2014-11-01/ListGrants
 func (c *KMS) ListGrantsRequest(input *ListGrantsInput) (req *request.Request, output *ListGrantsResponse) {
@@ -4963,13 +5039,13 @@ func (c *KMS) ListGrantsRequest(input *ListGrantsInput) (req *request.Request, o
 //
 // Related operations:
 //
-//    * CreateGrant
+//   - CreateGrant
 //
-//    * ListRetirableGrants
+//   - ListRetirableGrants
 //
-//    * RetireGrant
+//   - RetireGrant
 //
-//    * RevokeGrant
+//   - RevokeGrant
 //
 // Returns awserr.Error for service API and SDK errors. Use runtime type assertions
 // with awserr.Error's Code and Message methods to get detailed information about
@@ -4979,36 +5055,37 @@ func (c *KMS) ListGrantsRequest(input *ListGrantsInput) (req *request.Request, o
 // API operation ListGrants for usage and error information.
 //
 // Returned Error Types:
-//   * NotFoundException
-//   The request was rejected because the specified entity or resource could not
-//   be found.
 //
-//   * DependencyTimeoutException
-//   The system timed out while trying to fulfill the request. The request can
-//   be retried.
+//   - NotFoundException
+//     The request was rejected because the specified entity or resource could not
+//     be found.
 //
-//   * InvalidMarkerException
-//   The request was rejected because the marker that specifies where pagination
-//   should next begin is not valid.
+//   - DependencyTimeoutException
+//     The system timed out while trying to fulfill the request. The request can
+//     be retried.
 //
-//   * InvalidGrantIdException
-//   The request was rejected because the specified GrantId is not valid.
+//   - InvalidMarkerException
+//     The request was rejected because the marker that specifies where pagination
+//     should next begin is not valid.
 //
-//   * InvalidArnException
-//   The request was rejected because a specified ARN, or an ARN in a key policy,
-//   is not valid.
+//   - InvalidGrantIdException
+//     The request was rejected because the specified GrantId is not valid.
 //
-//   * InternalException
-//   The request was rejected because an internal exception occurred. The request
-//   can be retried.
+//   - InvalidArnException
+//     The request was rejected because a specified ARN, or an ARN in a key policy,
+//     is not valid.
 //
-//   * InvalidStateException
-//   The request was rejected because the state of the specified resource is not
-//   valid for this request.
+//   - InternalException
+//     The request was rejected because an internal exception occurred. The request
+//     can be retried.
 //
-//   For more information about how key state affects the use of a KMS key, see
-//   Key states of KMS keys (https://docs.aws.amazon.com/kms/latest/developerguide/key-state.html)
-//   in the Key Management Service Developer Guide .
+//   - InvalidStateException
+//     The request was rejected because the state of the specified resource is not
+//     valid for this request.
+//
+//     For more information about how key state affects the use of a KMS key, see
+//     Key states of KMS keys (https://docs.aws.amazon.com/kms/latest/developerguide/key-state.html)
+//     in the Key Management Service Developer Guide .
 //
 // See also, https://docs.aws.amazon.com/goto/WebAPI/kms-2014-11-01/ListGrants
 func (c *KMS) ListGrants(input *ListGrantsInput) (*ListGrantsResponse, error) {
@@ -5040,15 +5117,14 @@ func (c *KMS) ListGrantsWithContext(ctx aws.Context, input *ListGrantsInput, opt
 //
 // Note: This operation can generate multiple requests to a service.
 //
-//    // Example iterating over at most 3 pages of a ListGrants operation.
-//    pageNum := 0
-//    err := client.ListGrantsPages(params,
-//        func(page *kms.ListGrantsResponse, lastPage bool) bool {
-//            pageNum++
-//            fmt.Println(page)
-//            return pageNum <= 3
-//        })
-//
+//	// Example iterating over at most 3 pages of a ListGrants operation.
+//	pageNum := 0
+//	err := client.ListGrantsPages(params,
+//	    func(page *kms.ListGrantsResponse, lastPage bool) bool {
+//	        pageNum++
+//	        fmt.Println(page)
+//	        return pageNum <= 3
+//	    })
 func (c *KMS) ListGrantsPages(input *ListGrantsInput, fn func(*ListGrantsResponse, bool) bool) error {
 	return c.ListGrantsPagesWithContext(aws.BackgroundContext(), input, fn)
 }
@@ -5100,14 +5176,13 @@ const opListKeyPolicies = "ListKeyPolicies"
 // This method is useful when you want to inject custom logic or configuration
 // into the SDK's request lifecycle. Such as custom headers, or retry logic.
 //
+//	// Example sending a request using the ListKeyPoliciesRequest method.
+//	req, resp := client.ListKeyPoliciesRequest(params)
 //
-//    // Example sending a request using the ListKeyPoliciesRequest method.
-//    req, resp := client.ListKeyPoliciesRequest(params)
-//
-//    err := req.Send()
-//    if err == nil { // resp is now filled
-//        fmt.Println(resp)
-//    }
+//	err := req.Send()
+//	if err == nil { // resp is now filled
+//	    fmt.Println(resp)
+//	}
 //
 // See also, https://docs.aws.amazon.com/goto/WebAPI/kms-2014-11-01/ListKeyPolicies
 func (c *KMS) ListKeyPoliciesRequest(input *ListKeyPoliciesInput) (req *request.Request, output *ListKeyPoliciesOutput) {
@@ -5146,9 +5221,9 @@ func (c *KMS) ListKeyPoliciesRequest(input *ListKeyPoliciesInput) (req *request.
 //
 // Related operations:
 //
-//    * GetKeyPolicy
+//   - GetKeyPolicy
 //
-//    * PutKeyPolicy
+//   - PutKeyPolicy
 //
 // Returns awserr.Error for service API and SDK errors. Use runtime type assertions
 // with awserr.Error's Code and Message methods to get detailed information about
@@ -5158,29 +5233,30 @@ func (c *KMS) ListKeyPoliciesRequest(input *ListKeyPoliciesInput) (req *request.
 // API operation ListKeyPolicies for usage and error information.
 //
 // Returned Error Types:
-//   * NotFoundException
-//   The request was rejected because the specified entity or resource could not
-//   be found.
 //
-//   * InvalidArnException
-//   The request was rejected because a specified ARN, or an ARN in a key policy,
-//   is not valid.
+//   - NotFoundException
+//     The request was rejected because the specified entity or resource could not
+//     be found.
 //
-//   * DependencyTimeoutException
-//   The system timed out while trying to fulfill the request. The request can
-//   be retried.
+//   - InvalidArnException
+//     The request was rejected because a specified ARN, or an ARN in a key policy,
+//     is not valid.
 //
-//   * InternalException
-//   The request was rejected because an internal exception occurred. The request
-//   can be retried.
+//   - DependencyTimeoutException
+//     The system timed out while trying to fulfill the request. The request can
+//     be retried.
 //
-//   * InvalidStateException
-//   The request was rejected because the state of the specified resource is not
-//   valid for this request.
+//   - InternalException
+//     The request was rejected because an internal exception occurred. The request
+//     can be retried.
 //
-//   For more information about how key state affects the use of a KMS key, see
-//   Key states of KMS keys (https://docs.aws.amazon.com/kms/latest/developerguide/key-state.html)
-//   in the Key Management Service Developer Guide .
+//   - InvalidStateException
+//     The request was rejected because the state of the specified resource is not
+//     valid for this request.
+//
+//     For more information about how key state affects the use of a KMS key, see
+//     Key states of KMS keys (https://docs.aws.amazon.com/kms/latest/developerguide/key-state.html)
+//     in the Key Management Service Developer Guide .
 //
 // See also, https://docs.aws.amazon.com/goto/WebAPI/kms-2014-11-01/ListKeyPolicies
 func (c *KMS) ListKeyPolicies(input *ListKeyPoliciesInput) (*ListKeyPoliciesOutput, error) {
@@ -5212,15 +5288,14 @@ func (c *KMS) ListKeyPoliciesWithContext(ctx aws.Context, input *ListKeyPolicies
 //
 // Note: This operation can generate multiple requests to a service.
 //
-//    // Example iterating over at most 3 pages of a ListKeyPolicies operation.
-//    pageNum := 0
-//    err := client.ListKeyPoliciesPages(params,
-//        func(page *kms.ListKeyPoliciesOutput, lastPage bool) bool {
-//            pageNum++
-//            fmt.Println(page)
-//            return pageNum <= 3
-//        })
-//
+//	// Example iterating over at most 3 pages of a ListKeyPolicies operation.
+//	pageNum := 0
+//	err := client.ListKeyPoliciesPages(params,
+//	    func(page *kms.ListKeyPoliciesOutput, lastPage bool) bool {
+//	        pageNum++
+//	        fmt.Println(page)
+//	        return pageNum <= 3
+//	    })
 func (c *KMS) ListKeyPoliciesPages(input *ListKeyPoliciesInput, fn func(*ListKeyPoliciesOutput, bool) bool) error {
 	return c.ListKeyPoliciesPagesWithContext(aws.BackgroundContext(), input, fn)
 }
@@ -5272,14 +5347,13 @@ const opListKeys = "ListKeys"
 // This method is useful when you want to inject custom logic or configuration
 // into the SDK's request lifecycle. Such as custom headers, or retry logic.
 //
+//	// Example sending a request using the ListKeysRequest method.
+//	req, resp := client.ListKeysRequest(params)
 //
-//    // Example sending a request using the ListKeysRequest method.
-//    req, resp := client.ListKeysRequest(params)
-//
-//    err := req.Send()
-//    if err == nil { // resp is now filled
-//        fmt.Println(resp)
-//    }
+//	err := req.Send()
+//	if err == nil { // resp is now filled
+//	    fmt.Println(resp)
+//	}
 //
 // See also, https://docs.aws.amazon.com/goto/WebAPI/kms-2014-11-01/ListKeys
 func (c *KMS) ListKeysRequest(input *ListKeysInput) (req *request.Request, output *ListKeysOutput) {
@@ -5317,13 +5391,13 @@ func (c *KMS) ListKeysRequest(input *ListKeysInput) (req *request.Request, outpu
 //
 // Related operations:
 //
-//    * CreateKey
+//   - CreateKey
 //
-//    * DescribeKey
+//   - DescribeKey
 //
-//    * ListAliases
+//   - ListAliases
 //
-//    * ListResourceTags
+//   - ListResourceTags
 //
 // Returns awserr.Error for service API and SDK errors. Use runtime type assertions
 // with awserr.Error's Code and Message methods to get detailed information about
@@ -5333,17 +5407,18 @@ func (c *KMS) ListKeysRequest(input *ListKeysInput) (req *request.Request, outpu
 // API operation ListKeys for usage and error information.
 //
 // Returned Error Types:
-//   * DependencyTimeoutException
-//   The system timed out while trying to fulfill the request. The request can
-//   be retried.
 //
-//   * InternalException
-//   The request was rejected because an internal exception occurred. The request
-//   can be retried.
+//   - DependencyTimeoutException
+//     The system timed out while trying to fulfill the request. The request can
+//     be retried.
 //
-//   * InvalidMarkerException
-//   The request was rejected because the marker that specifies where pagination
-//   should next begin is not valid.
+//   - InternalException
+//     The request was rejected because an internal exception occurred. The request
+//     can be retried.
+//
+//   - InvalidMarkerException
+//     The request was rejected because the marker that specifies where pagination
+//     should next begin is not valid.
 //
 // See also, https://docs.aws.amazon.com/goto/WebAPI/kms-2014-11-01/ListKeys
 func (c *KMS) ListKeys(input *ListKeysInput) (*ListKeysOutput, error) {
@@ -5375,15 +5450,14 @@ func (c *KMS) ListKeysWithContext(ctx aws.Context, input *ListKeysInput, opts ..
 //
 // Note: This operation can generate multiple requests to a service.
 //
-//    // Example iterating over at most 3 pages of a ListKeys operation.
-//    pageNum := 0
-//    err := client.ListKeysPages(params,
-//        func(page *kms.ListKeysOutput, lastPage bool) bool {
-//            pageNum++
-//            fmt.Println(page)
-//            return pageNum <= 3
-//        })
-//
+//	// Example iterating over at most 3 pages of a ListKeys operation.
+//	pageNum := 0
+//	err := client.ListKeysPages(params,
+//	    func(page *kms.ListKeysOutput, lastPage bool) bool {
+//	        pageNum++
+//	        fmt.Println(page)
+//	        return pageNum <= 3
+//	    })
 func (c *KMS) ListKeysPages(input *ListKeysInput, fn func(*ListKeysOutput, bool) bool) error {
 	return c.ListKeysPagesWithContext(aws.BackgroundContext(), input, fn)
 }
@@ -5435,14 +5509,13 @@ const opListResourceTags = "ListResourceTags"
 // This method is useful when you want to inject custom logic or configuration
 // into the SDK's request lifecycle. Such as custom headers, or retry logic.
 //
+//	// Example sending a request using the ListResourceTagsRequest method.
+//	req, resp := client.ListResourceTagsRequest(params)
 //
-//    // Example sending a request using the ListResourceTagsRequest method.
-//    req, resp := client.ListResourceTagsRequest(params)
-//
-//    err := req.Send()
-//    if err == nil { // resp is now filled
-//        fmt.Println(resp)
-//    }
+//	err := req.Send()
+//	if err == nil { // resp is now filled
+//	    fmt.Println(resp)
+//	}
 //
 // See also, https://docs.aws.amazon.com/goto/WebAPI/kms-2014-11-01/ListResourceTags
 func (c *KMS) ListResourceTagsRequest(input *ListResourceTagsInput) (req *request.Request, output *ListResourceTagsOutput) {
@@ -5450,6 +5523,12 @@ func (c *KMS) ListResourceTagsRequest(input *ListResourceTagsInput) (req *reques
 		Name:       opListResourceTags,
 		HTTPMethod: "POST",
 		HTTPPath:   "/",
+		Paginator: &request.Paginator{
+			InputTokens:     []string{"Marker"},
+			OutputTokens:    []string{"NextMarker"},
+			LimitToken:      "Limit",
+			TruncationToken: "Truncated",
+		},
 	}
 
 	if input == nil {
@@ -5478,13 +5557,13 @@ func (c *KMS) ListResourceTagsRequest(input *ListResourceTagsInput) (req *reques
 //
 // Related operations:
 //
-//    * CreateKey
+//   - CreateKey
 //
-//    * ReplicateKey
+//   - ReplicateKey
 //
-//    * TagResource
+//   - TagResource
 //
-//    * UntagResource
+//   - UntagResource
 //
 // Returns awserr.Error for service API and SDK errors. Use runtime type assertions
 // with awserr.Error's Code and Message methods to get detailed information about
@@ -5494,21 +5573,22 @@ func (c *KMS) ListResourceTagsRequest(input *ListResourceTagsInput) (req *reques
 // API operation ListResourceTags for usage and error information.
 //
 // Returned Error Types:
-//   * InternalException
-//   The request was rejected because an internal exception occurred. The request
-//   can be retried.
 //
-//   * NotFoundException
-//   The request was rejected because the specified entity or resource could not
-//   be found.
+//   - InternalException
+//     The request was rejected because an internal exception occurred. The request
+//     can be retried.
 //
-//   * InvalidArnException
-//   The request was rejected because a specified ARN, or an ARN in a key policy,
-//   is not valid.
+//   - NotFoundException
+//     The request was rejected because the specified entity or resource could not
+//     be found.
 //
-//   * InvalidMarkerException
-//   The request was rejected because the marker that specifies where pagination
-//   should next begin is not valid.
+//   - InvalidArnException
+//     The request was rejected because a specified ARN, or an ARN in a key policy,
+//     is not valid.
+//
+//   - InvalidMarkerException
+//     The request was rejected because the marker that specifies where pagination
+//     should next begin is not valid.
 //
 // See also, https://docs.aws.amazon.com/goto/WebAPI/kms-2014-11-01/ListResourceTags
 func (c *KMS) ListResourceTags(input *ListResourceTagsInput) (*ListResourceTagsOutput, error) {
@@ -5532,6 +5612,57 @@ func (c *KMS) ListResourceTagsWithContext(ctx aws.Context, input *ListResourceTa
 	return out, req.Send()
 }
 
+// ListResourceTagsPages iterates over the pages of a ListResourceTags operation,
+// calling the "fn" function with the response data for each page. To stop
+// iterating, return false from the fn function.
+//
+// See ListResourceTags method for more information on how to use this operation.
+//
+// Note: This operation can generate multiple requests to a service.
+//
+//	// Example iterating over at most 3 pages of a ListResourceTags operation.
+//	pageNum := 0
+//	err := client.ListResourceTagsPages(params,
+//	    func(page *kms.ListResourceTagsOutput, lastPage bool) bool {
+//	        pageNum++
+//	        fmt.Println(page)
+//	        return pageNum <= 3
+//	    })
+func (c *KMS) ListResourceTagsPages(input *ListResourceTagsInput, fn func(*ListResourceTagsOutput, bool) bool) error {
+	return c.ListResourceTagsPagesWithContext(aws.BackgroundContext(), input, fn)
+}
+
+// ListResourceTagsPagesWithContext same as ListResourceTagsPages except
+// it takes a Context and allows setting request options on the pages.
+//
+// The context must be non-nil and will be used for request cancellation. If
+// the context is nil a panic will occur. In the future the SDK may create
+// sub-contexts for http.Requests. See https://golang.org/pkg/context/
+// for more information on using Contexts.
+func (c *KMS) ListResourceTagsPagesWithContext(ctx aws.Context, input *ListResourceTagsInput, fn func(*ListResourceTagsOutput, bool) bool, opts ...request.Option) error {
+	p := request.Pagination{
+		NewRequest: func() (*request.Request, error) {
+			var inCpy *ListResourceTagsInput
+			if input != nil {
+				tmp := *input
+				inCpy = &tmp
+			}
+			req, _ := c.ListResourceTagsRequest(inCpy)
+			req.SetContext(ctx)
+			req.ApplyOptions(opts...)
+			return req, nil
+		},
+	}
+
+	for p.Next() {
+		if !fn(p.Page().(*ListResourceTagsOutput), !p.HasNextPage()) {
+			break
+		}
+	}
+
+	return p.Err()
+}
+
 const opListRetirableGrants = "ListRetirableGrants"
 
 // ListRetirableGrantsRequest generates a "aws/request.Request" representing the
@@ -5548,14 +5679,13 @@ const opListRetirableGrants = "ListRetirableGrants"
 // This method is useful when you want to inject custom logic or configuration
 // into the SDK's request lifecycle. Such as custom headers, or retry logic.
 //
+//	// Example sending a request using the ListRetirableGrantsRequest method.
+//	req, resp := client.ListRetirableGrantsRequest(params)
 //
-//    // Example sending a request using the ListRetirableGrantsRequest method.
-//    req, resp := client.ListRetirableGrantsRequest(params)
-//
-//    err := req.Send()
-//    if err == nil { // resp is now filled
-//        fmt.Println(resp)
-//    }
+//	err := req.Send()
+//	if err == nil { // resp is now filled
+//	    fmt.Println(resp)
+//	}
 //
 // See also, https://docs.aws.amazon.com/goto/WebAPI/kms-2014-11-01/ListRetirableGrants
 func (c *KMS) ListRetirableGrantsRequest(input *ListRetirableGrantsInput) (req *request.Request, output *ListGrantsResponse) {
@@ -5563,6 +5693,12 @@ func (c *KMS) ListRetirableGrantsRequest(input *ListRetirableGrantsInput) (req *
 		Name:       opListRetirableGrants,
 		HTTPMethod: "POST",
 		HTTPPath:   "/",
+		Paginator: &request.Paginator{
+			InputTokens:     []string{"Marker"},
+			OutputTokens:    []string{"NextMarker"},
+			LimitToken:      "Limit",
+			TruncationToken: "Truncated",
+		},
 	}
 
 	if input == nil {
@@ -5601,13 +5737,13 @@ func (c *KMS) ListRetirableGrantsRequest(input *ListRetirableGrantsInput) (req *
 //
 // Related operations:
 //
-//    * CreateGrant
+//   - CreateGrant
 //
-//    * ListGrants
+//   - ListGrants
 //
-//    * RetireGrant
+//   - RetireGrant
 //
-//    * RevokeGrant
+//   - RevokeGrant
 //
 // Returns awserr.Error for service API and SDK errors. Use runtime type assertions
 // with awserr.Error's Code and Message methods to get detailed information about
@@ -5617,25 +5753,26 @@ func (c *KMS) ListRetirableGrantsRequest(input *ListRetirableGrantsInput) (req *
 // API operation ListRetirableGrants for usage and error information.
 //
 // Returned Error Types:
-//   * DependencyTimeoutException
-//   The system timed out while trying to fulfill the request. The request can
-//   be retried.
 //
-//   * InvalidMarkerException
-//   The request was rejected because the marker that specifies where pagination
-//   should next begin is not valid.
+//   - DependencyTimeoutException
+//     The system timed out while trying to fulfill the request. The request can
+//     be retried.
 //
-//   * InvalidArnException
-//   The request was rejected because a specified ARN, or an ARN in a key policy,
-//   is not valid.
+//   - InvalidMarkerException
+//     The request was rejected because the marker that specifies where pagination
+//     should next begin is not valid.
 //
-//   * NotFoundException
-//   The request was rejected because the specified entity or resource could not
-//   be found.
+//   - InvalidArnException
+//     The request was rejected because a specified ARN, or an ARN in a key policy,
+//     is not valid.
 //
-//   * InternalException
-//   The request was rejected because an internal exception occurred. The request
-//   can be retried.
+//   - NotFoundException
+//     The request was rejected because the specified entity or resource could not
+//     be found.
+//
+//   - InternalException
+//     The request was rejected because an internal exception occurred. The request
+//     can be retried.
 //
 // See also, https://docs.aws.amazon.com/goto/WebAPI/kms-2014-11-01/ListRetirableGrants
 func (c *KMS) ListRetirableGrants(input *ListRetirableGrantsInput) (*ListGrantsResponse, error) {
@@ -5659,6 +5796,57 @@ func (c *KMS) ListRetirableGrantsWithContext(ctx aws.Context, input *ListRetirab
 	return out, req.Send()
 }
 
+// ListRetirableGrantsPages iterates over the pages of a ListRetirableGrants operation,
+// calling the "fn" function with the response data for each page. To stop
+// iterating, return false from the fn function.
+//
+// See ListRetirableGrants method for more information on how to use this operation.
+//
+// Note: This operation can generate multiple requests to a service.
+//
+//	// Example iterating over at most 3 pages of a ListRetirableGrants operation.
+//	pageNum := 0
+//	err := client.ListRetirableGrantsPages(params,
+//	    func(page *kms.ListGrantsResponse, lastPage bool) bool {
+//	        pageNum++
+//	        fmt.Println(page)
+//	        return pageNum <= 3
+//	    })
+func (c *KMS) ListRetirableGrantsPages(input *ListRetirableGrantsInput, fn func(*ListGrantsResponse, bool) bool) error {
+	return c.ListRetirableGrantsPagesWithContext(aws.BackgroundContext(), input, fn)
+}
+
+// ListRetirableGrantsPagesWithContext same as ListRetirableGrantsPages except
+// it takes a Context and allows setting request options on the pages.
+//
+// The context must be non-nil and will be used for request cancellation. If
+// the context is nil a panic will occur. In the future the SDK may create
+// sub-contexts for http.Requests. See https://golang.org/pkg/context/
+// for more information on using Contexts.
+func (c *KMS) ListRetirableGrantsPagesWithContext(ctx aws.Context, input *ListRetirableGrantsInput, fn func(*ListGrantsResponse, bool) bool, opts ...request.Option) error {
+	p := request.Pagination{
+		NewRequest: func() (*request.Request, error) {
+			var inCpy *ListRetirableGrantsInput
+			if input != nil {
+				tmp := *input
+				inCpy = &tmp
+			}
+			req, _ := c.ListRetirableGrantsRequest(inCpy)
+			req.SetContext(ctx)
+			req.ApplyOptions(opts...)
+			return req, nil
+		},
+	}
+
+	for p.Next() {
+		if !fn(p.Page().(*ListGrantsResponse), !p.HasNextPage()) {
+			break
+		}
+	}
+
+	return p.Err()
+}
+
 const opPutKeyPolicy = "PutKeyPolicy"
 
 // PutKeyPolicyRequest generates a "aws/request.Request" representing the
@@ -5675,14 +5863,13 @@ const opPutKeyPolicy = "PutKeyPolicy"
 // This method is useful when you want to inject custom logic or configuration
 // into the SDK's request lifecycle. Such as custom headers, or retry logic.
 //
+//	// Example sending a request using the PutKeyPolicyRequest method.
+//	req, resp := client.PutKeyPolicyRequest(params)
 //
-//    // Example sending a request using the PutKeyPolicyRequest method.
-//    req, resp := client.PutKeyPolicyRequest(params)
-//
-//    err := req.Send()
-//    if err == nil { // resp is now filled
-//        fmt.Println(resp)
-//    }
+//	err := req.Send()
+//	if err == nil { // resp is now filled
+//	    fmt.Println(resp)
+//	}
 //
 // See also, https://docs.aws.amazon.com/goto/WebAPI/kms-2014-11-01/PutKeyPolicy
 func (c *KMS) PutKeyPolicyRequest(input *PutKeyPolicyInput) (req *request.Request, output *PutKeyPolicyOutput) {
@@ -5730,42 +5917,43 @@ func (c *KMS) PutKeyPolicyRequest(input *PutKeyPolicyInput) (req *request.Reques
 // API operation PutKeyPolicy for usage and error information.
 //
 // Returned Error Types:
-//   * NotFoundException
-//   The request was rejected because the specified entity or resource could not
-//   be found.
 //
-//   * InvalidArnException
-//   The request was rejected because a specified ARN, or an ARN in a key policy,
-//   is not valid.
+//   - NotFoundException
+//     The request was rejected because the specified entity or resource could not
+//     be found.
 //
-//   * MalformedPolicyDocumentException
-//   The request was rejected because the specified policy is not syntactically
-//   or semantically correct.
+//   - InvalidArnException
+//     The request was rejected because a specified ARN, or an ARN in a key policy,
+//     is not valid.
 //
-//   * DependencyTimeoutException
-//   The system timed out while trying to fulfill the request. The request can
-//   be retried.
+//   - MalformedPolicyDocumentException
+//     The request was rejected because the specified policy is not syntactically
+//     or semantically correct.
 //
-//   * UnsupportedOperationException
-//   The request was rejected because a specified parameter is not supported or
-//   a specified resource is not valid for this operation.
+//   - DependencyTimeoutException
+//     The system timed out while trying to fulfill the request. The request can
+//     be retried.
 //
-//   * InternalException
-//   The request was rejected because an internal exception occurred. The request
-//   can be retried.
+//   - UnsupportedOperationException
+//     The request was rejected because a specified parameter is not supported or
+//     a specified resource is not valid for this operation.
 //
-//   * LimitExceededException
-//   The request was rejected because a quota was exceeded. For more information,
-//   see Quotas (https://docs.aws.amazon.com/kms/latest/developerguide/limits.html)
-//   in the Key Management Service Developer Guide.
+//   - InternalException
+//     The request was rejected because an internal exception occurred. The request
+//     can be retried.
 //
-//   * InvalidStateException
-//   The request was rejected because the state of the specified resource is not
-//   valid for this request.
+//   - LimitExceededException
+//     The request was rejected because a quota was exceeded. For more information,
+//     see Quotas (https://docs.aws.amazon.com/kms/latest/developerguide/limits.html)
+//     in the Key Management Service Developer Guide.
 //
-//   For more information about how key state affects the use of a KMS key, see
-//   Key states of KMS keys (https://docs.aws.amazon.com/kms/latest/developerguide/key-state.html)
-//   in the Key Management Service Developer Guide .
+//   - InvalidStateException
+//     The request was rejected because the state of the specified resource is not
+//     valid for this request.
+//
+//     For more information about how key state affects the use of a KMS key, see
+//     Key states of KMS keys (https://docs.aws.amazon.com/kms/latest/developerguide/key-state.html)
+//     in the Key Management Service Developer Guide .
 //
 // See also, https://docs.aws.amazon.com/goto/WebAPI/kms-2014-11-01/PutKeyPolicy
 func (c *KMS) PutKeyPolicy(input *PutKeyPolicyInput) (*PutKeyPolicyOutput, error) {
@@ -5805,14 +5993,13 @@ const opReEncrypt = "ReEncrypt"
 // This method is useful when you want to inject custom logic or configuration
 // into the SDK's request lifecycle. Such as custom headers, or retry logic.
 //
+//	// Example sending a request using the ReEncryptRequest method.
+//	req, resp := client.ReEncryptRequest(params)
 //
-//    // Example sending a request using the ReEncryptRequest method.
-//    req, resp := client.ReEncryptRequest(params)
-//
-//    err := req.Send()
-//    if err == nil { // resp is now filled
-//        fmt.Println(resp)
-//    }
+//	err := req.Send()
+//	if err == nil { // resp is now filled
+//	    fmt.Println(resp)
+//	}
 //
 // See also, https://docs.aws.amazon.com/goto/WebAPI/kms-2014-11-01/ReEncrypt
 func (c *KMS) ReEncryptRequest(input *ReEncryptInput) (req *request.Request, output *ReEncryptOutput) {
@@ -5853,36 +6040,36 @@ func (c *KMS) ReEncryptRequest(input *ReEncryptInput) (req *request.Request, out
 // When you use the ReEncrypt operation, you need to provide information for
 // the decrypt operation and the subsequent encrypt operation.
 //
-//    * If your ciphertext was encrypted under an asymmetric KMS key, you must
-//    use the SourceKeyId parameter to identify the KMS key that encrypted the
-//    ciphertext. You must also supply the encryption algorithm that was used.
-//    This information is required to decrypt the data.
+//   - If your ciphertext was encrypted under an asymmetric KMS key, you must
+//     use the SourceKeyId parameter to identify the KMS key that encrypted the
+//     ciphertext. You must also supply the encryption algorithm that was used.
+//     This information is required to decrypt the data.
 //
-//    * If your ciphertext was encrypted under a symmetric encryption KMS key,
-//    the SourceKeyId parameter is optional. KMS can get this information from
-//    metadata that it adds to the symmetric ciphertext blob. This feature adds
-//    durability to your implementation by ensuring that authorized users can
-//    decrypt ciphertext decades after it was encrypted, even if they've lost
-//    track of the key ID. However, specifying the source KMS key is always
-//    recommended as a best practice. When you use the SourceKeyId parameter
-//    to specify a KMS key, KMS uses only the KMS key you specify. If the ciphertext
-//    was encrypted under a different KMS key, the ReEncrypt operation fails.
-//    This practice ensures that you use the KMS key that you intend.
+//   - If your ciphertext was encrypted under a symmetric encryption KMS key,
+//     the SourceKeyId parameter is optional. KMS can get this information from
+//     metadata that it adds to the symmetric ciphertext blob. This feature adds
+//     durability to your implementation by ensuring that authorized users can
+//     decrypt ciphertext decades after it was encrypted, even if they've lost
+//     track of the key ID. However, specifying the source KMS key is always
+//     recommended as a best practice. When you use the SourceKeyId parameter
+//     to specify a KMS key, KMS uses only the KMS key you specify. If the ciphertext
+//     was encrypted under a different KMS key, the ReEncrypt operation fails.
+//     This practice ensures that you use the KMS key that you intend.
 //
-//    * To reencrypt the data, you must use the DestinationKeyId parameter specify
-//    the KMS key that re-encrypts the data after it is decrypted. If the destination
-//    KMS key is an asymmetric KMS key, you must also provide the encryption
-//    algorithm. The algorithm that you choose must be compatible with the KMS
-//    key. When you use an asymmetric KMS key to encrypt or reencrypt data,
-//    be sure to record the KMS key and encryption algorithm that you choose.
-//    You will be required to provide the same KMS key and encryption algorithm
-//    when you decrypt the data. If the KMS key and algorithm do not match the
-//    values used to encrypt the data, the decrypt operation fails. You are
-//    not required to supply the key ID and encryption algorithm when you decrypt
-//    with symmetric encryption KMS keys because KMS stores this information
-//    in the ciphertext blob. KMS cannot store metadata in ciphertext generated
-//    with asymmetric keys. The standard format for asymmetric key ciphertext
-//    does not include configurable fields.
+//   - To reencrypt the data, you must use the DestinationKeyId parameter specify
+//     the KMS key that re-encrypts the data after it is decrypted. If the destination
+//     KMS key is an asymmetric KMS key, you must also provide the encryption
+//     algorithm. The algorithm that you choose must be compatible with the KMS
+//     key. When you use an asymmetric KMS key to encrypt or reencrypt data,
+//     be sure to record the KMS key and encryption algorithm that you choose.
+//     You will be required to provide the same KMS key and encryption algorithm
+//     when you decrypt the data. If the KMS key and algorithm do not match the
+//     values used to encrypt the data, the decrypt operation fails. You are
+//     not required to supply the key ID and encryption algorithm when you decrypt
+//     with symmetric encryption KMS keys because KMS stores this information
+//     in the ciphertext blob. KMS cannot store metadata in ciphertext generated
+//     with asymmetric keys. The standard format for asymmetric key ciphertext
+//     does not include configurable fields.
 //
 // The KMS key that you use for this operation must be in a compatible key state.
 // For details, see Key states of KMS keys (https://docs.aws.amazon.com/kms/latest/developerguide/key-state.html)
@@ -5895,11 +6082,11 @@ func (c *KMS) ReEncryptRequest(input *ReEncryptInput) (req *request.Request, out
 //
 // Required permissions:
 //
-//    * kms:ReEncryptFrom (https://docs.aws.amazon.com/kms/latest/developerguide/kms-api-permissions-reference.html)
-//    permission on the source KMS key (key policy)
+//   - kms:ReEncryptFrom (https://docs.aws.amazon.com/kms/latest/developerguide/kms-api-permissions-reference.html)
+//     permission on the source KMS key (key policy)
 //
-//    * kms:ReEncryptTo (https://docs.aws.amazon.com/kms/latest/developerguide/kms-api-permissions-reference.html)
-//    permission on the destination KMS key (key policy)
+//   - kms:ReEncryptTo (https://docs.aws.amazon.com/kms/latest/developerguide/kms-api-permissions-reference.html)
+//     permission on the destination KMS key (key policy)
 //
 // To permit reencryption from or to a KMS key, include the "kms:ReEncrypt*"
 // permission in your key policy (https://docs.aws.amazon.com/kms/latest/developerguide/key-policies.html).
@@ -5910,13 +6097,13 @@ func (c *KMS) ReEncryptRequest(input *ReEncryptInput) (req *request.Request, out
 //
 // Related operations:
 //
-//    * Decrypt
+//   - Decrypt
 //
-//    * Encrypt
+//   - Encrypt
 //
-//    * GenerateDataKey
+//   - GenerateDataKey
 //
-//    * GenerateDataKeyPair
+//   - GenerateDataKeyPair
 //
 // Returns awserr.Error for service API and SDK errors. Use runtime type assertions
 // with awserr.Error's Code and Message methods to get detailed information about
@@ -5926,66 +6113,67 @@ func (c *KMS) ReEncryptRequest(input *ReEncryptInput) (req *request.Request, out
 // API operation ReEncrypt for usage and error information.
 //
 // Returned Error Types:
-//   * NotFoundException
-//   The request was rejected because the specified entity or resource could not
-//   be found.
 //
-//   * DisabledException
-//   The request was rejected because the specified KMS key is not enabled.
+//   - NotFoundException
+//     The request was rejected because the specified entity or resource could not
+//     be found.
 //
-//   * InvalidCiphertextException
-//   From the Decrypt or ReEncrypt operation, the request was rejected because
-//   the specified ciphertext, or additional authenticated data incorporated into
-//   the ciphertext, such as the encryption context, is corrupted, missing, or
-//   otherwise invalid.
+//   - DisabledException
+//     The request was rejected because the specified KMS key is not enabled.
 //
-//   From the ImportKeyMaterial operation, the request was rejected because KMS
-//   could not decrypt the encrypted (wrapped) key material.
+//   - InvalidCiphertextException
+//     From the Decrypt or ReEncrypt operation, the request was rejected because
+//     the specified ciphertext, or additional authenticated data incorporated into
+//     the ciphertext, such as the encryption context, is corrupted, missing, or
+//     otherwise invalid.
 //
-//   * KeyUnavailableException
-//   The request was rejected because the specified KMS key was not available.
-//   You can retry the request.
+//     From the ImportKeyMaterial operation, the request was rejected because KMS
+//     could not decrypt the encrypted (wrapped) key material.
 //
-//   * IncorrectKeyException
-//   The request was rejected because the specified KMS key cannot decrypt the
-//   data. The KeyId in a Decrypt request and the SourceKeyId in a ReEncrypt request
-//   must identify the same KMS key that was used to encrypt the ciphertext.
+//   - KeyUnavailableException
+//     The request was rejected because the specified KMS key was not available.
+//     You can retry the request.
 //
-//   * DependencyTimeoutException
-//   The system timed out while trying to fulfill the request. The request can
-//   be retried.
+//   - IncorrectKeyException
+//     The request was rejected because the specified KMS key cannot decrypt the
+//     data. The KeyId in a Decrypt request and the SourceKeyId in a ReEncrypt request
+//     must identify the same KMS key that was used to encrypt the ciphertext.
 //
-//   * InvalidKeyUsageException
-//   The request was rejected for one of the following reasons:
+//   - DependencyTimeoutException
+//     The system timed out while trying to fulfill the request. The request can
+//     be retried.
 //
-//      * The KeyUsage value of the KMS key is incompatible with the API operation.
+//   - InvalidKeyUsageException
+//     The request was rejected for one of the following reasons:
 //
-//      * The encryption algorithm or signing algorithm specified for the operation
-//      is incompatible with the type of key material in the KMS key (KeySpec).
+//   - The KeyUsage value of the KMS key is incompatible with the API operation.
 //
-//   For encrypting, decrypting, re-encrypting, and generating data keys, the
-//   KeyUsage must be ENCRYPT_DECRYPT. For signing and verifying messages, the
-//   KeyUsage must be SIGN_VERIFY. For generating and verifying message authentication
-//   codes (MACs), the KeyUsage must be GENERATE_VERIFY_MAC. To find the KeyUsage
-//   of a KMS key, use the DescribeKey operation.
+//   - The encryption algorithm or signing algorithm specified for the operation
+//     is incompatible with the type of key material in the KMS key (KeySpec).
 //
-//   To find the encryption or signing algorithms supported for a particular KMS
-//   key, use the DescribeKey operation.
+//     For encrypting, decrypting, re-encrypting, and generating data keys, the
+//     KeyUsage must be ENCRYPT_DECRYPT. For signing and verifying messages, the
+//     KeyUsage must be SIGN_VERIFY. For generating and verifying message authentication
+//     codes (MACs), the KeyUsage must be GENERATE_VERIFY_MAC. To find the KeyUsage
+//     of a KMS key, use the DescribeKey operation.
 //
-//   * InvalidGrantTokenException
-//   The request was rejected because the specified grant token is not valid.
+//     To find the encryption or signing algorithms supported for a particular KMS
+//     key, use the DescribeKey operation.
 //
-//   * InternalException
-//   The request was rejected because an internal exception occurred. The request
-//   can be retried.
+//   - InvalidGrantTokenException
+//     The request was rejected because the specified grant token is not valid.
 //
-//   * InvalidStateException
-//   The request was rejected because the state of the specified resource is not
-//   valid for this request.
+//   - InternalException
+//     The request was rejected because an internal exception occurred. The request
+//     can be retried.
 //
-//   For more information about how key state affects the use of a KMS key, see
-//   Key states of KMS keys (https://docs.aws.amazon.com/kms/latest/developerguide/key-state.html)
-//   in the Key Management Service Developer Guide .
+//   - InvalidStateException
+//     The request was rejected because the state of the specified resource is not
+//     valid for this request.
+//
+//     For more information about how key state affects the use of a KMS key, see
+//     Key states of KMS keys (https://docs.aws.amazon.com/kms/latest/developerguide/key-state.html)
+//     in the Key Management Service Developer Guide .
 //
 // See also, https://docs.aws.amazon.com/goto/WebAPI/kms-2014-11-01/ReEncrypt
 func (c *KMS) ReEncrypt(input *ReEncryptInput) (*ReEncryptOutput, error) {
@@ -6025,14 +6213,13 @@ const opReplicateKey = "ReplicateKey"
 // This method is useful when you want to inject custom logic or configuration
 // into the SDK's request lifecycle. Such as custom headers, or retry logic.
 //
+//	// Example sending a request using the ReplicateKeyRequest method.
+//	req, resp := client.ReplicateKeyRequest(params)
 //
-//    // Example sending a request using the ReplicateKeyRequest method.
-//    req, resp := client.ReplicateKeyRequest(params)
-//
-//    err := req.Send()
-//    if err == nil { // resp is now filled
-//        fmt.Println(resp)
-//    }
+//	err := req.Send()
+//	if err == nil { // resp is now filled
+//	    fmt.Println(resp)
+//	}
 //
 // See also, https://docs.aws.amazon.com/goto/WebAPI/kms-2014-11-01/ReplicateKey
 func (c *KMS) ReplicateKeyRequest(input *ReplicateKeyInput) (req *request.Request, output *ReplicateKeyOutput) {
@@ -6123,19 +6310,19 @@ func (c *KMS) ReplicateKeyRequest(input *ReplicateKeyInput) (req *request.Reques
 //
 // Required permissions:
 //
-//    * kms:ReplicateKey on the primary key (in the primary key's Region). Include
-//    this permission in the primary key's key policy.
+//   - kms:ReplicateKey on the primary key (in the primary key's Region). Include
+//     this permission in the primary key's key policy.
 //
-//    * kms:CreateKey in an IAM policy in the replica Region.
+//   - kms:CreateKey in an IAM policy in the replica Region.
 //
-//    * To use the Tags parameter, kms:TagResource in an IAM policy in the replica
-//    Region.
+//   - To use the Tags parameter, kms:TagResource in an IAM policy in the replica
+//     Region.
 //
 // Related operations
 //
-//    * CreateKey
+//   - CreateKey
 //
-//    * UpdatePrimaryRegion
+//   - UpdatePrimaryRegion
 //
 // Returns awserr.Error for service API and SDK errors. Use runtime type assertions
 // with awserr.Error's Code and Message methods to get detailed information about
@@ -6145,48 +6332,49 @@ func (c *KMS) ReplicateKeyRequest(input *ReplicateKeyInput) (req *request.Reques
 // API operation ReplicateKey for usage and error information.
 //
 // Returned Error Types:
-//   * AlreadyExistsException
-//   The request was rejected because it attempted to create a resource that already
-//   exists.
 //
-//   * DisabledException
-//   The request was rejected because the specified KMS key is not enabled.
+//   - AlreadyExistsException
+//     The request was rejected because it attempted to create a resource that already
+//     exists.
 //
-//   * InvalidArnException
-//   The request was rejected because a specified ARN, or an ARN in a key policy,
-//   is not valid.
+//   - DisabledException
+//     The request was rejected because the specified KMS key is not enabled.
 //
-//   * InvalidStateException
-//   The request was rejected because the state of the specified resource is not
-//   valid for this request.
+//   - InvalidArnException
+//     The request was rejected because a specified ARN, or an ARN in a key policy,
+//     is not valid.
 //
-//   For more information about how key state affects the use of a KMS key, see
-//   Key states of KMS keys (https://docs.aws.amazon.com/kms/latest/developerguide/key-state.html)
-//   in the Key Management Service Developer Guide .
+//   - InvalidStateException
+//     The request was rejected because the state of the specified resource is not
+//     valid for this request.
 //
-//   * InternalException
-//   The request was rejected because an internal exception occurred. The request
-//   can be retried.
+//     For more information about how key state affects the use of a KMS key, see
+//     Key states of KMS keys (https://docs.aws.amazon.com/kms/latest/developerguide/key-state.html)
+//     in the Key Management Service Developer Guide .
 //
-//   * LimitExceededException
-//   The request was rejected because a quota was exceeded. For more information,
-//   see Quotas (https://docs.aws.amazon.com/kms/latest/developerguide/limits.html)
-//   in the Key Management Service Developer Guide.
+//   - InternalException
+//     The request was rejected because an internal exception occurred. The request
+//     can be retried.
 //
-//   * MalformedPolicyDocumentException
-//   The request was rejected because the specified policy is not syntactically
-//   or semantically correct.
+//   - LimitExceededException
+//     The request was rejected because a quota was exceeded. For more information,
+//     see Quotas (https://docs.aws.amazon.com/kms/latest/developerguide/limits.html)
+//     in the Key Management Service Developer Guide.
 //
-//   * NotFoundException
-//   The request was rejected because the specified entity or resource could not
-//   be found.
+//   - MalformedPolicyDocumentException
+//     The request was rejected because the specified policy is not syntactically
+//     or semantically correct.
 //
-//   * TagException
-//   The request was rejected because one or more tags are not valid.
+//   - NotFoundException
+//     The request was rejected because the specified entity or resource could not
+//     be found.
 //
-//   * UnsupportedOperationException
-//   The request was rejected because a specified parameter is not supported or
-//   a specified resource is not valid for this operation.
+//   - TagException
+//     The request was rejected because one or more tags are not valid.
+//
+//   - UnsupportedOperationException
+//     The request was rejected because a specified parameter is not supported or
+//     a specified resource is not valid for this operation.
 //
 // See also, https://docs.aws.amazon.com/goto/WebAPI/kms-2014-11-01/ReplicateKey
 func (c *KMS) ReplicateKey(input *ReplicateKeyInput) (*ReplicateKeyOutput, error) {
@@ -6226,14 +6414,13 @@ const opRetireGrant = "RetireGrant"
 // This method is useful when you want to inject custom logic or configuration
 // into the SDK's request lifecycle. Such as custom headers, or retry logic.
 //
+//	// Example sending a request using the RetireGrantRequest method.
+//	req, resp := client.RetireGrantRequest(params)
 //
-//    // Example sending a request using the RetireGrantRequest method.
-//    req, resp := client.RetireGrantRequest(params)
-//
-//    err := req.Send()
-//    if err == nil { // resp is now filled
-//        fmt.Println(resp)
-//    }
+//	err := req.Send()
+//	if err == nil { // resp is now filled
+//	    fmt.Println(resp)
+//	}
 //
 // See also, https://docs.aws.amazon.com/goto/WebAPI/kms-2014-11-01/RetireGrant
 func (c *KMS) RetireGrantRequest(input *RetireGrantInput) (req *request.Request, output *RetireGrantOutput) {
@@ -6281,13 +6468,13 @@ func (c *KMS) RetireGrantRequest(input *RetireGrantInput) (req *request.Request,
 //
 // Related operations:
 //
-//    * CreateGrant
+//   - CreateGrant
 //
-//    * ListGrants
+//   - ListGrants
 //
-//    * ListRetirableGrants
+//   - ListRetirableGrants
 //
-//    * RevokeGrant
+//   - RevokeGrant
 //
 // Returns awserr.Error for service API and SDK errors. Use runtime type assertions
 // with awserr.Error's Code and Message methods to get detailed information about
@@ -6297,35 +6484,36 @@ func (c *KMS) RetireGrantRequest(input *RetireGrantInput) (req *request.Request,
 // API operation RetireGrant for usage and error information.
 //
 // Returned Error Types:
-//   * InvalidArnException
-//   The request was rejected because a specified ARN, or an ARN in a key policy,
-//   is not valid.
 //
-//   * InvalidGrantTokenException
-//   The request was rejected because the specified grant token is not valid.
+//   - InvalidArnException
+//     The request was rejected because a specified ARN, or an ARN in a key policy,
+//     is not valid.
 //
-//   * InvalidGrantIdException
-//   The request was rejected because the specified GrantId is not valid.
+//   - InvalidGrantTokenException
+//     The request was rejected because the specified grant token is not valid.
 //
-//   * NotFoundException
-//   The request was rejected because the specified entity or resource could not
-//   be found.
+//   - InvalidGrantIdException
+//     The request was rejected because the specified GrantId is not valid.
 //
-//   * DependencyTimeoutException
-//   The system timed out while trying to fulfill the request. The request can
-//   be retried.
+//   - NotFoundException
+//     The request was rejected because the specified entity or resource could not
+//     be found.
 //
-//   * InternalException
-//   The request was rejected because an internal exception occurred. The request
-//   can be retried.
+//   - DependencyTimeoutException
+//     The system timed out while trying to fulfill the request. The request can
+//     be retried.
 //
-//   * InvalidStateException
-//   The request was rejected because the state of the specified resource is not
-//   valid for this request.
+//   - InternalException
+//     The request was rejected because an internal exception occurred. The request
+//     can be retried.
 //
-//   For more information about how key state affects the use of a KMS key, see
-//   Key states of KMS keys (https://docs.aws.amazon.com/kms/latest/developerguide/key-state.html)
-//   in the Key Management Service Developer Guide .
+//   - InvalidStateException
+//     The request was rejected because the state of the specified resource is not
+//     valid for this request.
+//
+//     For more information about how key state affects the use of a KMS key, see
+//     Key states of KMS keys (https://docs.aws.amazon.com/kms/latest/developerguide/key-state.html)
+//     in the Key Management Service Developer Guide .
 //
 // See also, https://docs.aws.amazon.com/goto/WebAPI/kms-2014-11-01/RetireGrant
 func (c *KMS) RetireGrant(input *RetireGrantInput) (*RetireGrantOutput, error) {
@@ -6365,14 +6553,13 @@ const opRevokeGrant = "RevokeGrant"
 // This method is useful when you want to inject custom logic or configuration
 // into the SDK's request lifecycle. Such as custom headers, or retry logic.
 //
+//	// Example sending a request using the RevokeGrantRequest method.
+//	req, resp := client.RevokeGrantRequest(params)
 //
-//    // Example sending a request using the RevokeGrantRequest method.
-//    req, resp := client.RevokeGrantRequest(params)
-//
-//    err := req.Send()
-//    if err == nil { // resp is now filled
-//        fmt.Println(resp)
-//    }
+//	err := req.Send()
+//	if err == nil { // resp is now filled
+//	    fmt.Println(resp)
+//	}
 //
 // See also, https://docs.aws.amazon.com/goto/WebAPI/kms-2014-11-01/RevokeGrant
 func (c *KMS) RevokeGrantRequest(input *RevokeGrantInput) (req *request.Request, output *RevokeGrantOutput) {
@@ -6419,13 +6606,13 @@ func (c *KMS) RevokeGrantRequest(input *RevokeGrantInput) (req *request.Request,
 //
 // Related operations:
 //
-//    * CreateGrant
+//   - CreateGrant
 //
-//    * ListGrants
+//   - ListGrants
 //
-//    * ListRetirableGrants
+//   - ListRetirableGrants
 //
-//    * RetireGrant
+//   - RetireGrant
 //
 // Returns awserr.Error for service API and SDK errors. Use runtime type assertions
 // with awserr.Error's Code and Message methods to get detailed information about
@@ -6435,32 +6622,33 @@ func (c *KMS) RevokeGrantRequest(input *RevokeGrantInput) (req *request.Request,
 // API operation RevokeGrant for usage and error information.
 //
 // Returned Error Types:
-//   * NotFoundException
-//   The request was rejected because the specified entity or resource could not
-//   be found.
 //
-//   * DependencyTimeoutException
-//   The system timed out while trying to fulfill the request. The request can
-//   be retried.
+//   - NotFoundException
+//     The request was rejected because the specified entity or resource could not
+//     be found.
 //
-//   * InvalidArnException
-//   The request was rejected because a specified ARN, or an ARN in a key policy,
-//   is not valid.
+//   - DependencyTimeoutException
+//     The system timed out while trying to fulfill the request. The request can
+//     be retried.
 //
-//   * InvalidGrantIdException
-//   The request was rejected because the specified GrantId is not valid.
+//   - InvalidArnException
+//     The request was rejected because a specified ARN, or an ARN in a key policy,
+//     is not valid.
 //
-//   * InternalException
-//   The request was rejected because an internal exception occurred. The request
-//   can be retried.
+//   - InvalidGrantIdException
+//     The request was rejected because the specified GrantId is not valid.
 //
-//   * InvalidStateException
-//   The request was rejected because the state of the specified resource is not
-//   valid for this request.
+//   - InternalException
+//     The request was rejected because an internal exception occurred. The request
+//     can be retried.
 //
-//   For more information about how key state affects the use of a KMS key, see
-//   Key states of KMS keys (https://docs.aws.amazon.com/kms/latest/developerguide/key-state.html)
-//   in the Key Management Service Developer Guide .
+//   - InvalidStateException
+//     The request was rejected because the state of the specified resource is not
+//     valid for this request.
+//
+//     For more information about how key state affects the use of a KMS key, see
+//     Key states of KMS keys (https://docs.aws.amazon.com/kms/latest/developerguide/key-state.html)
+//     in the Key Management Service Developer Guide .
 //
 // See also, https://docs.aws.amazon.com/goto/WebAPI/kms-2014-11-01/RevokeGrant
 func (c *KMS) RevokeGrant(input *RevokeGrantInput) (*RevokeGrantOutput, error) {
@@ -6500,14 +6688,13 @@ const opScheduleKeyDeletion = "ScheduleKeyDeletion"
 // This method is useful when you want to inject custom logic or configuration
 // into the SDK's request lifecycle. Such as custom headers, or retry logic.
 //
+//	// Example sending a request using the ScheduleKeyDeletionRequest method.
+//	req, resp := client.ScheduleKeyDeletionRequest(params)
 //
-//    // Example sending a request using the ScheduleKeyDeletionRequest method.
-//    req, resp := client.ScheduleKeyDeletionRequest(params)
-//
-//    err := req.Send()
-//    if err == nil { // resp is now filled
-//        fmt.Println(resp)
-//    }
+//	err := req.Send()
+//	if err == nil { // resp is now filled
+//	    fmt.Println(resp)
+//	}
 //
 // See also, https://docs.aws.amazon.com/goto/WebAPI/kms-2014-11-01/ScheduleKeyDeletion
 func (c *KMS) ScheduleKeyDeletionRequest(input *ScheduleKeyDeletionInput) (req *request.Request, output *ScheduleKeyDeletionOutput) {
@@ -6576,9 +6763,9 @@ func (c *KMS) ScheduleKeyDeletionRequest(input *ScheduleKeyDeletionInput) (req *
 //
 // Related operations
 //
-//    * CancelKeyDeletion
+//   - CancelKeyDeletion
 //
-//    * DisableKey
+//   - DisableKey
 //
 // Returns awserr.Error for service API and SDK errors. Use runtime type assertions
 // with awserr.Error's Code and Message methods to get detailed information about
@@ -6588,29 +6775,30 @@ func (c *KMS) ScheduleKeyDeletionRequest(input *ScheduleKeyDeletionInput) (req *
 // API operation ScheduleKeyDeletion for usage and error information.
 //
 // Returned Error Types:
-//   * NotFoundException
-//   The request was rejected because the specified entity or resource could not
-//   be found.
 //
-//   * InvalidArnException
-//   The request was rejected because a specified ARN, or an ARN in a key policy,
-//   is not valid.
+//   - NotFoundException
+//     The request was rejected because the specified entity or resource could not
+//     be found.
 //
-//   * DependencyTimeoutException
-//   The system timed out while trying to fulfill the request. The request can
-//   be retried.
+//   - InvalidArnException
+//     The request was rejected because a specified ARN, or an ARN in a key policy,
+//     is not valid.
 //
-//   * InternalException
-//   The request was rejected because an internal exception occurred. The request
-//   can be retried.
+//   - DependencyTimeoutException
+//     The system timed out while trying to fulfill the request. The request can
+//     be retried.
 //
-//   * InvalidStateException
-//   The request was rejected because the state of the specified resource is not
-//   valid for this request.
+//   - InternalException
+//     The request was rejected because an internal exception occurred. The request
+//     can be retried.
 //
-//   For more information about how key state affects the use of a KMS key, see
-//   Key states of KMS keys (https://docs.aws.amazon.com/kms/latest/developerguide/key-state.html)
-//   in the Key Management Service Developer Guide .
+//   - InvalidStateException
+//     The request was rejected because the state of the specified resource is not
+//     valid for this request.
+//
+//     For more information about how key state affects the use of a KMS key, see
+//     Key states of KMS keys (https://docs.aws.amazon.com/kms/latest/developerguide/key-state.html)
+//     in the Key Management Service Developer Guide .
 //
 // See also, https://docs.aws.amazon.com/goto/WebAPI/kms-2014-11-01/ScheduleKeyDeletion
 func (c *KMS) ScheduleKeyDeletion(input *ScheduleKeyDeletionInput) (*ScheduleKeyDeletionOutput, error) {
@@ -6650,14 +6838,13 @@ const opSign = "Sign"
 // This method is useful when you want to inject custom logic or configuration
 // into the SDK's request lifecycle. Such as custom headers, or retry logic.
 //
+//	// Example sending a request using the SignRequest method.
+//	req, resp := client.SignRequest(params)
 //
-//    // Example sending a request using the SignRequest method.
-//    req, resp := client.SignRequest(params)
-//
-//    err := req.Send()
-//    if err == nil { // resp is now filled
-//        fmt.Println(resp)
-//    }
+//	err := req.Send()
+//	if err == nil { // resp is now filled
+//	    fmt.Println(resp)
+//	}
 //
 // See also, https://docs.aws.amazon.com/goto/WebAPI/kms-2014-11-01/Sign
 func (c *KMS) SignRequest(input *SignInput) (req *request.Request, output *SignOutput) {
@@ -6693,18 +6880,18 @@ func (c *KMS) SignRequest(input *SignInput) (req *request.Request, output *SignO
 //
 // To use the Sign operation, provide the following information:
 //
-//    * Use the KeyId parameter to identify an asymmetric KMS key with a KeyUsage
-//    value of SIGN_VERIFY. To get the KeyUsage value of a KMS key, use the
-//    DescribeKey operation. The caller must have kms:Sign permission on the
-//    KMS key.
+//   - Use the KeyId parameter to identify an asymmetric KMS key with a KeyUsage
+//     value of SIGN_VERIFY. To get the KeyUsage value of a KMS key, use the
+//     DescribeKey operation. The caller must have kms:Sign permission on the
+//     KMS key.
 //
-//    * Use the Message parameter to specify the message or message digest to
-//    sign. You can submit messages of up to 4096 bytes. To sign a larger message,
-//    generate a hash digest of the message, and then provide the hash digest
-//    in the Message parameter. To indicate whether the message is a full message
-//    or a digest, use the MessageType parameter.
+//   - Use the Message parameter to specify the message or message digest to
+//     sign. You can submit messages of up to 4096 bytes. To sign a larger message,
+//     generate a hash digest of the message, and then provide the hash digest
+//     in the Message parameter. To indicate whether the message is a full message
+//     or a digest, use the MessageType parameter.
 //
-//    * Choose a signing algorithm that is compatible with the KMS key.
+//   - Choose a signing algorithm that is compatible with the KMS key.
 //
 // When signing a message, be sure to record the KMS key and the signing algorithm.
 // This information is required to verify the signature.
@@ -6740,52 +6927,53 @@ func (c *KMS) SignRequest(input *SignInput) (req *request.Request, output *SignO
 // API operation Sign for usage and error information.
 //
 // Returned Error Types:
-//   * NotFoundException
-//   The request was rejected because the specified entity or resource could not
-//   be found.
 //
-//   * DisabledException
-//   The request was rejected because the specified KMS key is not enabled.
+//   - NotFoundException
+//     The request was rejected because the specified entity or resource could not
+//     be found.
 //
-//   * KeyUnavailableException
-//   The request was rejected because the specified KMS key was not available.
-//   You can retry the request.
+//   - DisabledException
+//     The request was rejected because the specified KMS key is not enabled.
 //
-//   * DependencyTimeoutException
-//   The system timed out while trying to fulfill the request. The request can
-//   be retried.
+//   - KeyUnavailableException
+//     The request was rejected because the specified KMS key was not available.
+//     You can retry the request.
 //
-//   * InvalidKeyUsageException
-//   The request was rejected for one of the following reasons:
+//   - DependencyTimeoutException
+//     The system timed out while trying to fulfill the request. The request can
+//     be retried.
 //
-//      * The KeyUsage value of the KMS key is incompatible with the API operation.
+//   - InvalidKeyUsageException
+//     The request was rejected for one of the following reasons:
 //
-//      * The encryption algorithm or signing algorithm specified for the operation
-//      is incompatible with the type of key material in the KMS key (KeySpec).
+//   - The KeyUsage value of the KMS key is incompatible with the API operation.
 //
-//   For encrypting, decrypting, re-encrypting, and generating data keys, the
-//   KeyUsage must be ENCRYPT_DECRYPT. For signing and verifying messages, the
-//   KeyUsage must be SIGN_VERIFY. For generating and verifying message authentication
-//   codes (MACs), the KeyUsage must be GENERATE_VERIFY_MAC. To find the KeyUsage
-//   of a KMS key, use the DescribeKey operation.
+//   - The encryption algorithm or signing algorithm specified for the operation
+//     is incompatible with the type of key material in the KMS key (KeySpec).
 //
-//   To find the encryption or signing algorithms supported for a particular KMS
-//   key, use the DescribeKey operation.
+//     For encrypting, decrypting, re-encrypting, and generating data keys, the
+//     KeyUsage must be ENCRYPT_DECRYPT. For signing and verifying messages, the
+//     KeyUsage must be SIGN_VERIFY. For generating and verifying message authentication
+//     codes (MACs), the KeyUsage must be GENERATE_VERIFY_MAC. To find the KeyUsage
+//     of a KMS key, use the DescribeKey operation.
 //
-//   * InvalidGrantTokenException
-//   The request was rejected because the specified grant token is not valid.
+//     To find the encryption or signing algorithms supported for a particular KMS
+//     key, use the DescribeKey operation.
 //
-//   * InternalException
-//   The request was rejected because an internal exception occurred. The request
-//   can be retried.
+//   - InvalidGrantTokenException
+//     The request was rejected because the specified grant token is not valid.
 //
-//   * InvalidStateException
-//   The request was rejected because the state of the specified resource is not
-//   valid for this request.
+//   - InternalException
+//     The request was rejected because an internal exception occurred. The request
+//     can be retried.
 //
-//   For more information about how key state affects the use of a KMS key, see
-//   Key states of KMS keys (https://docs.aws.amazon.com/kms/latest/developerguide/key-state.html)
-//   in the Key Management Service Developer Guide .
+//   - InvalidStateException
+//     The request was rejected because the state of the specified resource is not
+//     valid for this request.
+//
+//     For more information about how key state affects the use of a KMS key, see
+//     Key states of KMS keys (https://docs.aws.amazon.com/kms/latest/developerguide/key-state.html)
+//     in the Key Management Service Developer Guide .
 //
 // See also, https://docs.aws.amazon.com/goto/WebAPI/kms-2014-11-01/Sign
 func (c *KMS) Sign(input *SignInput) (*SignOutput, error) {
@@ -6825,14 +7013,13 @@ const opTagResource = "TagResource"
 // This method is useful when you want to inject custom logic or configuration
 // into the SDK's request lifecycle. Such as custom headers, or retry logic.
 //
+//	// Example sending a request using the TagResourceRequest method.
+//	req, resp := client.TagResourceRequest(params)
 //
-//    // Example sending a request using the TagResourceRequest method.
-//    req, resp := client.TagResourceRequest(params)
-//
-//    err := req.Send()
-//    if err == nil { // resp is now filled
-//        fmt.Println(resp)
-//    }
+//	err := req.Send()
+//	if err == nil { // resp is now filled
+//	    fmt.Println(resp)
+//	}
 //
 // See also, https://docs.aws.amazon.com/goto/WebAPI/kms-2014-11-01/TagResource
 func (c *KMS) TagResourceRequest(input *TagResourceInput) (req *request.Request, output *TagResourceOutput) {
@@ -6891,13 +7078,13 @@ func (c *KMS) TagResourceRequest(input *TagResourceInput) (req *request.Request,
 //
 // Related operations
 //
-//    * CreateKey
+//   - CreateKey
 //
-//    * ListResourceTags
+//   - ListResourceTags
 //
-//    * ReplicateKey
+//   - ReplicateKey
 //
-//    * UntagResource
+//   - UntagResource
 //
 // Returns awserr.Error for service API and SDK errors. Use runtime type assertions
 // with awserr.Error's Code and Message methods to get detailed information about
@@ -6907,33 +7094,34 @@ func (c *KMS) TagResourceRequest(input *TagResourceInput) (req *request.Request,
 // API operation TagResource for usage and error information.
 //
 // Returned Error Types:
-//   * InternalException
-//   The request was rejected because an internal exception occurred. The request
-//   can be retried.
 //
-//   * NotFoundException
-//   The request was rejected because the specified entity or resource could not
-//   be found.
+//   - InternalException
+//     The request was rejected because an internal exception occurred. The request
+//     can be retried.
 //
-//   * InvalidArnException
-//   The request was rejected because a specified ARN, or an ARN in a key policy,
-//   is not valid.
+//   - NotFoundException
+//     The request was rejected because the specified entity or resource could not
+//     be found.
 //
-//   * InvalidStateException
-//   The request was rejected because the state of the specified resource is not
-//   valid for this request.
+//   - InvalidArnException
+//     The request was rejected because a specified ARN, or an ARN in a key policy,
+//     is not valid.
 //
-//   For more information about how key state affects the use of a KMS key, see
-//   Key states of KMS keys (https://docs.aws.amazon.com/kms/latest/developerguide/key-state.html)
-//   in the Key Management Service Developer Guide .
+//   - InvalidStateException
+//     The request was rejected because the state of the specified resource is not
+//     valid for this request.
 //
-//   * LimitExceededException
-//   The request was rejected because a quota was exceeded. For more information,
-//   see Quotas (https://docs.aws.amazon.com/kms/latest/developerguide/limits.html)
-//   in the Key Management Service Developer Guide.
+//     For more information about how key state affects the use of a KMS key, see
+//     Key states of KMS keys (https://docs.aws.amazon.com/kms/latest/developerguide/key-state.html)
+//     in the Key Management Service Developer Guide .
 //
-//   * TagException
-//   The request was rejected because one or more tags are not valid.
+//   - LimitExceededException
+//     The request was rejected because a quota was exceeded. For more information,
+//     see Quotas (https://docs.aws.amazon.com/kms/latest/developerguide/limits.html)
+//     in the Key Management Service Developer Guide.
+//
+//   - TagException
+//     The request was rejected because one or more tags are not valid.
 //
 // See also, https://docs.aws.amazon.com/goto/WebAPI/kms-2014-11-01/TagResource
 func (c *KMS) TagResource(input *TagResourceInput) (*TagResourceOutput, error) {
@@ -6973,14 +7161,13 @@ const opUntagResource = "UntagResource"
 // This method is useful when you want to inject custom logic or configuration
 // into the SDK's request lifecycle. Such as custom headers, or retry logic.
 //
+//	// Example sending a request using the UntagResourceRequest method.
+//	req, resp := client.UntagResourceRequest(params)
 //
-//    // Example sending a request using the UntagResourceRequest method.
-//    req, resp := client.UntagResourceRequest(params)
-//
-//    err := req.Send()
-//    if err == nil { // resp is now filled
-//        fmt.Println(resp)
-//    }
+//	err := req.Send()
+//	if err == nil { // resp is now filled
+//	    fmt.Println(resp)
+//	}
 //
 // See also, https://docs.aws.amazon.com/goto/WebAPI/kms-2014-11-01/UntagResource
 func (c *KMS) UntagResourceRequest(input *UntagResourceInput) (req *request.Request, output *UntagResourceOutput) {
@@ -7031,13 +7218,13 @@ func (c *KMS) UntagResourceRequest(input *UntagResourceInput) (req *request.Requ
 //
 // Related operations
 //
-//    * CreateKey
+//   - CreateKey
 //
-//    * ListResourceTags
+//   - ListResourceTags
 //
-//    * ReplicateKey
+//   - ReplicateKey
 //
-//    * TagResource
+//   - TagResource
 //
 // Returns awserr.Error for service API and SDK errors. Use runtime type assertions
 // with awserr.Error's Code and Message methods to get detailed information about
@@ -7047,28 +7234,29 @@ func (c *KMS) UntagResourceRequest(input *UntagResourceInput) (req *request.Requ
 // API operation UntagResource for usage and error information.
 //
 // Returned Error Types:
-//   * InternalException
-//   The request was rejected because an internal exception occurred. The request
-//   can be retried.
 //
-//   * NotFoundException
-//   The request was rejected because the specified entity or resource could not
-//   be found.
+//   - InternalException
+//     The request was rejected because an internal exception occurred. The request
+//     can be retried.
 //
-//   * InvalidArnException
-//   The request was rejected because a specified ARN, or an ARN in a key policy,
-//   is not valid.
+//   - NotFoundException
+//     The request was rejected because the specified entity or resource could not
+//     be found.
 //
-//   * InvalidStateException
-//   The request was rejected because the state of the specified resource is not
-//   valid for this request.
+//   - InvalidArnException
+//     The request was rejected because a specified ARN, or an ARN in a key policy,
+//     is not valid.
 //
-//   For more information about how key state affects the use of a KMS key, see
-//   Key states of KMS keys (https://docs.aws.amazon.com/kms/latest/developerguide/key-state.html)
-//   in the Key Management Service Developer Guide .
+//   - InvalidStateException
+//     The request was rejected because the state of the specified resource is not
+//     valid for this request.
 //
-//   * TagException
-//   The request was rejected because one or more tags are not valid.
+//     For more information about how key state affects the use of a KMS key, see
+//     Key states of KMS keys (https://docs.aws.amazon.com/kms/latest/developerguide/key-state.html)
+//     in the Key Management Service Developer Guide .
+//
+//   - TagException
+//     The request was rejected because one or more tags are not valid.
 //
 // See also, https://docs.aws.amazon.com/goto/WebAPI/kms-2014-11-01/UntagResource
 func (c *KMS) UntagResource(input *UntagResourceInput) (*UntagResourceOutput, error) {
@@ -7108,14 +7296,13 @@ const opUpdateAlias = "UpdateAlias"
 // This method is useful when you want to inject custom logic or configuration
 // into the SDK's request lifecycle. Such as custom headers, or retry logic.
 //
+//	// Example sending a request using the UpdateAliasRequest method.
+//	req, resp := client.UpdateAliasRequest(params)
 //
-//    // Example sending a request using the UpdateAliasRequest method.
-//    req, resp := client.UpdateAliasRequest(params)
-//
-//    err := req.Send()
-//    if err == nil { // resp is now filled
-//        fmt.Println(resp)
-//    }
+//	err := req.Send()
+//	if err == nil { // resp is now filled
+//	    fmt.Println(resp)
+//	}
 //
 // See also, https://docs.aws.amazon.com/goto/WebAPI/kms-2014-11-01/UpdateAlias
 func (c *KMS) UpdateAliasRequest(input *UpdateAliasInput) (req *request.Request, output *UpdateAliasOutput) {
@@ -7169,25 +7356,25 @@ func (c *KMS) UpdateAliasRequest(input *UpdateAliasInput) (req *request.Request,
 //
 // Required permissions
 //
-//    * kms:UpdateAlias (https://docs.aws.amazon.com/kms/latest/developerguide/kms-api-permissions-reference.html)
-//    on the alias (IAM policy).
+//   - kms:UpdateAlias (https://docs.aws.amazon.com/kms/latest/developerguide/kms-api-permissions-reference.html)
+//     on the alias (IAM policy).
 //
-//    * kms:UpdateAlias (https://docs.aws.amazon.com/kms/latest/developerguide/kms-api-permissions-reference.html)
-//    on the current KMS key (key policy).
+//   - kms:UpdateAlias (https://docs.aws.amazon.com/kms/latest/developerguide/kms-api-permissions-reference.html)
+//     on the current KMS key (key policy).
 //
-//    * kms:UpdateAlias (https://docs.aws.amazon.com/kms/latest/developerguide/kms-api-permissions-reference.html)
-//    on the new KMS key (key policy).
+//   - kms:UpdateAlias (https://docs.aws.amazon.com/kms/latest/developerguide/kms-api-permissions-reference.html)
+//     on the new KMS key (key policy).
 //
 // For details, see Controlling access to aliases (https://docs.aws.amazon.com/kms/latest/developerguide/kms-alias.html#alias-access)
 // in the Key Management Service Developer Guide.
 //
 // Related operations:
 //
-//    * CreateAlias
+//   - CreateAlias
 //
-//    * DeleteAlias
+//   - DeleteAlias
 //
-//    * ListAliases
+//   - ListAliases
 //
 // Returns awserr.Error for service API and SDK errors. Use runtime type assertions
 // with awserr.Error's Code and Message methods to get detailed information about
@@ -7197,30 +7384,31 @@ func (c *KMS) UpdateAliasRequest(input *UpdateAliasInput) (req *request.Request,
 // API operation UpdateAlias for usage and error information.
 //
 // Returned Error Types:
-//   * DependencyTimeoutException
-//   The system timed out while trying to fulfill the request. The request can
-//   be retried.
 //
-//   * NotFoundException
-//   The request was rejected because the specified entity or resource could not
-//   be found.
+//   - DependencyTimeoutException
+//     The system timed out while trying to fulfill the request. The request can
+//     be retried.
 //
-//   * InternalException
-//   The request was rejected because an internal exception occurred. The request
-//   can be retried.
+//   - NotFoundException
+//     The request was rejected because the specified entity or resource could not
+//     be found.
 //
-//   * LimitExceededException
-//   The request was rejected because a quota was exceeded. For more information,
-//   see Quotas (https://docs.aws.amazon.com/kms/latest/developerguide/limits.html)
-//   in the Key Management Service Developer Guide.
+//   - InternalException
+//     The request was rejected because an internal exception occurred. The request
+//     can be retried.
 //
-//   * InvalidStateException
-//   The request was rejected because the state of the specified resource is not
-//   valid for this request.
+//   - LimitExceededException
+//     The request was rejected because a quota was exceeded. For more information,
+//     see Quotas (https://docs.aws.amazon.com/kms/latest/developerguide/limits.html)
+//     in the Key Management Service Developer Guide.
 //
-//   For more information about how key state affects the use of a KMS key, see
-//   Key states of KMS keys (https://docs.aws.amazon.com/kms/latest/developerguide/key-state.html)
-//   in the Key Management Service Developer Guide .
+//   - InvalidStateException
+//     The request was rejected because the state of the specified resource is not
+//     valid for this request.
+//
+//     For more information about how key state affects the use of a KMS key, see
+//     Key states of KMS keys (https://docs.aws.amazon.com/kms/latest/developerguide/key-state.html)
+//     in the Key Management Service Developer Guide .
 //
 // See also, https://docs.aws.amazon.com/goto/WebAPI/kms-2014-11-01/UpdateAlias
 func (c *KMS) UpdateAlias(input *UpdateAliasInput) (*UpdateAliasOutput, error) {
@@ -7260,14 +7448,13 @@ const opUpdateCustomKeyStore = "UpdateCustomKeyStore"
 // This method is useful when you want to inject custom logic or configuration
 // into the SDK's request lifecycle. Such as custom headers, or retry logic.
 //
+//	// Example sending a request using the UpdateCustomKeyStoreRequest method.
+//	req, resp := client.UpdateCustomKeyStoreRequest(params)
 //
-//    // Example sending a request using the UpdateCustomKeyStoreRequest method.
-//    req, resp := client.UpdateCustomKeyStoreRequest(params)
-//
-//    err := req.Send()
-//    if err == nil { // resp is now filled
-//        fmt.Println(resp)
-//    }
+//	err := req.Send()
+//	if err == nil { // resp is now filled
+//	    fmt.Println(resp)
+//	}
 //
 // See also, https://docs.aws.amazon.com/goto/WebAPI/kms-2014-11-01/UpdateCustomKeyStore
 func (c *KMS) UpdateCustomKeyStoreRequest(input *UpdateCustomKeyStoreInput) (req *request.Request, output *UpdateCustomKeyStoreOutput) {
@@ -7302,26 +7489,26 @@ func (c *KMS) UpdateCustomKeyStoreRequest(input *UpdateCustomKeyStoreInput) (req
 // The CustomKeyStoreId parameter is required in all commands. Use the other
 // parameters of UpdateCustomKeyStore to edit your key store settings.
 //
-//    * Use the NewCustomKeyStoreName parameter to change the friendly name
-//    of the custom key store to the value that you specify.
+//   - Use the NewCustomKeyStoreName parameter to change the friendly name
+//     of the custom key store to the value that you specify.
 //
-//    * Use the KeyStorePassword parameter tell KMS the current password of
-//    the kmsuser crypto user (CU) (https://docs.aws.amazon.com/kms/latest/developerguide/key-store-concepts.html#concept-kmsuser)
-//    in the associated CloudHSM cluster. You can use this parameter to fix
-//    connection failures (https://docs.aws.amazon.com/kms/latest/developerguide/fix-keystore.html#fix-keystore-password)
-//    that occur when KMS cannot log into the associated cluster because the
-//    kmsuser password has changed. This value does not change the password
-//    in the CloudHSM cluster.
+//   - Use the KeyStorePassword parameter tell KMS the current password of
+//     the kmsuser crypto user (CU) (https://docs.aws.amazon.com/kms/latest/developerguide/key-store-concepts.html#concept-kmsuser)
+//     in the associated CloudHSM cluster. You can use this parameter to fix
+//     connection failures (https://docs.aws.amazon.com/kms/latest/developerguide/fix-keystore.html#fix-keystore-password)
+//     that occur when KMS cannot log into the associated cluster because the
+//     kmsuser password has changed. This value does not change the password
+//     in the CloudHSM cluster.
 //
-//    * Use the CloudHsmClusterId parameter to associate the custom key store
-//    with a different, but related, CloudHSM cluster. You can use this parameter
-//    to repair a custom key store if its CloudHSM cluster becomes corrupted
-//    or is deleted, or when you need to create or restore a cluster from a
-//    backup.
+//   - Use the CloudHsmClusterId parameter to associate the custom key store
+//     with a different, but related, CloudHSM cluster. You can use this parameter
+//     to repair a custom key store if its CloudHSM cluster becomes corrupted
+//     or is deleted, or when you need to create or restore a cluster from a
+//     backup.
 //
 // If the operation succeeds, it returns a JSON object with no properties.
 //
-// This operation is part of the Custom Key Store feature (https://docs.aws.amazon.com/kms/latest/developerguide/custom-key-store-overview.html)
+// This operation is part of the custom key store feature (https://docs.aws.amazon.com/kms/latest/developerguide/custom-key-store-overview.html)
 // feature in KMS, which combines the convenience and extensive integration
 // of KMS with the isolation and control of a single-tenant key store.
 //
@@ -7333,15 +7520,15 @@ func (c *KMS) UpdateCustomKeyStoreRequest(input *UpdateCustomKeyStoreInput) (req
 //
 // Related operations:
 //
-//    * ConnectCustomKeyStore
+//   - ConnectCustomKeyStore
 //
-//    * CreateCustomKeyStore
+//   - CreateCustomKeyStore
 //
-//    * DeleteCustomKeyStore
+//   - DeleteCustomKeyStore
 //
-//    * DescribeCustomKeyStores
+//   - DescribeCustomKeyStores
 //
-//    * DisconnectCustomKeyStore
+//   - DisconnectCustomKeyStore
 //
 // Returns awserr.Error for service API and SDK errors. Use runtime type assertions
 // with awserr.Error's Code and Message methods to get detailed information about
@@ -7351,93 +7538,94 @@ func (c *KMS) UpdateCustomKeyStoreRequest(input *UpdateCustomKeyStoreInput) (req
 // API operation UpdateCustomKeyStore for usage and error information.
 //
 // Returned Error Types:
-//   * CustomKeyStoreNotFoundException
-//   The request was rejected because KMS cannot find a custom key store with
-//   the specified key store name or ID.
 //
-//   * CustomKeyStoreNameInUseException
-//   The request was rejected because the specified custom key store name is already
-//   assigned to another custom key store in the account. Try again with a custom
-//   key store name that is unique in the account.
+//   - CustomKeyStoreNotFoundException
+//     The request was rejected because KMS cannot find a custom key store with
+//     the specified key store name or ID.
 //
-//   * CloudHsmClusterNotFoundException
-//   The request was rejected because KMS cannot find the CloudHSM cluster with
-//   the specified cluster ID. Retry the request with a different cluster ID.
+//   - CustomKeyStoreNameInUseException
+//     The request was rejected because the specified custom key store name is already
+//     assigned to another custom key store in the account. Try again with a custom
+//     key store name that is unique in the account.
 //
-//   * CloudHsmClusterNotRelatedException
-//   The request was rejected because the specified CloudHSM cluster has a different
-//   cluster certificate than the original cluster. You cannot use the operation
-//   to specify an unrelated cluster.
+//   - CloudHsmClusterNotFoundException
+//     The request was rejected because KMS cannot find the CloudHSM cluster with
+//     the specified cluster ID. Retry the request with a different cluster ID.
 //
-//   Specify a cluster that shares a backup history with the original cluster.
-//   This includes clusters that were created from a backup of the current cluster,
-//   and clusters that were created from the same backup that produced the current
-//   cluster.
+//   - CloudHsmClusterNotRelatedException
+//     The request was rejected because the specified CloudHSM cluster has a different
+//     cluster certificate than the original cluster. You cannot use the operation
+//     to specify an unrelated cluster.
 //
-//   Clusters that share a backup history have the same cluster certificate. To
-//   view the cluster certificate of a cluster, use the DescribeClusters (https://docs.aws.amazon.com/cloudhsm/latest/APIReference/API_DescribeClusters.html)
-//   operation.
+//     Specify a cluster that shares a backup history with the original cluster.
+//     This includes clusters that were created from a backup of the current cluster,
+//     and clusters that were created from the same backup that produced the current
+//     cluster.
 //
-//   * CustomKeyStoreInvalidStateException
-//   The request was rejected because of the ConnectionState of the custom key
-//   store. To get the ConnectionState of a custom key store, use the DescribeCustomKeyStores
-//   operation.
+//     Clusters that share a backup history have the same cluster certificate. To
+//     view the cluster certificate of a cluster, use the DescribeClusters (https://docs.aws.amazon.com/cloudhsm/latest/APIReference/API_DescribeClusters.html)
+//     operation.
 //
-//   This exception is thrown under the following conditions:
+//   - CustomKeyStoreInvalidStateException
+//     The request was rejected because of the ConnectionState of the custom key
+//     store. To get the ConnectionState of a custom key store, use the DescribeCustomKeyStores
+//     operation.
 //
-//      * You requested the CreateKey or GenerateRandom operation in a custom
-//      key store that is not connected. These operations are valid only when
-//      the custom key store ConnectionState is CONNECTED.
+//     This exception is thrown under the following conditions:
 //
-//      * You requested the UpdateCustomKeyStore or DeleteCustomKeyStore operation
-//      on a custom key store that is not disconnected. This operation is valid
-//      only when the custom key store ConnectionState is DISCONNECTED.
+//   - You requested the CreateKey or GenerateRandom operation in a custom
+//     key store that is not connected. These operations are valid only when
+//     the custom key store ConnectionState is CONNECTED.
 //
-//      * You requested the ConnectCustomKeyStore operation on a custom key store
-//      with a ConnectionState of DISCONNECTING or FAILED. This operation is valid
-//      for all other ConnectionState values.
+//   - You requested the UpdateCustomKeyStore or DeleteCustomKeyStore operation
+//     on a custom key store that is not disconnected. This operation is valid
+//     only when the custom key store ConnectionState is DISCONNECTED.
 //
-//   * InternalException
-//   The request was rejected because an internal exception occurred. The request
-//   can be retried.
+//   - You requested the ConnectCustomKeyStore operation on a custom key store
+//     with a ConnectionState of DISCONNECTING or FAILED. This operation is valid
+//     for all other ConnectionState values.
 //
-//   * CloudHsmClusterNotActiveException
-//   The request was rejected because the CloudHSM cluster that is associated
-//   with the custom key store is not active. Initialize and activate the cluster
-//   and try the command again. For detailed instructions, see Getting Started
-//   (https://docs.aws.amazon.com/cloudhsm/latest/userguide/getting-started.html)
-//   in the CloudHSM User Guide.
+//   - InternalException
+//     The request was rejected because an internal exception occurred. The request
+//     can be retried.
 //
-//   * CloudHsmClusterInvalidConfigurationException
-//   The request was rejected because the associated CloudHSM cluster did not
-//   meet the configuration requirements for a custom key store.
+//   - CloudHsmClusterNotActiveException
+//     The request was rejected because the CloudHSM cluster that is associated
+//     with the custom key store is not active. Initialize and activate the cluster
+//     and try the command again. For detailed instructions, see Getting Started
+//     (https://docs.aws.amazon.com/cloudhsm/latest/userguide/getting-started.html)
+//     in the CloudHSM User Guide.
 //
-//      * The cluster must be configured with private subnets in at least two
-//      different Availability Zones in the Region.
+//   - CloudHsmClusterInvalidConfigurationException
+//     The request was rejected because the associated CloudHSM cluster did not
+//     meet the configuration requirements for a custom key store.
 //
-//      * The security group for the cluster (https://docs.aws.amazon.com/cloudhsm/latest/userguide/configure-sg.html)
-//      (cloudhsm-cluster-<cluster-id>-sg) must include inbound rules and outbound
-//      rules that allow TCP traffic on ports 2223-2225. The Source in the inbound
-//      rules and the Destination in the outbound rules must match the security
-//      group ID. These rules are set by default when you create the cluster.
-//      Do not delete or change them. To get information about a particular security
-//      group, use the DescribeSecurityGroups (https://docs.aws.amazon.com/AWSEC2/latest/APIReference/API_DescribeSecurityGroups.html)
-//      operation.
+//   - The cluster must be configured with private subnets in at least two
+//     different Availability Zones in the Region.
 //
-//      * The cluster must contain at least as many HSMs as the operation requires.
-//      To add HSMs, use the CloudHSM CreateHsm (https://docs.aws.amazon.com/cloudhsm/latest/APIReference/API_CreateHsm.html)
-//      operation. For the CreateCustomKeyStore, UpdateCustomKeyStore, and CreateKey
-//      operations, the CloudHSM cluster must have at least two active HSMs, each
-//      in a different Availability Zone. For the ConnectCustomKeyStore operation,
-//      the CloudHSM must contain at least one active HSM.
+//   - The security group for the cluster (https://docs.aws.amazon.com/cloudhsm/latest/userguide/configure-sg.html)
+//     (cloudhsm-cluster-<cluster-id>-sg) must include inbound rules and outbound
+//     rules that allow TCP traffic on ports 2223-2225. The Source in the inbound
+//     rules and the Destination in the outbound rules must match the security
+//     group ID. These rules are set by default when you create the cluster.
+//     Do not delete or change them. To get information about a particular security
+//     group, use the DescribeSecurityGroups (https://docs.aws.amazon.com/AWSEC2/latest/APIReference/API_DescribeSecurityGroups.html)
+//     operation.
 //
-//   For information about the requirements for an CloudHSM cluster that is associated
-//   with a custom key store, see Assemble the Prerequisites (https://docs.aws.amazon.com/kms/latest/developerguide/create-keystore.html#before-keystore)
-//   in the Key Management Service Developer Guide. For information about creating
-//   a private subnet for an CloudHSM cluster, see Create a Private Subnet (https://docs.aws.amazon.com/cloudhsm/latest/userguide/create-subnets.html)
-//   in the CloudHSM User Guide. For information about cluster security groups,
-//   see Configure a Default Security Group (https://docs.aws.amazon.com/cloudhsm/latest/userguide/configure-sg.html)
-//   in the CloudHSM User Guide .
+//   - The cluster must contain at least as many HSMs as the operation requires.
+//     To add HSMs, use the CloudHSM CreateHsm (https://docs.aws.amazon.com/cloudhsm/latest/APIReference/API_CreateHsm.html)
+//     operation. For the CreateCustomKeyStore, UpdateCustomKeyStore, and CreateKey
+//     operations, the CloudHSM cluster must have at least two active HSMs, each
+//     in a different Availability Zone. For the ConnectCustomKeyStore operation,
+//     the CloudHSM must contain at least one active HSM.
+//
+//     For information about the requirements for an CloudHSM cluster that is associated
+//     with a custom key store, see Assemble the Prerequisites (https://docs.aws.amazon.com/kms/latest/developerguide/create-keystore.html#before-keystore)
+//     in the Key Management Service Developer Guide. For information about creating
+//     a private subnet for an CloudHSM cluster, see Create a Private Subnet (https://docs.aws.amazon.com/cloudhsm/latest/userguide/create-subnets.html)
+//     in the CloudHSM User Guide. For information about cluster security groups,
+//     see Configure a Default Security Group (https://docs.aws.amazon.com/cloudhsm/latest/userguide/configure-sg.html)
+//     in the CloudHSM User Guide .
 //
 // See also, https://docs.aws.amazon.com/goto/WebAPI/kms-2014-11-01/UpdateCustomKeyStore
 func (c *KMS) UpdateCustomKeyStore(input *UpdateCustomKeyStoreInput) (*UpdateCustomKeyStoreOutput, error) {
@@ -7477,14 +7665,13 @@ const opUpdateKeyDescription = "UpdateKeyDescription"
 // This method is useful when you want to inject custom logic or configuration
 // into the SDK's request lifecycle. Such as custom headers, or retry logic.
 //
+//	// Example sending a request using the UpdateKeyDescriptionRequest method.
+//	req, resp := client.UpdateKeyDescriptionRequest(params)
 //
-//    // Example sending a request using the UpdateKeyDescriptionRequest method.
-//    req, resp := client.UpdateKeyDescriptionRequest(params)
-//
-//    err := req.Send()
-//    if err == nil { // resp is now filled
-//        fmt.Println(resp)
-//    }
+//	err := req.Send()
+//	if err == nil { // resp is now filled
+//	    fmt.Println(resp)
+//	}
 //
 // See also, https://docs.aws.amazon.com/goto/WebAPI/kms-2014-11-01/UpdateKeyDescription
 func (c *KMS) UpdateKeyDescriptionRequest(input *UpdateKeyDescriptionInput) (req *request.Request, output *UpdateKeyDescriptionOutput) {
@@ -7521,9 +7708,9 @@ func (c *KMS) UpdateKeyDescriptionRequest(input *UpdateKeyDescriptionInput) (req
 //
 // Related operations
 //
-//    * CreateKey
+//   - CreateKey
 //
-//    * DescribeKey
+//   - DescribeKey
 //
 // Returns awserr.Error for service API and SDK errors. Use runtime type assertions
 // with awserr.Error's Code and Message methods to get detailed information about
@@ -7533,29 +7720,30 @@ func (c *KMS) UpdateKeyDescriptionRequest(input *UpdateKeyDescriptionInput) (req
 // API operation UpdateKeyDescription for usage and error information.
 //
 // Returned Error Types:
-//   * NotFoundException
-//   The request was rejected because the specified entity or resource could not
-//   be found.
 //
-//   * InvalidArnException
-//   The request was rejected because a specified ARN, or an ARN in a key policy,
-//   is not valid.
+//   - NotFoundException
+//     The request was rejected because the specified entity or resource could not
+//     be found.
 //
-//   * DependencyTimeoutException
-//   The system timed out while trying to fulfill the request. The request can
-//   be retried.
+//   - InvalidArnException
+//     The request was rejected because a specified ARN, or an ARN in a key policy,
+//     is not valid.
 //
-//   * InternalException
-//   The request was rejected because an internal exception occurred. The request
-//   can be retried.
+//   - DependencyTimeoutException
+//     The system timed out while trying to fulfill the request. The request can
+//     be retried.
 //
-//   * InvalidStateException
-//   The request was rejected because the state of the specified resource is not
-//   valid for this request.
+//   - InternalException
+//     The request was rejected because an internal exception occurred. The request
+//     can be retried.
 //
-//   For more information about how key state affects the use of a KMS key, see
-//   Key states of KMS keys (https://docs.aws.amazon.com/kms/latest/developerguide/key-state.html)
-//   in the Key Management Service Developer Guide .
+//   - InvalidStateException
+//     The request was rejected because the state of the specified resource is not
+//     valid for this request.
+//
+//     For more information about how key state affects the use of a KMS key, see
+//     Key states of KMS keys (https://docs.aws.amazon.com/kms/latest/developerguide/key-state.html)
+//     in the Key Management Service Developer Guide .
 //
 // See also, https://docs.aws.amazon.com/goto/WebAPI/kms-2014-11-01/UpdateKeyDescription
 func (c *KMS) UpdateKeyDescription(input *UpdateKeyDescriptionInput) (*UpdateKeyDescriptionOutput, error) {
@@ -7595,14 +7783,13 @@ const opUpdatePrimaryRegion = "UpdatePrimaryRegion"
 // This method is useful when you want to inject custom logic or configuration
 // into the SDK's request lifecycle. Such as custom headers, or retry logic.
 //
+//	// Example sending a request using the UpdatePrimaryRegionRequest method.
+//	req, resp := client.UpdatePrimaryRegionRequest(params)
 //
-//    // Example sending a request using the UpdatePrimaryRegionRequest method.
-//    req, resp := client.UpdatePrimaryRegionRequest(params)
-//
-//    err := req.Send()
-//    if err == nil { // resp is now filled
-//        fmt.Println(resp)
-//    }
+//	err := req.Send()
+//	if err == nil { // resp is now filled
+//	    fmt.Println(resp)
+//	}
 //
 // See also, https://docs.aws.amazon.com/goto/WebAPI/kms-2014-11-01/UpdatePrimaryRegion
 func (c *KMS) UpdatePrimaryRegionRequest(input *UpdatePrimaryRegionInput) (req *request.Request, output *UpdatePrimaryRegionOutput) {
@@ -7683,17 +7870,17 @@ func (c *KMS) UpdatePrimaryRegionRequest(input *UpdatePrimaryRegionInput) (req *
 //
 // Required permissions:
 //
-//    * kms:UpdatePrimaryRegion on the current primary key (in the primary key's
-//    Region). Include this permission primary key's key policy.
+//   - kms:UpdatePrimaryRegion on the current primary key (in the primary key's
+//     Region). Include this permission primary key's key policy.
 //
-//    * kms:UpdatePrimaryRegion on the current replica key (in the replica key's
-//    Region). Include this permission in the replica key's key policy.
+//   - kms:UpdatePrimaryRegion on the current replica key (in the replica key's
+//     Region). Include this permission in the replica key's key policy.
 //
 // Related operations
 //
-//    * CreateKey
+//   - CreateKey
 //
-//    * ReplicateKey
+//   - ReplicateKey
 //
 // Returns awserr.Error for service API and SDK errors. Use runtime type assertions
 // with awserr.Error's Code and Message methods to get detailed information about
@@ -7703,32 +7890,33 @@ func (c *KMS) UpdatePrimaryRegionRequest(input *UpdatePrimaryRegionInput) (req *
 // API operation UpdatePrimaryRegion for usage and error information.
 //
 // Returned Error Types:
-//   * DisabledException
-//   The request was rejected because the specified KMS key is not enabled.
 //
-//   * InvalidArnException
-//   The request was rejected because a specified ARN, or an ARN in a key policy,
-//   is not valid.
+//   - DisabledException
+//     The request was rejected because the specified KMS key is not enabled.
 //
-//   * InvalidStateException
-//   The request was rejected because the state of the specified resource is not
-//   valid for this request.
+//   - InvalidArnException
+//     The request was rejected because a specified ARN, or an ARN in a key policy,
+//     is not valid.
 //
-//   For more information about how key state affects the use of a KMS key, see
-//   Key states of KMS keys (https://docs.aws.amazon.com/kms/latest/developerguide/key-state.html)
-//   in the Key Management Service Developer Guide .
+//   - InvalidStateException
+//     The request was rejected because the state of the specified resource is not
+//     valid for this request.
 //
-//   * InternalException
-//   The request was rejected because an internal exception occurred. The request
-//   can be retried.
+//     For more information about how key state affects the use of a KMS key, see
+//     Key states of KMS keys (https://docs.aws.amazon.com/kms/latest/developerguide/key-state.html)
+//     in the Key Management Service Developer Guide .
 //
-//   * NotFoundException
-//   The request was rejected because the specified entity or resource could not
-//   be found.
+//   - InternalException
+//     The request was rejected because an internal exception occurred. The request
+//     can be retried.
 //
-//   * UnsupportedOperationException
-//   The request was rejected because a specified parameter is not supported or
-//   a specified resource is not valid for this operation.
+//   - NotFoundException
+//     The request was rejected because the specified entity or resource could not
+//     be found.
+//
+//   - UnsupportedOperationException
+//     The request was rejected because a specified parameter is not supported or
+//     a specified resource is not valid for this operation.
 //
 // See also, https://docs.aws.amazon.com/goto/WebAPI/kms-2014-11-01/UpdatePrimaryRegion
 func (c *KMS) UpdatePrimaryRegion(input *UpdatePrimaryRegionInput) (*UpdatePrimaryRegionOutput, error) {
@@ -7768,14 +7956,13 @@ const opVerify = "Verify"
 // This method is useful when you want to inject custom logic or configuration
 // into the SDK's request lifecycle. Such as custom headers, or retry logic.
 //
+//	// Example sending a request using the VerifyRequest method.
+//	req, resp := client.VerifyRequest(params)
 //
-//    // Example sending a request using the VerifyRequest method.
-//    req, resp := client.VerifyRequest(params)
-//
-//    err := req.Send()
-//    if err == nil { // resp is now filled
-//        fmt.Println(resp)
-//    }
+//	err := req.Send()
+//	if err == nil { // resp is now filled
+//	    fmt.Println(resp)
+//	}
 //
 // See also, https://docs.aws.amazon.com/goto/WebAPI/kms-2014-11-01/Verify
 func (c *KMS) VerifyRequest(input *VerifyInput) (req *request.Request, output *VerifyOutput) {
@@ -7817,11 +8004,15 @@ func (c *KMS) VerifyRequest(input *VerifyInput) (req *request.Request, output *V
 // You can also verify the digital signature by using the public key of the
 // KMS key outside of KMS. Use the GetPublicKey operation to download the public
 // key in the asymmetric KMS key and then use the public key to verify the signature
-// outside of KMS. The advantage of using the Verify operation is that it is
-// performed within KMS. As a result, it's easy to call, the operation is performed
-// within the FIPS boundary, it is logged in CloudTrail, and you can use key
-// policy and IAM policy to determine who is authorized to use the KMS key to
-// verify signatures.
+// outside of KMS. To verify a signature outside of KMS with an SM2 public key,
+// you must specify the distinguishing ID. By default, KMS uses 1234567812345678
+// as the distinguishing ID. For more information, see Offline verification
+// with SM2 key pairs (https://docs.aws.amazon.com/kms/latest/developerguide/asymmetric-key-specs.html#key-spec-sm-offline-verification)
+// in Key Management Service Developer Guide. The advantage of using the Verify
+// operation is that it is performed within KMS. As a result, it's easy to call,
+// the operation is performed within the FIPS boundary, it is logged in CloudTrail,
+// and you can use key policy and IAM policy to determine who is authorized
+// to use the KMS key to verify signatures.
 //
 // The KMS key that you use for this operation must be in a compatible key state.
 // For details, see Key states of KMS keys (https://docs.aws.amazon.com/kms/latest/developerguide/key-state.html)
@@ -7844,57 +8035,58 @@ func (c *KMS) VerifyRequest(input *VerifyInput) (req *request.Request, output *V
 // API operation Verify for usage and error information.
 //
 // Returned Error Types:
-//   * NotFoundException
-//   The request was rejected because the specified entity or resource could not
-//   be found.
 //
-//   * DisabledException
-//   The request was rejected because the specified KMS key is not enabled.
+//   - NotFoundException
+//     The request was rejected because the specified entity or resource could not
+//     be found.
 //
-//   * KeyUnavailableException
-//   The request was rejected because the specified KMS key was not available.
-//   You can retry the request.
+//   - DisabledException
+//     The request was rejected because the specified KMS key is not enabled.
 //
-//   * DependencyTimeoutException
-//   The system timed out while trying to fulfill the request. The request can
-//   be retried.
+//   - KeyUnavailableException
+//     The request was rejected because the specified KMS key was not available.
+//     You can retry the request.
 //
-//   * InvalidKeyUsageException
-//   The request was rejected for one of the following reasons:
+//   - DependencyTimeoutException
+//     The system timed out while trying to fulfill the request. The request can
+//     be retried.
 //
-//      * The KeyUsage value of the KMS key is incompatible with the API operation.
+//   - InvalidKeyUsageException
+//     The request was rejected for one of the following reasons:
 //
-//      * The encryption algorithm or signing algorithm specified for the operation
-//      is incompatible with the type of key material in the KMS key (KeySpec).
+//   - The KeyUsage value of the KMS key is incompatible with the API operation.
 //
-//   For encrypting, decrypting, re-encrypting, and generating data keys, the
-//   KeyUsage must be ENCRYPT_DECRYPT. For signing and verifying messages, the
-//   KeyUsage must be SIGN_VERIFY. For generating and verifying message authentication
-//   codes (MACs), the KeyUsage must be GENERATE_VERIFY_MAC. To find the KeyUsage
-//   of a KMS key, use the DescribeKey operation.
+//   - The encryption algorithm or signing algorithm specified for the operation
+//     is incompatible with the type of key material in the KMS key (KeySpec).
 //
-//   To find the encryption or signing algorithms supported for a particular KMS
-//   key, use the DescribeKey operation.
+//     For encrypting, decrypting, re-encrypting, and generating data keys, the
+//     KeyUsage must be ENCRYPT_DECRYPT. For signing and verifying messages, the
+//     KeyUsage must be SIGN_VERIFY. For generating and verifying message authentication
+//     codes (MACs), the KeyUsage must be GENERATE_VERIFY_MAC. To find the KeyUsage
+//     of a KMS key, use the DescribeKey operation.
 //
-//   * InvalidGrantTokenException
-//   The request was rejected because the specified grant token is not valid.
+//     To find the encryption or signing algorithms supported for a particular KMS
+//     key, use the DescribeKey operation.
 //
-//   * InternalException
-//   The request was rejected because an internal exception occurred. The request
-//   can be retried.
+//   - InvalidGrantTokenException
+//     The request was rejected because the specified grant token is not valid.
 //
-//   * InvalidStateException
-//   The request was rejected because the state of the specified resource is not
-//   valid for this request.
+//   - InternalException
+//     The request was rejected because an internal exception occurred. The request
+//     can be retried.
 //
-//   For more information about how key state affects the use of a KMS key, see
-//   Key states of KMS keys (https://docs.aws.amazon.com/kms/latest/developerguide/key-state.html)
-//   in the Key Management Service Developer Guide .
+//   - InvalidStateException
+//     The request was rejected because the state of the specified resource is not
+//     valid for this request.
 //
-//   * KMSInvalidSignatureException
-//   The request was rejected because the signature verification failed. Signature
-//   verification fails when it cannot confirm that signature was produced by
-//   signing the specified message with the specified KMS key and signing algorithm.
+//     For more information about how key state affects the use of a KMS key, see
+//     Key states of KMS keys (https://docs.aws.amazon.com/kms/latest/developerguide/key-state.html)
+//     in the Key Management Service Developer Guide .
+//
+//   - KMSInvalidSignatureException
+//     The request was rejected because the signature verification failed. Signature
+//     verification fails when it cannot confirm that signature was produced by
+//     signing the specified message with the specified KMS key and signing algorithm.
 //
 // See also, https://docs.aws.amazon.com/goto/WebAPI/kms-2014-11-01/Verify
 func (c *KMS) Verify(input *VerifyInput) (*VerifyOutput, error) {
@@ -7934,14 +8126,13 @@ const opVerifyMac = "VerifyMac"
 // This method is useful when you want to inject custom logic or configuration
 // into the SDK's request lifecycle. Such as custom headers, or retry logic.
 //
+//	// Example sending a request using the VerifyMacRequest method.
+//	req, resp := client.VerifyMacRequest(params)
 //
-//    // Example sending a request using the VerifyMacRequest method.
-//    req, resp := client.VerifyMacRequest(params)
-//
-//    err := req.Send()
-//    if err == nil { // resp is now filled
-//        fmt.Println(resp)
-//    }
+//	err := req.Send()
+//	if err == nil { // resp is now filled
+//	    fmt.Println(resp)
+//	}
 //
 // See also, https://docs.aws.amazon.com/goto/WebAPI/kms-2014-11-01/VerifyMac
 func (c *KMS) VerifyMacRequest(input *VerifyMacInput) (req *request.Request, output *VerifyMacOutput) {
@@ -7996,53 +8187,54 @@ func (c *KMS) VerifyMacRequest(input *VerifyMacInput) (req *request.Request, out
 // API operation VerifyMac for usage and error information.
 //
 // Returned Error Types:
-//   * NotFoundException
-//   The request was rejected because the specified entity or resource could not
-//   be found.
 //
-//   * DisabledException
-//   The request was rejected because the specified KMS key is not enabled.
+//   - NotFoundException
+//     The request was rejected because the specified entity or resource could not
+//     be found.
 //
-//   * KeyUnavailableException
-//   The request was rejected because the specified KMS key was not available.
-//   You can retry the request.
+//   - DisabledException
+//     The request was rejected because the specified KMS key is not enabled.
 //
-//   * InvalidKeyUsageException
-//   The request was rejected for one of the following reasons:
+//   - KeyUnavailableException
+//     The request was rejected because the specified KMS key was not available.
+//     You can retry the request.
 //
-//      * The KeyUsage value of the KMS key is incompatible with the API operation.
+//   - InvalidKeyUsageException
+//     The request was rejected for one of the following reasons:
 //
-//      * The encryption algorithm or signing algorithm specified for the operation
-//      is incompatible with the type of key material in the KMS key (KeySpec).
+//   - The KeyUsage value of the KMS key is incompatible with the API operation.
 //
-//   For encrypting, decrypting, re-encrypting, and generating data keys, the
-//   KeyUsage must be ENCRYPT_DECRYPT. For signing and verifying messages, the
-//   KeyUsage must be SIGN_VERIFY. For generating and verifying message authentication
-//   codes (MACs), the KeyUsage must be GENERATE_VERIFY_MAC. To find the KeyUsage
-//   of a KMS key, use the DescribeKey operation.
+//   - The encryption algorithm or signing algorithm specified for the operation
+//     is incompatible with the type of key material in the KMS key (KeySpec).
 //
-//   To find the encryption or signing algorithms supported for a particular KMS
-//   key, use the DescribeKey operation.
+//     For encrypting, decrypting, re-encrypting, and generating data keys, the
+//     KeyUsage must be ENCRYPT_DECRYPT. For signing and verifying messages, the
+//     KeyUsage must be SIGN_VERIFY. For generating and verifying message authentication
+//     codes (MACs), the KeyUsage must be GENERATE_VERIFY_MAC. To find the KeyUsage
+//     of a KMS key, use the DescribeKey operation.
 //
-//   * InvalidGrantTokenException
-//   The request was rejected because the specified grant token is not valid.
+//     To find the encryption or signing algorithms supported for a particular KMS
+//     key, use the DescribeKey operation.
 //
-//   * InternalException
-//   The request was rejected because an internal exception occurred. The request
-//   can be retried.
+//   - InvalidGrantTokenException
+//     The request was rejected because the specified grant token is not valid.
 //
-//   * KMSInvalidMacException
-//   The request was rejected because the HMAC verification failed. HMAC verification
-//   fails when the HMAC computed by using the specified message, HMAC KMS key,
-//   and MAC algorithm does not match the HMAC specified in the request.
+//   - InternalException
+//     The request was rejected because an internal exception occurred. The request
+//     can be retried.
 //
-//   * InvalidStateException
-//   The request was rejected because the state of the specified resource is not
-//   valid for this request.
+//   - KMSInvalidMacException
+//     The request was rejected because the HMAC verification failed. HMAC verification
+//     fails when the HMAC computed by using the specified message, HMAC KMS key,
+//     and MAC algorithm does not match the HMAC specified in the request.
 //
-//   For more information about how key state affects the use of a KMS key, see
-//   Key states of KMS keys (https://docs.aws.amazon.com/kms/latest/developerguide/key-state.html)
-//   in the Key Management Service Developer Guide .
+//   - InvalidStateException
+//     The request was rejected because the state of the specified resource is not
+//     valid for this request.
+//
+//     For more information about how key state affects the use of a KMS key, see
+//     Key states of KMS keys (https://docs.aws.amazon.com/kms/latest/developerguide/key-state.html)
+//     in the Key Management Service Developer Guide .
 //
 // See also, https://docs.aws.amazon.com/goto/WebAPI/kms-2014-11-01/VerifyMac
 func (c *KMS) VerifyMac(input *VerifyMacInput) (*VerifyMacOutput, error) {
@@ -8367,24 +8559,24 @@ func (s *CloudHsmClusterInUseException) RequestID() string {
 // The request was rejected because the associated CloudHSM cluster did not
 // meet the configuration requirements for a custom key store.
 //
-//    * The cluster must be configured with private subnets in at least two
-//    different Availability Zones in the Region.
+//   - The cluster must be configured with private subnets in at least two
+//     different Availability Zones in the Region.
 //
-//    * The security group for the cluster (https://docs.aws.amazon.com/cloudhsm/latest/userguide/configure-sg.html)
-//    (cloudhsm-cluster-<cluster-id>-sg) must include inbound rules and outbound
-//    rules that allow TCP traffic on ports 2223-2225. The Source in the inbound
-//    rules and the Destination in the outbound rules must match the security
-//    group ID. These rules are set by default when you create the cluster.
-//    Do not delete or change them. To get information about a particular security
-//    group, use the DescribeSecurityGroups (https://docs.aws.amazon.com/AWSEC2/latest/APIReference/API_DescribeSecurityGroups.html)
-//    operation.
+//   - The security group for the cluster (https://docs.aws.amazon.com/cloudhsm/latest/userguide/configure-sg.html)
+//     (cloudhsm-cluster-<cluster-id>-sg) must include inbound rules and outbound
+//     rules that allow TCP traffic on ports 2223-2225. The Source in the inbound
+//     rules and the Destination in the outbound rules must match the security
+//     group ID. These rules are set by default when you create the cluster.
+//     Do not delete or change them. To get information about a particular security
+//     group, use the DescribeSecurityGroups (https://docs.aws.amazon.com/AWSEC2/latest/APIReference/API_DescribeSecurityGroups.html)
+//     operation.
 //
-//    * The cluster must contain at least as many HSMs as the operation requires.
-//    To add HSMs, use the CloudHSM CreateHsm (https://docs.aws.amazon.com/cloudhsm/latest/APIReference/API_CreateHsm.html)
-//    operation. For the CreateCustomKeyStore, UpdateCustomKeyStore, and CreateKey
-//    operations, the CloudHSM cluster must have at least two active HSMs, each
-//    in a different Availability Zone. For the ConnectCustomKeyStore operation,
-//    the CloudHSM must contain at least one active HSM.
+//   - The cluster must contain at least as many HSMs as the operation requires.
+//     To add HSMs, use the CloudHSM CreateHsm (https://docs.aws.amazon.com/cloudhsm/latest/APIReference/API_CreateHsm.html)
+//     operation. For the CreateCustomKeyStore, UpdateCustomKeyStore, and CreateKey
+//     operations, the CloudHSM cluster must have at least two active HSMs, each
+//     in a different Availability Zone. For the ConnectCustomKeyStore operation,
+//     the CloudHSM must contain at least one active HSM.
 //
 // For information about the requirements for an CloudHSM cluster that is associated
 // with a custom key store, see Assemble the Prerequisites (https://docs.aws.amazon.com/kms/latest/developerguide/create-keystore.html#before-keystore)
@@ -8854,9 +9046,7 @@ type CreateCustomKeyStoreInput struct {
 	// ID of any active CloudHSM cluster that is not already associated with a custom
 	// key store. To find the cluster ID, use the DescribeClusters (https://docs.aws.amazon.com/cloudhsm/latest/APIReference/API_DescribeClusters.html)
 	// operation.
-	//
-	// CloudHsmClusterId is a required field
-	CloudHsmClusterId *string `min:"19" type:"string" required:"true"`
+	CloudHsmClusterId *string `min:"19" type:"string"`
 
 	// Specifies a friendly name for the custom key store. The name must be unique
 	// in your Amazon Web Services account.
@@ -8876,16 +9066,12 @@ type CreateCustomKeyStoreInput struct {
 	// KeyStorePassword is a sensitive parameter and its value will be
 	// replaced with "sensitive" in string returned by CreateCustomKeyStoreInput's
 	// String and GoString methods.
-	//
-	// KeyStorePassword is a required field
-	KeyStorePassword *string `min:"7" type:"string" required:"true" sensitive:"true"`
+	KeyStorePassword *string `min:"7" type:"string" sensitive:"true"`
 
 	// Enter the content of the trust anchor certificate for the cluster. This is
 	// the content of the customerCA.crt file that you created when you initialized
 	// the cluster (https://docs.aws.amazon.com/cloudhsm/latest/userguide/initialize-cluster.html).
-	//
-	// TrustAnchorCertificate is a required field
-	TrustAnchorCertificate *string `min:"1" type:"string" required:"true"`
+	TrustAnchorCertificate *string `min:"1" type:"string"`
 }
 
 // String returns the string representation.
@@ -8909,9 +9095,6 @@ func (s CreateCustomKeyStoreInput) GoString() string {
 // Validate inspects the fields of the type to determine if they are valid.
 func (s *CreateCustomKeyStoreInput) Validate() error {
 	invalidParams := request.ErrInvalidParams{Context: "CreateCustomKeyStoreInput"}
-	if s.CloudHsmClusterId == nil {
-		invalidParams.Add(request.NewErrParamRequired("CloudHsmClusterId"))
-	}
 	if s.CloudHsmClusterId != nil && len(*s.CloudHsmClusterId) < 19 {
 		invalidParams.Add(request.NewErrParamMinLen("CloudHsmClusterId", 19))
 	}
@@ -8921,14 +9104,8 @@ func (s *CreateCustomKeyStoreInput) Validate() error {
 	if s.CustomKeyStoreName != nil && len(*s.CustomKeyStoreName) < 1 {
 		invalidParams.Add(request.NewErrParamMinLen("CustomKeyStoreName", 1))
 	}
-	if s.KeyStorePassword == nil {
-		invalidParams.Add(request.NewErrParamRequired("KeyStorePassword"))
-	}
 	if s.KeyStorePassword != nil && len(*s.KeyStorePassword) < 7 {
 		invalidParams.Add(request.NewErrParamMinLen("KeyStorePassword", 7))
-	}
-	if s.TrustAnchorCertificate == nil {
-		invalidParams.Add(request.NewErrParamRequired("TrustAnchorCertificate"))
 	}
 	if s.TrustAnchorCertificate != nil && len(*s.TrustAnchorCertificate) < 1 {
 		invalidParams.Add(request.NewErrParamMinLen("TrustAnchorCertificate", 1))
@@ -9284,7 +9461,7 @@ type CreateKeyInput struct {
 	// The response includes the custom key store ID and the ID of the CloudHSM
 	// cluster.
 	//
-	// This operation is part of the Custom Key Store feature (https://docs.aws.amazon.com/kms/latest/developerguide/custom-key-store-overview.html)
+	// This operation is part of the custom key store feature (https://docs.aws.amazon.com/kms/latest/developerguide/custom-key-store-overview.html)
 	// feature in KMS, which combines the convenience and extensive integration
 	// of KMS with the isolation and control of a single-tenant key store.
 	CustomKeyStoreId *string `min:"1" type:"string"`
@@ -9307,9 +9484,10 @@ type CreateKeyInput struct {
 	Description *string `type:"string"`
 
 	// Specifies the type of KMS key to create. The default value, SYMMETRIC_DEFAULT,
-	// creates a KMS key with a 256-bit symmetric key for encryption and decryption.
-	// For help choosing a key spec for your KMS key, see Choosing a KMS key type
-	// (https://docs.aws.amazon.com/kms/latest/developerguide/key-types.html#symm-asymm-choose)
+	// creates a KMS key with a 256-bit AES-GCM key that is used for encryption
+	// and decryption, except in China Regions, where it creates a 128-bit symmetric
+	// key that uses SM4 encryption. For help choosing a key spec for your KMS key,
+	// see Choosing a KMS key type (https://docs.aws.amazon.com/kms/latest/developerguide/key-types.html#symm-asymm-choose)
 	// in the Key Management Service Developer Guide .
 	//
 	// The KeySpec determines whether the KMS key contains a symmetric key or an
@@ -9328,7 +9506,7 @@ type CreateKeyInput struct {
 	//
 	// KMS supports the following key specs for KMS keys:
 	//
-	//    * Symmetric encryption key (default) SYMMETRIC_DEFAULT (AES-256-GCM)
+	//    * Symmetric encryption key (default) SYMMETRIC_DEFAULT
 	//
 	//    * HMAC keys (symmetric) HMAC_224 HMAC_256 HMAC_384 HMAC_512
 	//
@@ -9339,6 +9517,8 @@ type CreateKeyInput struct {
 	//
 	//    * Other asymmetric elliptic curve key pairs ECC_SECG_P256K1 (secp256k1),
 	//    commonly used for cryptocurrencies.
+	//
+	//    * SM2 key pairs (China Regions only) SM2
 	KeySpec *string `type:"string" enum:"KeySpec"`
 
 	// Determines the cryptographic operations (https://docs.aws.amazon.com/kms/latest/developerguide/concepts.html#cryptographic-operations)
@@ -9357,6 +9537,9 @@ type CreateKeyInput struct {
 	//    or SIGN_VERIFY.
 	//
 	//    * For asymmetric KMS keys with ECC key material, specify SIGN_VERIFY.
+	//
+	//    * For asymmetric KMS keys with SM2 key material (China Regions only),
+	//    specify ENCRYPT_DECRYPT or SIGN_VERIFY.
 	KeyUsage *string `type:"string" enum:"KeyUsageType"`
 
 	// Creates a multi-Region primary key that you can replicate into other Amazon
@@ -9423,21 +9606,20 @@ type CreateKeyInput struct {
 	//    visible (https://docs.aws.amazon.com/IAM/latest/UserGuide/troubleshoot_general.html#troubleshoot_general_eventual-consistency)
 	//    in the Amazon Web Services Identity and Access Management User Guide.
 	//
-	// A key policy document must conform to the following rules.
+	// A key policy document can include only the following characters:
 	//
-	//    * Up to 32 kilobytes (32768 bytes)
+	//    * Printable ASCII characters from the space character (\u0020) through
+	//    the end of the ASCII character range.
 	//
-	//    * Must be UTF-8 encoded
+	//    * Printable characters in the Basic Latin and Latin-1 Supplement character
+	//    set (through \u00FF).
 	//
-	//    * The only Unicode characters that are permitted in a key policy document
-	//    are the horizontal tab (U+0009), linefeed (U+000A), carriage return (U+000D),
-	//    and characters in the range U+0020 to U+00FF.
+	//    * The tab (\u0009), line feed (\u000A), and carriage return (\u000D) special
+	//    characters
 	//
-	//    * The Sid element in a key policy statement can include spaces. (Spaces
-	//    are prohibited in the Sid element of an IAM policy document.)
-	//
-	// For help writing and formatting a JSON policy document, see the IAM JSON
-	// Policy Reference (https://docs.aws.amazon.com/IAM/latest/UserGuide/reference_policies.html)
+	// For information about key policies, see Key policies in KMS (https://docs.aws.amazon.com/kms/latest/developerguide/key-policies.html)
+	// in the Key Management Service Developer Guide. For help writing and formatting
+	// a JSON policy document, see the IAM JSON Policy Reference (https://docs.aws.amazon.com/IAM/latest/UserGuide/reference_policies.html)
 	// in the Identity and Access Management User Guide .
 	Policy *string `min:"1" type:"string"`
 
@@ -9672,17 +9854,17 @@ func (s *CustomKeyStoreHasCMKsException) RequestID() string {
 //
 // This exception is thrown under the following conditions:
 //
-//    * You requested the CreateKey or GenerateRandom operation in a custom
-//    key store that is not connected. These operations are valid only when
-//    the custom key store ConnectionState is CONNECTED.
+//   - You requested the CreateKey or GenerateRandom operation in a custom
+//     key store that is not connected. These operations are valid only when
+//     the custom key store ConnectionState is CONNECTED.
 //
-//    * You requested the UpdateCustomKeyStore or DeleteCustomKeyStore operation
-//    on a custom key store that is not disconnected. This operation is valid
-//    only when the custom key store ConnectionState is DISCONNECTED.
+//   - You requested the UpdateCustomKeyStore or DeleteCustomKeyStore operation
+//     on a custom key store that is not disconnected. This operation is valid
+//     only when the custom key store ConnectionState is DISCONNECTED.
 //
-//    * You requested the ConnectCustomKeyStore operation on a custom key store
-//    with a ConnectionState of DISCONNECTING or FAILED. This operation is valid
-//    for all other ConnectionState values.
+//   - You requested the ConnectCustomKeyStore operation on a custom key store
+//     with a ConnectionState of DISCONNECTING or FAILED. This operation is valid
+//     for all other ConnectionState values.
 type CustomKeyStoreInvalidStateException struct {
 	_            struct{}                  `type:"structure"`
 	RespMetadata protocol.ResponseMetadata `json:"-" xml:"-"`
@@ -11777,10 +11959,12 @@ type GenerateDataKeyPairInput struct {
 
 	// Determines the type of data key pair that is generated.
 	//
-	// The KMS rule that restricts the use of asymmetric RSA KMS keys to encrypt
-	// and decrypt or to sign and verify (but not both), and the rule that permits
-	// you to use ECC KMS keys only to sign and verify, are not effective on data
-	// key pairs, which are used outside of KMS.
+	// The KMS rule that restricts the use of asymmetric RSA and SM2 KMS keys to
+	// encrypt and decrypt or to sign and verify (but not both), and the rule that
+	// permits you to use ECC KMS keys only to sign and verify, are not effective
+	// on data key pairs, which are used outside of KMS. The SM2 key spec is only
+	// available in China Regions. RSA and ECC asymmetric key pairs are also available
+	// in China Regions.
 	//
 	// KeyPairSpec is a required field
 	KeyPairSpec *string `type:"string" required:"true" enum:"DataKeyPairSpec"`
@@ -11981,10 +12165,12 @@ type GenerateDataKeyPairWithoutPlaintextInput struct {
 
 	// Determines the type of data key pair that is generated.
 	//
-	// The KMS rule that restricts the use of asymmetric RSA KMS keys to encrypt
-	// and decrypt or to sign and verify (but not both), and the rule that permits
-	// you to use ECC KMS keys only to sign and verify, are not effective on data
-	// key pairs, which are used outside of KMS.
+	// The KMS rule that restricts the use of asymmetric RSA and SM2 KMS keys to
+	// encrypt and decrypt or to sign and verify (but not both), and the rule that
+	// permits you to use ECC KMS keys only to sign and verify, are not effective
+	// on data key pairs, which are used outside of KMS. The SM2 key spec is only
+	// available in China Regions. RSA and ECC asymmetric key pairs are also available
+	// in China Regions.
 	//
 	// KeyPairSpec is a required field
 	KeyPairSpec *string `type:"string" required:"true" enum:"DataKeyPairSpec"`
@@ -12459,7 +12645,7 @@ type GenerateRandomInput struct {
 	// To find the ID of a custom key store, use the DescribeCustomKeyStores operation.
 	CustomKeyStoreId *string `min:"1" type:"string"`
 
-	// The length of the byte string.
+	// The length of the random byte string. This parameter is required.
 	NumberOfBytes *int64 `min:"1" type:"integer"`
 }
 
@@ -14093,10 +14279,10 @@ func (s *InvalidImportTokenException) RequestID() string {
 
 // The request was rejected for one of the following reasons:
 //
-//    * The KeyUsage value of the KMS key is incompatible with the API operation.
+//   - The KeyUsage value of the KMS key is incompatible with the API operation.
 //
-//    * The encryption algorithm or signing algorithm specified for the operation
-//    is incompatible with the type of key material in the KMS key (KeySpec).
+//   - The encryption algorithm or signing algorithm specified for the operation
+//     is incompatible with the type of key material in the KMS key (KeySpec).
 //
 // For encrypting, decrypting, re-encrypting, and generating data keys, the
 // KeyUsage must be ENCRYPT_DECRYPT. For signing and verifying messages, the
@@ -16010,18 +16196,21 @@ type PutKeyPolicyInput struct {
 	//    visible (https://docs.aws.amazon.com/IAM/latest/UserGuide/troubleshoot_general.html#troubleshoot_general_eventual-consistency)
 	//    in the Amazon Web Services Identity and Access Management User Guide.
 	//
-	// A key policy document must conform to the following rules.
+	// A key policy document can include only the following characters:
 	//
-	//    * Up to 32 kilobytes (32768 bytes)
+	//    * Printable ASCII characters from the space character (\u0020) through
+	//    the end of the ASCII character range.
 	//
-	//    * Must be UTF-8 encoded
+	//    * Printable characters in the Basic Latin and Latin-1 Supplement character
+	//    set (through \u00FF).
 	//
-	//    * The only Unicode characters that are permitted in a key policy document
-	//    are the horizontal tab (U+0009), linefeed (U+000A), carriage return (U+000D),
-	//    and characters in the range U+0020 to U+00FF.
+	//    * The tab (\u0009), line feed (\u000A), and carriage return (\u000D) special
+	//    characters
 	//
-	//    * The Sid element in a key policy statement can include spaces. (Spaces
-	//    are prohibited in the Sid element of an IAM policy document.)
+	// For information about key policies, see Key policies in KMS (https://docs.aws.amazon.com/kms/latest/developerguide/key-policies.html)
+	// in the Key Management Service Developer Guide. For help writing and formatting
+	// a JSON policy document, see the IAM JSON Policy Reference (https://docs.aws.amazon.com/IAM/latest/UserGuide/reference_policies.html)
+	// in the Identity and Access Management User Guide .
 	//
 	// Policy is a required field
 	Policy *string `min:"1" type:"string" required:"true"`
@@ -16481,18 +16670,21 @@ type ReplicateKeyInput struct {
 	//    visible (https://docs.aws.amazon.com/IAM/latest/UserGuide/troubleshoot_general.html#troubleshoot_general_eventual-consistency)
 	//    in the Identity and Access Management User Guide .
 	//
-	// A key policy document must conform to the following rules.
+	// A key policy document can include only the following characters:
 	//
-	//    * Up to 32 kilobytes (32768 bytes)
+	//    * Printable ASCII characters from the space character (\u0020) through
+	//    the end of the ASCII character range.
 	//
-	//    * Must be UTF-8 encoded
+	//    * Printable characters in the Basic Latin and Latin-1 Supplement character
+	//    set (through \u00FF).
 	//
-	//    * The only Unicode characters that are permitted in a key policy document
-	//    are the horizontal tab (U+0009), linefeed (U+000A), carriage return (U+000D),
-	//    and characters in the range U+0020 to U+00FF.
+	//    * The tab (\u0009), line feed (\u000A), and carriage return (\u000D) special
+	//    characters
 	//
-	//    * The Sid element in a key policy statement can include spaces. (Spaces
-	//    are prohibited in the Sid element of an IAM policy document.)
+	// For information about key policies, see Key policies in KMS (https://docs.aws.amazon.com/kms/latest/developerguide/key-policies.html)
+	// in the Key Management Service Developer Guide. For help writing and formatting
+	// a JSON policy document, see the IAM JSON Policy Reference (https://docs.aws.amazon.com/IAM/latest/UserGuide/reference_policies.html)
+	// in the Identity and Access Management User Guide .
 	Policy *string `min:"1" type:"string"`
 
 	// The Region ID of the Amazon Web Services Region for this replica key.
@@ -18538,6 +18730,9 @@ const (
 
 	// ConnectionErrorCodeTypeSubnetNotFound is a ConnectionErrorCodeType enum value
 	ConnectionErrorCodeTypeSubnetNotFound = "SUBNET_NOT_FOUND"
+
+	// ConnectionErrorCodeTypeInsufficientFreeAddressesInSubnet is a ConnectionErrorCodeType enum value
+	ConnectionErrorCodeTypeInsufficientFreeAddressesInSubnet = "INSUFFICIENT_FREE_ADDRESSES_IN_SUBNET"
 )
 
 // ConnectionErrorCodeType_Values returns all elements of the ConnectionErrorCodeType enum
@@ -18552,6 +18747,7 @@ func ConnectionErrorCodeType_Values() []string {
 		ConnectionErrorCodeTypeUserNotFound,
 		ConnectionErrorCodeTypeUserLoggedIn,
 		ConnectionErrorCodeTypeSubnetNotFound,
+		ConnectionErrorCodeTypeInsufficientFreeAddressesInSubnet,
 	}
 }
 
@@ -18619,6 +18815,9 @@ const (
 
 	// CustomerMasterKeySpecHmac512 is a CustomerMasterKeySpec enum value
 	CustomerMasterKeySpecHmac512 = "HMAC_512"
+
+	// CustomerMasterKeySpecSm2 is a CustomerMasterKeySpec enum value
+	CustomerMasterKeySpecSm2 = "SM2"
 )
 
 // CustomerMasterKeySpec_Values returns all elements of the CustomerMasterKeySpec enum
@@ -18636,6 +18835,7 @@ func CustomerMasterKeySpec_Values() []string {
 		CustomerMasterKeySpecHmac256,
 		CustomerMasterKeySpecHmac384,
 		CustomerMasterKeySpecHmac512,
+		CustomerMasterKeySpecSm2,
 	}
 }
 
@@ -18660,6 +18860,9 @@ const (
 
 	// DataKeyPairSpecEccSecgP256k1 is a DataKeyPairSpec enum value
 	DataKeyPairSpecEccSecgP256k1 = "ECC_SECG_P256K1"
+
+	// DataKeyPairSpecSm2 is a DataKeyPairSpec enum value
+	DataKeyPairSpecSm2 = "SM2"
 )
 
 // DataKeyPairSpec_Values returns all elements of the DataKeyPairSpec enum
@@ -18672,6 +18875,7 @@ func DataKeyPairSpec_Values() []string {
 		DataKeyPairSpecEccNistP384,
 		DataKeyPairSpecEccNistP521,
 		DataKeyPairSpecEccSecgP256k1,
+		DataKeyPairSpecSm2,
 	}
 }
 
@@ -18700,6 +18904,9 @@ const (
 
 	// EncryptionAlgorithmSpecRsaesOaepSha256 is a EncryptionAlgorithmSpec enum value
 	EncryptionAlgorithmSpecRsaesOaepSha256 = "RSAES_OAEP_SHA_256"
+
+	// EncryptionAlgorithmSpecSm2pke is a EncryptionAlgorithmSpec enum value
+	EncryptionAlgorithmSpecSm2pke = "SM2PKE"
 )
 
 // EncryptionAlgorithmSpec_Values returns all elements of the EncryptionAlgorithmSpec enum
@@ -18708,6 +18915,7 @@ func EncryptionAlgorithmSpec_Values() []string {
 		EncryptionAlgorithmSpecSymmetricDefault,
 		EncryptionAlgorithmSpecRsaesOaepSha1,
 		EncryptionAlgorithmSpecRsaesOaepSha256,
+		EncryptionAlgorithmSpecSm2pke,
 	}
 }
 
@@ -18851,6 +19059,9 @@ const (
 
 	// KeySpecHmac512 is a KeySpec enum value
 	KeySpecHmac512 = "HMAC_512"
+
+	// KeySpecSm2 is a KeySpec enum value
+	KeySpecSm2 = "SM2"
 )
 
 // KeySpec_Values returns all elements of the KeySpec enum
@@ -18868,6 +19079,7 @@ func KeySpec_Values() []string {
 		KeySpecHmac256,
 		KeySpecHmac384,
 		KeySpecHmac512,
+		KeySpecSm2,
 	}
 }
 
@@ -19034,6 +19246,9 @@ const (
 
 	// SigningAlgorithmSpecEcdsaSha512 is a SigningAlgorithmSpec enum value
 	SigningAlgorithmSpecEcdsaSha512 = "ECDSA_SHA_512"
+
+	// SigningAlgorithmSpecSm2dsa is a SigningAlgorithmSpec enum value
+	SigningAlgorithmSpecSm2dsa = "SM2DSA"
 )
 
 // SigningAlgorithmSpec_Values returns all elements of the SigningAlgorithmSpec enum
@@ -19048,6 +19263,7 @@ func SigningAlgorithmSpec_Values() []string {
 		SigningAlgorithmSpecEcdsaSha256,
 		SigningAlgorithmSpecEcdsaSha384,
 		SigningAlgorithmSpecEcdsaSha512,
+		SigningAlgorithmSpecSm2dsa,
 	}
 }
 

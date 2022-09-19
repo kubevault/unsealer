@@ -19,7 +19,7 @@ package gcs
 import (
 	"context"
 	"fmt"
-	"io/ioutil"
+	"io"
 
 	"kubevault.dev/unsealer/pkg/kv"
 
@@ -65,7 +65,7 @@ func (g *gcsStorage) Get(key string) ([]byte, error) {
 		return nil, fmt.Errorf("error getting object for key '%s': %s", n, err.Error())
 	}
 
-	b, err := ioutil.ReadAll(r)
+	b, err := io.ReadAll(r)
 	if err != nil {
 		return nil, fmt.Errorf("error reading object with key '%s': %s", n, err.Error())
 	}
