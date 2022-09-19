@@ -54,9 +54,10 @@ func (o *WorkerOptions) Run() error {
 }
 
 // It will do:
-//	- If vault is not initialized, then initialize vault
-//	- If vault is not unsealed, then unseal it
-//  - configure vault
+//   - If vault is not initialized, then initialize vault
+//   - If vault is not unsealed, then unseal it
+//   - configure vault
+//
 // it will periodically check for infinite time
 func (o *WorkerOptions) unsealAndConfigureVault(vc *vaultapi.Client, keyStore kv.Service, retryPeriod time.Duration) {
 	rootTokenID := util.RootTokenID(o.UnsealerOptions.KeyPrefix)
@@ -133,8 +134,8 @@ func (o *WorkerOptions) unsealAndConfigureVault(vc *vaultapi.Client, keyStore kv
 }
 
 // configureVault will do:
-//	- enable and configure kubernetes auth
-//	- create policy and policy binding
+//   - enable and configure kubernetes auth
+//   - create policy and policy binding
 func (o *WorkerOptions) configureVault(vc *vaultapi.Client, keyStore kv.Service, rootTokenID string) error {
 	rootToken, err := keyStore.Get(rootTokenID)
 	if err != nil {
