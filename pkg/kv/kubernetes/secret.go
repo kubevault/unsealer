@@ -82,13 +82,13 @@ func (k *KVService) Set(key string, value []byte) error {
 func (k *KVService) Get(key string) ([]byte, error) {
 	sr, err := k.KubeClient.CoreV1().Secrets(k.Namespace).Get(context.TODO(), k.SecretName, metav1.GetOptions{})
 	if kerror.IsNotFound(err) {
-		return nil, kv.NewNotFoundError(fmt.Sprintf("secret not found. reason: %v", err))
+		return nil, kv.NewNotFoundError("secret not found. reason: %v", err)
 	} else if err != nil {
 		return nil, fmt.Errorf("failed to get secret. reason: %v", err)
 	}
 
 	if sr.Data == nil {
-		return nil, kv.NewNotFoundError(fmt.Sprintf("key not found in secret data. reason: %v", err))
+		return nil, kv.NewNotFoundError("key not found in secret data. reason: %v", err)
 	}
 
 	if value, ok := sr.Data[key]; ok {
@@ -114,7 +114,7 @@ func (k *KVService) CheckWriteAccess() error {
 
 	sr, err := k.KubeClient.CoreV1().Secrets(k.Namespace).Get(context.TODO(), k.SecretName, metav1.GetOptions{})
 	if kerror.IsNotFound(err) {
-		return kv.NewNotFoundError(fmt.Sprintf("secret not found. reason: %v", err))
+		return kv.NewNotFoundError("secret not found. reason: %v", err)
 	} else if err != nil {
 		return fmt.Errorf("failed to get secret. reason: %v", err)
 	}
