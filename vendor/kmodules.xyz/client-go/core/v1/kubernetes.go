@@ -19,6 +19,8 @@ package v1
 import (
 	"sort"
 
+	"kmodules.xyz/client-go/meta"
+
 	jsoniter "github.com/json-iterator/go"
 	"gomodules.xyz/mergo"
 	core "k8s.io/api/core/v1"
@@ -77,6 +79,15 @@ func GetContainerByName(containers []core.Container, name string) *core.Containe
 	return nil
 }
 
+func GetContainerIdByName(containers []core.Container, name string) int {
+	for i := range containers {
+		if containers[i].Name == name {
+			return i
+		}
+	}
+	return -1
+}
+
 func UpsertContainer(containers []core.Container, upsert core.Container) []core.Container {
 	for i, container := range containers {
 		if container.Name == upsert.Name {
@@ -106,6 +117,33 @@ func UpsertContainer(containers []core.Container, upsert core.Container) []core.
 		}
 	}
 	return append(containers, upsert)
+}
+
+func MergeContainer(container core.Container, containerTemplate core.Container) core.Container {
+	if len(containerTemplate.Command) > 0 {
+		container.Command = containerTemplate.Command
+	}
+	container.Args = meta.UpsertArgumentList(container.Args, containerTemplate.Args)
+	container.WorkingDir = containerTemplate.WorkingDir
+	container.EnvFrom = containerTemplate.EnvFrom
+	container.Env = UpsertEnvVars(container.Env, containerTemplate.Env...)
+	container.Ports = UpsertContainerPorts(container.Ports, containerTemplate.Ports...)
+	container.Resources = containerTemplate.Resources
+	container.ResizePolicy = containerTemplate.ResizePolicy
+	container.RestartPolicy = containerTemplate.RestartPolicy
+	container.VolumeMounts = UpsertVolumeMount(container.VolumeMounts, containerTemplate.VolumeMounts...)
+	container.VolumeDevices = containerTemplate.VolumeDevices
+	container.LivenessProbe = containerTemplate.LivenessProbe
+	container.ReadinessProbe = containerTemplate.ReadinessProbe
+	container.StartupProbe = containerTemplate.StartupProbe
+	container.Lifecycle = containerTemplate.Lifecycle
+	container.TerminationMessagePath = containerTemplate.TerminationMessagePath
+	container.TerminationMessagePolicy = containerTemplate.TerminationMessagePolicy
+	container.ImagePullPolicy = containerTemplate.ImagePullPolicy
+	container.SecurityContext = containerTemplate.SecurityContext
+	container.StdinOnce = containerTemplate.StdinOnce
+	container.TTY = containerTemplate.TTY
+	return container
 }
 
 func UpsertContainers(containers []core.Container, addons []core.Container) []core.Container {
@@ -262,6 +300,26 @@ func EnsureVolumeMountDeletedByPath(mounts []core.VolumeMount, mountPath string)
 		}
 	}
 	return mounts
+}
+
+func UpsertContainerPorts(ports []core.ContainerPort, np ...core.ContainerPort) []core.ContainerPort {
+	upsert := func(p core.ContainerPort) {
+		for i, port := range ports {
+			if port.Name == p.Name {
+				err := mergo.Merge(&ports[i], p, mergo.WithOverride)
+				if err != nil {
+					panic(err)
+				}
+				return
+			}
+		}
+		ports = append(ports, p)
+	}
+
+	for _, port := range np {
+		upsert(port)
+	}
+	return ports
 }
 
 func GetEnvByName(envs []core.EnvVar, name string) *core.EnvVar {
