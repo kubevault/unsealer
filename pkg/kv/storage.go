@@ -24,7 +24,7 @@ type NotFoundError struct {
 
 func (e *NotFoundError) Error() string { return e.msg }
 
-func NewNotFoundError(msg string, args ...interface{}) *NotFoundError {
+func NewNotFoundError(msg string, args ...any) *NotFoundError {
 	return &NotFoundError{
 		msg: fmt.Sprintf(msg, args...),
 	}

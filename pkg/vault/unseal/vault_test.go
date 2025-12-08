@@ -46,9 +46,10 @@ func (f *fakeKV) Set(key string, data []byte) error {
 }
 
 func (f *fakeKV) Get(key string) ([]byte, error) {
-	if key == "exists" {
+	switch key {
+	case "exists":
 		return []byte("data"), nil
-	} else if key == "not-found" {
+	case "not-found":
 		return nil, kv.NewNotFoundError("not-found")
 	}
 
