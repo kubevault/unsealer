@@ -48,7 +48,7 @@ func GetConfigFromFile(configFilePath string) (*AzureAuthConfig, error) {
 			return nil, err
 		}
 
-		defer configFile.Close()
+		defer configFile.Close() //nolint:errcheck
 		configReader = configFile
 		configContents, err := io.ReadAll(configReader)
 		if err != nil {
@@ -72,7 +72,7 @@ func (c *AzureAuthConfig) GetKeyVaultToken(grantType OAuthGrantType) (authorizer
 	}
 
 	kvEndPoint := env.KeyVaultEndpoint
-	if '/' == kvEndPoint[len(kvEndPoint)-1] {
+	if kvEndPoint[len(kvEndPoint)-1] == '/' {
 		kvEndPoint = kvEndPoint[:len(kvEndPoint)-1]
 	}
 	servicePrincipalToken, err := GetServicePrincipalToken(c, env, kvEndPoint)
@@ -94,7 +94,7 @@ func GetServicePrincipalToken(config *AzureAuthConfig, env *azure.Environment, r
 		klog.V(2).Infoln("azure: using managed identity extension to retrieve access token")
 		msiEndpoint, err := adal.GetMSIVMEndpoint()
 		if err != nil {
-			return nil, fmt.Errorf("Getting the managed service identity endpoint: %v", err)
+			return nil, fmt.Errorf("getting the managed service identity endpoint: %v", err)
 		}
 		return adal.NewServicePrincipalTokenFromMSI(
 			msiEndpoint,
@@ -128,7 +128,7 @@ func GetServicePrincipalToken(config *AzureAuthConfig, env *azure.Environment, r
 			env.ServiceManagementEndpoint)
 	}
 
-	return nil, fmt.Errorf("No credentials provided for AAD application %s", config.AADClientID)
+	return nil, fmt.Errorf("no credentials provided for AAD application %s", config.AADClientID)
 }
 
 // ParseAzureEnvironment returns azure environment by name

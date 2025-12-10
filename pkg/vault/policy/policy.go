@@ -78,7 +78,7 @@ func EnsurePolicyAndPolicyBinding(vc *vaultapi.Client, config *PolicyManagerOpti
 	}
 
 	path := fmt.Sprintf("auth/kubernetes/role/%s", config.Name)
-	payload := map[string]interface{}{
+	payload := map[string]any{
 		"bound_service_account_names":      config.ServiceAccountName,
 		"bound_service_account_namespaces": config.ServiceAccountNamespace,
 		"policies":                         []string{config.Name, "default"},

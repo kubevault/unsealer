@@ -78,7 +78,7 @@ func (k *KubernetesAuthenticator) ConfigureAuth() error {
 		return errors.New("kubernetes config is nil")
 	}
 
-	payload := map[string]interface{}{
+	payload := map[string]any{
 		"kubernetes_host":        k.config.Host,
 		"kubernetes_ca_cert":     k.config.CA,
 		"token_reviewer_jwt":     k.config.Token,

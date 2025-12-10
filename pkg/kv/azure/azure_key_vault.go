@@ -61,11 +61,11 @@ func NewKVService(opts *Options) (kv.Service, error) {
 
 func (k *KVService) Set(key string, value []byte) error {
 	data := base64.StdEncoding.EncodeToString(value)
-	return k.SetSecret(strings.Replace(k.getKeyName(key), ".", "-", -1), data)
+	return k.SetSecret(strings.ReplaceAll(k.getKeyName(key), ".", "-"), data)
 }
 
 func (k *KVService) Get(key string) ([]byte, error) {
-	data, err := k.GetSecret(strings.Replace(k.getKeyName(key), ".", "-", -1))
+	data, err := k.GetSecret(strings.ReplaceAll(k.getKeyName(key), ".", "-"))
 	if err != nil {
 		return nil, kv.NewNotFoundError("unable to get secret(%s) from key vault. reason: %v", key, err)
 	}

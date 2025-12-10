@@ -1,8 +1,6 @@
 module kubevault.dev/unsealer
 
-go 1.23.0
-
-toolchain go1.24.3
+go 1.24.0
 
 require (
 	cloud.google.com/go/storage v1.36.0
@@ -17,8 +15,8 @@ require (
 	github.com/spf13/cobra v1.8.1
 	github.com/spf13/pflag v1.0.6
 	github.com/stretchr/testify v1.10.0
-	golang.org/x/crypto v0.38.0
-	golang.org/x/text v0.25.0
+	golang.org/x/crypto v0.45.0
+	golang.org/x/text v0.31.0
 	gomodules.xyz/errors v0.1.0
 	gomodules.xyz/logs v0.0.7
 	gomodules.xyz/runtime v0.3.0
@@ -126,11 +124,11 @@ require (
 	go.opentelemetry.io/otel v1.33.0 // indirect
 	go.opentelemetry.io/otel/metric v1.33.0 // indirect
 	go.opentelemetry.io/otel/trace v1.33.0 // indirect
-	golang.org/x/net v0.38.0 // indirect
+	golang.org/x/net v0.47.0 // indirect
 	golang.org/x/oauth2 v0.27.0 // indirect
-	golang.org/x/sync v0.14.0 // indirect
-	golang.org/x/sys v0.33.0 // indirect
-	golang.org/x/term v0.32.0 // indirect
+	golang.org/x/sync v0.18.0 // indirect
+	golang.org/x/sys v0.38.0 // indirect
+	golang.org/x/term v0.37.0 // indirect
 	golang.org/x/time v0.10.0 // indirect
 	gomodules.xyz/clock v0.0.0-20200817085942-06523dba733f // indirect
 	gomodules.xyz/flags v0.1.3 // indirect
