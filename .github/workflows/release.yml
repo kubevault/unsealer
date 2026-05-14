@@ -48,12 +48,6 @@ jobs:
           make release
 
 
-      - name: Publish to Docker Registry
-        env:
-          APPSCODE_ENV: prod
-        run: |
-          make release
-
       - name: Release
         uses: softprops/action-gh-release@26994186c0ac3ef5cae75ac16aa32e8153525f77 # v1
         if: startsWith(github.ref, 'refs/tags/')
