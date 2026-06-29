@@ -59,6 +59,18 @@ path "auth/kubernetes/role" {
 path "auth/kubernetes/role/*" {
 	capabilities = ["create", "update", "read", "delete", "list"]
 }
+
+path "sys/mounts" {
+  capabilities = ["read", "list"]
+}
+
+path "sys/mounts/*" {
+  capabilities = ["create", "read", "update", "delete", "sudo"]
+}
+
+path "agent/*" {
+  capabilities = ["create", "read", "update", "delete", "list"]
+}
 `
 
 // EnsurePolicyAndPolicyBinding will ensure policy and kubernetes role
