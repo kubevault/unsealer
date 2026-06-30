@@ -59,6 +59,19 @@ path "auth/kubernetes/role" {
 path "auth/kubernetes/role/*" {
 	capabilities = ["create", "update", "read", "delete", "list"]
 }
+
+# OpenBao spoke-agent backend (hub-spoke placement). The operator mounts the
+# agent/ backend, initializes the spoke-CA / hub TLS identity, refreshes the
+# advertised endpoint, and mints/revokes bootstrap tokens through it. The
+# explicit sys/mounts/agent rule adds the sudo capability mounting a backend
+# requires (and overrides the broader sys/mounts/* rule for this path).
+path "sys/mounts/agent" {
+	capabilities = ["create", "read", "update", "delete", "sudo"]
+}
+
+path "agent/*" {
+	capabilities = ["create", "read", "update", "delete", "list"]
+}
 `
 
 // EnsurePolicyAndPolicyBinding will ensure policy and kubernetes role
