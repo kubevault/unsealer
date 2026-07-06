@@ -68,7 +68,7 @@ path "sys/mounts/*" {
   capabilities = ["create", "read", "update", "delete", "sudo"]
 }
 
-path "agent/*" {
+path "relay/*" {
   capabilities = ["create", "read", "update", "delete", "list"]
 }
 `
