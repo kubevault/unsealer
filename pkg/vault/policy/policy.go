@@ -59,6 +59,19 @@ path "auth/kubernetes/role" {
 path "auth/kubernetes/role/*" {
 	capabilities = ["create", "update", "read", "delete", "list"]
 }
+
+# OpenBao spoke-relay backend (hub-spoke placement). The operator mounts the
+# relay/ backend, initializes the spoke-CA / hub TLS identity, refreshes the
+# advertised endpoint, and mints/revokes bootstrap tokens through it. The
+# explicit sys/mounts/relay rule adds the sudo capability mounting a backend
+# requires (and overrides the broader sys/mounts/* rule for this path).
+path "sys/mounts/relay" {
+	capabilities = ["create", "read", "update", "delete", "sudo"]
+}
+
+path "relay/*" {
+	capabilities = ["create", "read", "update", "delete", "list"]
+}
 `
 
 // EnsurePolicyAndPolicyBinding will ensure policy and kubernetes role
