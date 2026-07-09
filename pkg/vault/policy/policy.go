@@ -72,6 +72,14 @@ path "sys/mounts/relay" {
 path "relay/*" {
 	capabilities = ["create", "read", "update", "delete", "list"]
 }
+
+# OpenBao namespaces (tenant isolation). The operator creates a client-org's
+# namespace under sys/namespaces/<org-id> before mounting that org's secret
+# engines, and reads it back to check whether it already exists. sudo is
+# required for sys/namespaces writes, same as the mount-creation rules above.
+path "sys/namespaces/*" {
+	capabilities = ["create", "read", "update", "delete", "list", "sudo"]
+}
 `
 
 // EnsurePolicyAndPolicyBinding will ensure policy and kubernetes role
