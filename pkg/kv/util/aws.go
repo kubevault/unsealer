@@ -40,9 +40,11 @@ func GetAWSRegion() string {
 
 	hc := httpclient.Default()
 	resp, err := hc.Call(http.MethodGet, "http://169.254.169.254/latest/dynamic/instance-identity/document", nil, &md, false)
-	if err == nil &&
-		resp.StatusCode == http.StatusOK {
-		return md.Region
+	if err == nil {
+		defer func() { _ = resp.Body.Close() }()
+		if resp.StatusCode == http.StatusOK {
+			return md.Region
+		}
 	}
 
 	return ""
