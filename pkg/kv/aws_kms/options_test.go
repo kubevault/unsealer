@@ -25,13 +25,13 @@ import (
 )
 
 func getValidationErrorForFlagsNotProvided() []error {
-	var errs []error
+	errs := make([]error, 0, 1)
 	errs = append(errs, errors.New("--aws.kms-key-id or --aws.use-secure-string must be defined"))
 	return errs
 }
 
 func getValidationErrorForBothFlagProvided() []error {
-	var errs []error
+	errs := make([]error, 0, 1)
 	errs = append(errs, errors.New("--aws.kms-key-id and --aws.use-secure-string both are defined, but only one of them is needed"))
 	return errs
 }

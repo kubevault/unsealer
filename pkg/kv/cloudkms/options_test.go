@@ -40,7 +40,7 @@ func getOptions() *Options {
 }
 
 func getValidationError() []error {
-	var errs []error
+	errs := make([]error, 0, 5)
 	errs = append(errs, errors.New("google kms crypto key must be non-empty"))
 	errs = append(errs, errors.New("google kms key ring must be non-empty"))
 	errs = append(errs, errors.New("google kms location must be non-empty"))

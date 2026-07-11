@@ -98,7 +98,8 @@ func GetServicePrincipalToken(config *AzureAuthConfig, env *azure.Environment, r
 		}
 		return adal.NewServicePrincipalTokenFromMSI(
 			msiEndpoint,
-			resource)
+			resource,
+		)
 	}
 
 	if len(config.AADClientSecret) > 0 {
@@ -107,7 +108,8 @@ func GetServicePrincipalToken(config *AzureAuthConfig, env *azure.Environment, r
 			*oauthConfig,
 			config.AADClientID,
 			config.AADClientSecret,
-			resource)
+			resource,
+		)
 	}
 
 	if len(config.AADClientCertPath) > 0 && len(config.AADClientCertPassword) > 0 {
@@ -125,7 +127,8 @@ func GetServicePrincipalToken(config *AzureAuthConfig, env *azure.Environment, r
 			config.AADClientID,
 			certificate,
 			privateKey,
-			env.ServiceManagementEndpoint)
+			env.ServiceManagementEndpoint,
+		)
 	}
 
 	return nil, fmt.Errorf("no credentials provided for AAD application %s", config.AADClientID)
