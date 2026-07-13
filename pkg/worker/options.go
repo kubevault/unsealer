@@ -40,6 +40,11 @@ const (
 	VaultAddressDefault = "https://127.0.0.1:8200"
 
 	RetryPeriod = 10 * time.Second
+
+	// RoleLabelPeriod is the default sync period for the role pod
+	// label. Kept short so a raft failover re-points the client Service
+	// quickly.
+	RoleLabelPeriod = 10 * time.Second
 )
 
 type WorkerOptions struct {
@@ -55,6 +60,11 @@ type WorkerOptions struct {
 
 	// retry period to try initializing and unsealing
 	ReTryPeriod time.Duration
+
+	// RoleLabelPeriod is how often the local node's HA role (primary/standby)
+	// is synced to the pod's kubevault.com/role label. Zero disables
+	// the labeler. It only runs when POD_NAME/POD_NAMESPACE are injected.
+	RoleLabelPeriod time.Duration
 
 	// Select the mode to use
 	// 	- 'google-cloud-kms-gcs' => Google Cloud Storage with encryption using Google KMS
@@ -76,6 +86,7 @@ func NewWorkerOptions() *WorkerOptions {
 	return &WorkerOptions{
 		Address:              VaultAddressDefault,
 		ReTryPeriod:          RetryPeriod,
+		RoleLabelPeriod:      RoleLabelPeriod,
 		UnsealerOptions:      unseal.NewUnsealOptions(),
 		AuthenticatorOptions: auth.NewK8sAuthOptions(),
 		PolicyManagerOptions: policy.NewPolicyOptions(),
@@ -92,6 +103,7 @@ func (o *WorkerOptions) AddFlags(fs *pflag.FlagSet) {
 	fs.BoolVar(&o.InsecureSkipTLSVerify, "vault.insecure-skip-tls-verify", o.InsecureSkipTLSVerify, "To skip tls verification when communicating with vault server")
 	fs.StringVar(&o.Mode, "mode", o.Mode, "Select the mode to use 'google-cloud-kms-gcs' => Google Cloud Storage with encryption using Google KMS; 'aws-kms-ssm' => AWS SSM parameter store using AWS KMS; 'azure-key-vault' => Azure Key Vault Secret store; 'kubernetes-secret' => Kubernetes secret to store unseal keys")
 	fs.DurationVar(&o.ReTryPeriod, "retry-period", o.ReTryPeriod, "How often to attempt to unseal the vault instance")
+	fs.DurationVar(&o.RoleLabelPeriod, "role-label-period", o.RoleLabelPeriod, "How often to sync the local node's HA role to the pod's kubevault.com/role label; 0 disables. Requires POD_NAME/POD_NAMESPACE env")
 
 	o.UnsealerOptions.AddFlags(fs)
 	o.AuthenticatorOptions.AddFlags(fs)

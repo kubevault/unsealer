@@ -17,6 +17,7 @@ limitations under the License.
 package worker
 
 import (
+	"context"
 	"time"
 
 	"kubevault.dev/unsealer/pkg/kv"
@@ -26,6 +27,7 @@ import (
 	"kubevault.dev/unsealer/pkg/kv/cloudkms"
 	"kubevault.dev/unsealer/pkg/kv/gcs"
 	"kubevault.dev/unsealer/pkg/kv/kubernetes"
+	"kubevault.dev/unsealer/pkg/labeler"
 	"kubevault.dev/unsealer/pkg/vault"
 	"kubevault.dev/unsealer/pkg/vault/auth"
 	"kubevault.dev/unsealer/pkg/vault/policy"
@@ -46,6 +48,20 @@ func (o *WorkerOptions) Run() error {
 	vc, err := vault.NewVaultClient(o.Address, o.InsecureSkipTLSVerify, []byte(o.CaCert))
 	if err != nil {
 		return errors.Wrap(err, "failed to create vault api client")
+	}
+
+	// Every vault node advertises its own HA role by labeling its pod from
+	// the local /v1/sys/health. The client Service selects role=primary for
+	// raft-backed servers, so leadership changes re-point the Service
+	// without any central actor.
+	rl, err := labeler.NewFromEnv(vc, o.RoleLabelPeriod)
+	if err != nil {
+		return errors.Wrap(err, "failed to create role labeler")
+	}
+	if rl != nil {
+		go rl.Run(context.Background())
+	} else {
+		klog.Info("role labeling disabled (POD_NAME/POD_NAMESPACE not set or period is 0)")
 	}
 
 	o.unsealAndConfigureVault(vc, keyStore, o.ReTryPeriod)
