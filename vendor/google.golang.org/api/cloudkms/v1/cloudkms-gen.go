@@ -1,4 +1,4 @@
-// Copyright 2024 Google LLC.
+// Copyright 2026 Google LLC.
 // Use of this source code is governed by a BSD-style
 // license that can be found in the LICENSE file.
 
@@ -64,11 +64,13 @@ import (
 	"errors"
 	"fmt"
 	"io"
+	"log/slog"
 	"net/http"
 	"net/url"
 	"strconv"
 	"strings"
 
+	"github.com/googleapis/gax-go/v2/internallog"
 	googleapi "google.golang.org/api/googleapi"
 	internal "google.golang.org/api/internal"
 	gensupport "google.golang.org/api/internal/gensupport"
@@ -92,6 +94,7 @@ var _ = strings.Replace
 var _ = context.Canceled
 var _ = internaloption.WithDefaultEndpoint
 var _ = internal.Version
+var _ = internallog.New
 
 const apiId = "cloudkms:v1"
 const apiName = "cloudkms"
@@ -126,10 +129,10 @@ func NewService(ctx context.Context, opts ...option.ClientOption) (*Service, err
 	if err != nil {
 		return nil, err
 	}
-	s, err := New(client)
-	if err != nil {
-		return nil, err
-	}
+	s := &Service{client: client, BasePath: basePath, logger: internaloption.GetLogger(opts)}
+	s.Folders = NewFoldersService(s)
+	s.Organizations = NewOrganizationsService(s)
+	s.Projects = NewProjectsService(s)
 	if endpoint != "" {
 		s.BasePath = endpoint
 	}
@@ -145,18 +148,18 @@ func New(client *http.Client) (*Service, error) {
 	if client == nil {
 		return nil, errors.New("client is nil")
 	}
-	s := &Service{client: client, BasePath: basePath}
-	s.Folders = NewFoldersService(s)
-	s.Projects = NewProjectsService(s)
-	return s, nil
+	return NewService(context.TODO(), option.WithHTTPClient(client))
 }
 
 type Service struct {
 	client    *http.Client
+	logger    *slog.Logger
 	BasePath  string // API endpoint base URL
 	UserAgent string // optional additional User-Agent fragment
 
 	Folders *FoldersService
+
+	Organizations *OrganizationsService
 
 	Projects *ProjectsService
 }
@@ -174,6 +177,15 @@ func NewFoldersService(s *Service) *FoldersService {
 }
 
 type FoldersService struct {
+	s *Service
+}
+
+func NewOrganizationsService(s *Service) *OrganizationsService {
+	rs := &OrganizationsService{s: s}
+	return rs
+}
+
+type OrganizationsService struct {
 	s *Service
 }
 
@@ -196,6 +208,7 @@ func NewProjectsLocationsService(s *Service) *ProjectsLocationsService {
 	rs.KeyHandles = NewProjectsLocationsKeyHandlesService(s)
 	rs.KeyRings = NewProjectsLocationsKeyRingsService(s)
 	rs.Operations = NewProjectsLocationsOperationsService(s)
+	rs.SingleTenantHsmInstances = NewProjectsLocationsSingleTenantHsmInstancesService(s)
 	return rs
 }
 
@@ -211,6 +224,8 @@ type ProjectsLocationsService struct {
 	KeyRings *ProjectsLocationsKeyRingsService
 
 	Operations *ProjectsLocationsOperationsService
+
+	SingleTenantHsmInstances *ProjectsLocationsSingleTenantHsmInstancesService
 }
 
 func NewProjectsLocationsEkmConfigService(s *Service) *ProjectsLocationsEkmConfigService {
@@ -294,6 +309,87 @@ type ProjectsLocationsOperationsService struct {
 	s *Service
 }
 
+func NewProjectsLocationsSingleTenantHsmInstancesService(s *Service) *ProjectsLocationsSingleTenantHsmInstancesService {
+	rs := &ProjectsLocationsSingleTenantHsmInstancesService{s: s}
+	rs.Proposals = NewProjectsLocationsSingleTenantHsmInstancesProposalsService(s)
+	return rs
+}
+
+type ProjectsLocationsSingleTenantHsmInstancesService struct {
+	s *Service
+
+	Proposals *ProjectsLocationsSingleTenantHsmInstancesProposalsService
+}
+
+func NewProjectsLocationsSingleTenantHsmInstancesProposalsService(s *Service) *ProjectsLocationsSingleTenantHsmInstancesProposalsService {
+	rs := &ProjectsLocationsSingleTenantHsmInstancesProposalsService{s: s}
+	return rs
+}
+
+type ProjectsLocationsSingleTenantHsmInstancesProposalsService struct {
+	s *Service
+}
+
+// AddQuorumMember: Add a quorum member to the SingleTenantHsmInstance. This
+// will increase the total_approver_count by 1. The SingleTenantHsmInstance
+// must be in the ACTIVE state to perform this operation.
+type AddQuorumMember struct {
+	// TwoFactorPublicKeyPem: Required. The public key associated with the 2FA key
+	// for the new quorum member to add. Public keys must be associated with RSA
+	// 2048 keys.
+	TwoFactorPublicKeyPem string `json:"twoFactorPublicKeyPem,omitempty"`
+	// ForceSendFields is a list of field names (e.g. "TwoFactorPublicKeyPem") to
+	// unconditionally include in API requests. By default, fields with empty or
+	// default values are omitted from API requests. See
+	// https://pkg.go.dev/google.golang.org/api#hdr-ForceSendFields for more
+	// details.
+	ForceSendFields []string `json:"-"`
+	// NullFields is a list of field names (e.g. "TwoFactorPublicKeyPem") to
+	// include in API requests with the JSON null value. By default, fields with
+	// empty values are omitted from API requests. See
+	// https://pkg.go.dev/google.golang.org/api#hdr-NullFields for more details.
+	NullFields []string `json:"-"`
+}
+
+func (s AddQuorumMember) MarshalJSON() ([]byte, error) {
+	type NoMethod AddQuorumMember
+	return gensupport.MarshalJSON(NoMethod(s), s.ForceSendFields, s.NullFields)
+}
+
+// ApproveSingleTenantHsmInstanceProposalRequest: Request message for
+// HsmManagement.ApproveSingleTenantHsmInstanceProposal.
+type ApproveSingleTenantHsmInstanceProposalRequest struct {
+	// QuorumReply: Required. The reply to QuorumParameters for approving the
+	// proposal.
+	QuorumReply *QuorumReply `json:"quorumReply,omitempty"`
+	// RequiredActionQuorumReply: Required. The reply to
+	// RequiredActionQuorumParameters for approving the proposal.
+	RequiredActionQuorumReply *RequiredActionQuorumReply `json:"requiredActionQuorumReply,omitempty"`
+	// ForceSendFields is a list of field names (e.g. "QuorumReply") to
+	// unconditionally include in API requests. By default, fields with empty or
+	// default values are omitted from API requests. See
+	// https://pkg.go.dev/google.golang.org/api#hdr-ForceSendFields for more
+	// details.
+	ForceSendFields []string `json:"-"`
+	// NullFields is a list of field names (e.g. "QuorumReply") to include in API
+	// requests with the JSON null value. By default, fields with empty values are
+	// omitted from API requests. See
+	// https://pkg.go.dev/google.golang.org/api#hdr-NullFields for more details.
+	NullFields []string `json:"-"`
+}
+
+func (s ApproveSingleTenantHsmInstanceProposalRequest) MarshalJSON() ([]byte, error) {
+	type NoMethod ApproveSingleTenantHsmInstanceProposalRequest
+	return gensupport.MarshalJSON(NoMethod(s), s.ForceSendFields, s.NullFields)
+}
+
+// ApproveSingleTenantHsmInstanceProposalResponse: Response message for
+// HsmManagement.ApproveSingleTenantHsmInstanceProposal.
+type ApproveSingleTenantHsmInstanceProposalResponse struct {
+	// ServerResponse contains the HTTP response code and headers from the server.
+	googleapi.ServerResponse `json:"-"`
+}
+
 // AsymmetricDecryptRequest: Request message for
 // KeyManagementService.AsymmetricDecrypt.
 type AsymmetricDecryptRequest struct {
@@ -358,6 +454,8 @@ type AsymmetricDecryptResponse struct {
 	//   "EXTERNAL" - Crypto operations are performed by an external key manager.
 	//   "EXTERNAL_VPC" - Crypto operations are performed in an EKM-over-VPC
 	// backend.
+	//   "HSM_SINGLE_TENANT" - Crypto operations are performed in a single-tenant
+	// HSM.
 	ProtectionLevel string `json:"protectionLevel,omitempty"`
 	// VerifiedCiphertextCrc32c: Integrity verification field. A flag indicating
 	// whether AsymmetricDecryptRequest.ciphertext_crc32c was received by
@@ -460,6 +558,8 @@ type AsymmetricSignResponse struct {
 	//   "EXTERNAL" - Crypto operations are performed by an external key manager.
 	//   "EXTERNAL_VPC" - Crypto operations are performed in an EKM-over-VPC
 	// backend.
+	//   "HSM_SINGLE_TENANT" - Crypto operations are performed in a single-tenant
+	// HSM.
 	ProtectionLevel string `json:"protectionLevel,omitempty"`
 	// Signature: The created signature.
 	Signature string `json:"signature,omitempty"`
@@ -590,6 +690,11 @@ func (s AuditLogConfig) MarshalJSON() ([]byte, error) {
 
 // AutokeyConfig: Cloud KMS Autokey configuration for a folder.
 type AutokeyConfig struct {
+	// Etag: Optional. A checksum computed by the server based on the value of
+	// other fields. This may be sent on update requests to ensure that the client
+	// has an up-to-date value before proceeding. The request will be rejected with
+	// an ABORTED error on a mismatched etag.
+	Etag string `json:"etag,omitempty"`
 	// KeyProject: Optional. Name of the key project, e.g. `projects/{PROJECT_ID}`
 	// or `projects/{PROJECT_NUMBER}`, where Cloud KMS Autokey will provision a new
 	// CryptoKey when a KeyHandle is created. On UpdateAutokeyConfig, the caller
@@ -601,20 +706,30 @@ type AutokeyConfig struct {
 	// the configuration.
 	KeyProject string `json:"keyProject,omitempty"`
 	// Name: Identifier. Name of the AutokeyConfig resource, e.g.
-	// `folders/{FOLDER_NUMBER}/autokeyConfig`.
+	// `folders/{FOLDER_NUMBER}/autokeyConfig`
 	Name string `json:"name,omitempty"`
+	// State: Output only. The state for the AutokeyConfig.
+	//
+	// Possible values:
+	//   "STATE_UNSPECIFIED" - The state of the AutokeyConfig is unspecified.
+	//   "ACTIVE" - The AutokeyConfig is currently active.
+	//   "KEY_PROJECT_DELETED" - A previously configured key project has been
+	// deleted and the current AutokeyConfig is unusable.
+	//   "UNINITIALIZED" - The AutokeyConfig is not yet initialized or has been
+	// reset to its default uninitialized state.
+	State string `json:"state,omitempty"`
 
 	// ServerResponse contains the HTTP response code and headers from the server.
 	googleapi.ServerResponse `json:"-"`
-	// ForceSendFields is a list of field names (e.g. "KeyProject") to
-	// unconditionally include in API requests. By default, fields with empty or
-	// default values are omitted from API requests. See
+	// ForceSendFields is a list of field names (e.g. "Etag") to unconditionally
+	// include in API requests. By default, fields with empty or default values are
+	// omitted from API requests. See
 	// https://pkg.go.dev/google.golang.org/api#hdr-ForceSendFields for more
 	// details.
 	ForceSendFields []string `json:"-"`
-	// NullFields is a list of field names (e.g. "KeyProject") to include in API
-	// requests with the JSON null value. By default, fields with empty values are
-	// omitted from API requests. See
+	// NullFields is a list of field names (e.g. "Etag") to include in API requests
+	// with the JSON null value. By default, fields with empty values are omitted
+	// from API requests. See
 	// https://pkg.go.dev/google.golang.org/api#hdr-NullFields for more details.
 	NullFields []string `json:"-"`
 }
@@ -799,6 +914,90 @@ func (s CertificateChains) MarshalJSON() ([]byte, error) {
 	return gensupport.MarshalJSON(NoMethod(s), s.ForceSendFields, s.NullFields)
 }
 
+// Challenge: A challenge to be signed by a 2FA key.
+type Challenge struct {
+	// Challenge: Output only. The challenge to be signed by the 2FA key indicated
+	// by the public key.
+	Challenge string `json:"challenge,omitempty"`
+	// PublicKeyPem: Output only. The public key associated with the 2FA key that
+	// should sign the challenge.
+	PublicKeyPem string `json:"publicKeyPem,omitempty"`
+	// ForceSendFields is a list of field names (e.g. "Challenge") to
+	// unconditionally include in API requests. By default, fields with empty or
+	// default values are omitted from API requests. See
+	// https://pkg.go.dev/google.golang.org/api#hdr-ForceSendFields for more
+	// details.
+	ForceSendFields []string `json:"-"`
+	// NullFields is a list of field names (e.g. "Challenge") to include in API
+	// requests with the JSON null value. By default, fields with empty values are
+	// omitted from API requests. See
+	// https://pkg.go.dev/google.golang.org/api#hdr-NullFields for more details.
+	NullFields []string `json:"-"`
+}
+
+func (s Challenge) MarshalJSON() ([]byte, error) {
+	type NoMethod Challenge
+	return gensupport.MarshalJSON(NoMethod(s), s.ForceSendFields, s.NullFields)
+}
+
+// ChallengeReply: A reply to a challenge signed by a 2FA key.
+type ChallengeReply struct {
+	// PublicKeyPem: Required. The public key associated with the 2FA key.
+	PublicKeyPem string `json:"publicKeyPem,omitempty"`
+	// SignedChallenge: Required. The signed challenge associated with the 2FA key.
+	// The signature must be RSASSA-PKCS1 v1.5 with a SHA256 digest.
+	SignedChallenge string `json:"signedChallenge,omitempty"`
+	// ForceSendFields is a list of field names (e.g. "PublicKeyPem") to
+	// unconditionally include in API requests. By default, fields with empty or
+	// default values are omitted from API requests. See
+	// https://pkg.go.dev/google.golang.org/api#hdr-ForceSendFields for more
+	// details.
+	ForceSendFields []string `json:"-"`
+	// NullFields is a list of field names (e.g. "PublicKeyPem") to include in API
+	// requests with the JSON null value. By default, fields with empty values are
+	// omitted from API requests. See
+	// https://pkg.go.dev/google.golang.org/api#hdr-NullFields for more details.
+	NullFields []string `json:"-"`
+}
+
+func (s ChallengeReply) MarshalJSON() ([]byte, error) {
+	type NoMethod ChallengeReply
+	return gensupport.MarshalJSON(NoMethod(s), s.ForceSendFields, s.NullFields)
+}
+
+// ChecksummedData: Data with integrity verification field.
+type ChecksummedData struct {
+	// Crc32cChecksum: Integrity verification field. A CRC32C checksum of the
+	// returned ChecksummedData.data. An integrity check of ChecksummedData.data
+	// can be performed by computing the CRC32C checksum of ChecksummedData.data
+	// and comparing your results to this field. Discard the response in case of
+	// non-matching checksum values, and perform a limited number of retries. A
+	// persistent mismatch may indicate an issue in your computation of the CRC32C
+	// checksum. Note: This field is defined as int64 for reasons of compatibility
+	// across different languages. However, it is a non-negative integer, which
+	// will never exceed `2^32-1`, and can be safely downconverted to uint32 in
+	// languages that support this type.
+	Crc32cChecksum int64 `json:"crc32cChecksum,omitempty,string"`
+	// Data: Raw Data.
+	Data string `json:"data,omitempty"`
+	// ForceSendFields is a list of field names (e.g. "Crc32cChecksum") to
+	// unconditionally include in API requests. By default, fields with empty or
+	// default values are omitted from API requests. See
+	// https://pkg.go.dev/google.golang.org/api#hdr-ForceSendFields for more
+	// details.
+	ForceSendFields []string `json:"-"`
+	// NullFields is a list of field names (e.g. "Crc32cChecksum") to include in
+	// API requests with the JSON null value. By default, fields with empty values
+	// are omitted from API requests. See
+	// https://pkg.go.dev/google.golang.org/api#hdr-NullFields for more details.
+	NullFields []string `json:"-"`
+}
+
+func (s ChecksummedData) MarshalJSON() ([]byte, error) {
+	type NoMethod ChecksummedData
+	return gensupport.MarshalJSON(NoMethod(s), s.ForceSendFields, s.NullFields)
+}
+
 // CryptoKey: A CryptoKey represents a logical key that can be used for
 // cryptographic operations. A CryptoKey is made up of zero or more versions,
 // which represent the actual key material used in cryptographic operations.
@@ -810,8 +1009,11 @@ type CryptoKey struct {
 	// CryptoKey reside and where all related cryptographic operations are
 	// performed. Only applicable if CryptoKeyVersions have a ProtectionLevel of
 	// EXTERNAL_VPC, with the resource name in the format
-	// `projects/*/locations/*/ekmConnections/*`. Note, this list is non-exhaustive
-	// and may apply to additional ProtectionLevels in the future.
+	// `projects/*/locations/*/ekmConnections/*`. Only applicable if
+	// CryptoKeyVersions have a ProtectionLevel of HSM_SINGLE_TENANT, with the
+	// resource name in the format
+	// `projects/*/locations/*/singleTenantHsmInstances/*`. Note, this list is
+	// non-exhaustive and may apply to additional ProtectionLevels in the future.
 	CryptoKeyBackend string `json:"cryptoKeyBackend,omitempty"`
 	// DestroyScheduledDuration: Immutable. The period of time that versions of
 	// this key spend in the DESTROY_SCHEDULED state before transitioning to
@@ -863,6 +1065,8 @@ type CryptoKey struct {
 	// interoperable symmetric encryption and does not support automatic CryptoKey
 	// rotation.
 	//   "MAC" - CryptoKeys with this purpose may be used with MacSign.
+	//   "KEY_ENCAPSULATION" - CryptoKeys with this purpose may be used with
+	// GetPublicKey and Decapsulate.
 	Purpose string `json:"purpose,omitempty"`
 	// RotationPeriod: next_rotation_time will be advanced by this period when the
 	// service automatically rotates a key. Must be at least 24 hours and at most
@@ -963,6 +1167,30 @@ type CryptoKeyVersion struct {
 	//   "HMAC_SHA224" - HMAC-SHA224 signing with a 224 bit key.
 	//   "EXTERNAL_SYMMETRIC_ENCRYPTION" - Algorithm representing symmetric
 	// encryption by an external key manager.
+	//   "ML_KEM_768" - ML-KEM-768 (FIPS 203)
+	//   "ML_KEM_1024" - ML-KEM-1024 (FIPS 203)
+	//   "KEM_XWING" - X-Wing hybrid KEM combining ML-KEM-768 with X25519 following
+	// datatracker.ietf.org/doc/draft-connolly-cfrg-xwing-kem/.
+	//   "PQ_SIGN_ML_DSA_44" - The post-quantum Module-Lattice-Based Digital
+	// Signature Algorithm, at security level 1. Randomized version.
+	//   "PQ_SIGN_ML_DSA_65" - The post-quantum Module-Lattice-Based Digital
+	// Signature Algorithm, at security level 3. Randomized version.
+	//   "PQ_SIGN_ML_DSA_87" - The post-quantum Module-Lattice-Based Digital
+	// Signature Algorithm, at security level 5. Randomized version.
+	//   "PQ_SIGN_SLH_DSA_SHA2_128S" - The post-quantum stateless hash-based
+	// digital signature algorithm, at security level 1. Randomized version.
+	//   "PQ_SIGN_HASH_SLH_DSA_SHA2_128S_SHA256" - The post-quantum stateless
+	// hash-based digital signature algorithm, at security level 1. Randomized
+	// pre-hash version supporting SHA256 digests.
+	//   "PQ_SIGN_ML_DSA_44_EXTERNAL_MU" - The post-quantum Module-Lattice-Based
+	// Digital Signature Algorithm, at security level 1. Randomized version
+	// supporting externally-computed message representatives.
+	//   "PQ_SIGN_ML_DSA_65_EXTERNAL_MU" - The post-quantum Module-Lattice-Based
+	// Digital Signature Algorithm, at security level 3. Randomized version
+	// supporting externally-computed message representatives.
+	//   "PQ_SIGN_ML_DSA_87_EXTERNAL_MU" - The post-quantum Module-Lattice-Based
+	// Digital Signature Algorithm, at security level 5. Randomized version
+	// supporting externally-computed message representatives.
 	Algorithm string `json:"algorithm,omitempty"`
 	// Attestation: Output only. Statement that was generated and signed by the HSM
 	// at key creation time. Use this statement to verify attributes of the key as
@@ -1016,6 +1244,8 @@ type CryptoKeyVersion struct {
 	//   "EXTERNAL" - Crypto operations are performed by an external key manager.
 	//   "EXTERNAL_VPC" - Crypto operations are performed in an EKM-over-VPC
 	// backend.
+	//   "HSM_SINGLE_TENANT" - Crypto operations are performed in a single-tenant
+	// HSM.
 	ProtectionLevel string `json:"protectionLevel,omitempty"`
 	// ReimportEligible: Output only. Whether or not this key version is eligible
 	// for reimport, by being specified as a target in
@@ -1031,7 +1261,7 @@ type CryptoKeyVersion struct {
 	//   "ENABLED" - This version may be used for cryptographic operations.
 	//   "DISABLED" - This version may not be used, but the key material is still
 	// available, and the version can be placed back into the ENABLED state.
-	//   "DESTROYED" - This version is destroyed, and the key material is no longer
+	//   "DESTROYED" - The key material of this version is destroyed and no longer
 	// stored. This version may only become ENABLED again if this version is
 	// reimport_eligible and the original key material is reimported with a call to
 	// KeyManagementService.ImportCryptoKeyVersion.
@@ -1144,6 +1374,30 @@ type CryptoKeyVersionTemplate struct {
 	//   "HMAC_SHA224" - HMAC-SHA224 signing with a 224 bit key.
 	//   "EXTERNAL_SYMMETRIC_ENCRYPTION" - Algorithm representing symmetric
 	// encryption by an external key manager.
+	//   "ML_KEM_768" - ML-KEM-768 (FIPS 203)
+	//   "ML_KEM_1024" - ML-KEM-1024 (FIPS 203)
+	//   "KEM_XWING" - X-Wing hybrid KEM combining ML-KEM-768 with X25519 following
+	// datatracker.ietf.org/doc/draft-connolly-cfrg-xwing-kem/.
+	//   "PQ_SIGN_ML_DSA_44" - The post-quantum Module-Lattice-Based Digital
+	// Signature Algorithm, at security level 1. Randomized version.
+	//   "PQ_SIGN_ML_DSA_65" - The post-quantum Module-Lattice-Based Digital
+	// Signature Algorithm, at security level 3. Randomized version.
+	//   "PQ_SIGN_ML_DSA_87" - The post-quantum Module-Lattice-Based Digital
+	// Signature Algorithm, at security level 5. Randomized version.
+	//   "PQ_SIGN_SLH_DSA_SHA2_128S" - The post-quantum stateless hash-based
+	// digital signature algorithm, at security level 1. Randomized version.
+	//   "PQ_SIGN_HASH_SLH_DSA_SHA2_128S_SHA256" - The post-quantum stateless
+	// hash-based digital signature algorithm, at security level 1. Randomized
+	// pre-hash version supporting SHA256 digests.
+	//   "PQ_SIGN_ML_DSA_44_EXTERNAL_MU" - The post-quantum Module-Lattice-Based
+	// Digital Signature Algorithm, at security level 1. Randomized version
+	// supporting externally-computed message representatives.
+	//   "PQ_SIGN_ML_DSA_65_EXTERNAL_MU" - The post-quantum Module-Lattice-Based
+	// Digital Signature Algorithm, at security level 3. Randomized version
+	// supporting externally-computed message representatives.
+	//   "PQ_SIGN_ML_DSA_87_EXTERNAL_MU" - The post-quantum Module-Lattice-Based
+	// Digital Signature Algorithm, at security level 5. Randomized version
+	// supporting externally-computed message representatives.
 	Algorithm string `json:"algorithm,omitempty"`
 	// ProtectionLevel: ProtectionLevel to use when creating a CryptoKeyVersion
 	// based on this template. Immutable. Defaults to SOFTWARE.
@@ -1155,6 +1409,8 @@ type CryptoKeyVersionTemplate struct {
 	//   "EXTERNAL" - Crypto operations are performed by an external key manager.
 	//   "EXTERNAL_VPC" - Crypto operations are performed in an EKM-over-VPC
 	// backend.
+	//   "HSM_SINGLE_TENANT" - Crypto operations are performed in a single-tenant
+	// HSM.
 	ProtectionLevel string `json:"protectionLevel,omitempty"`
 	// ForceSendFields is a list of field names (e.g. "Algorithm") to
 	// unconditionally include in API requests. By default, fields with empty or
@@ -1171,6 +1427,107 @@ type CryptoKeyVersionTemplate struct {
 
 func (s CryptoKeyVersionTemplate) MarshalJSON() ([]byte, error) {
 	type NoMethod CryptoKeyVersionTemplate
+	return gensupport.MarshalJSON(NoMethod(s), s.ForceSendFields, s.NullFields)
+}
+
+// DecapsulateRequest: Request message for KeyManagementService.Decapsulate.
+type DecapsulateRequest struct {
+	// Ciphertext: Required. The ciphertext produced from encapsulation with the
+	// named CryptoKeyVersion public key(s).
+	Ciphertext string `json:"ciphertext,omitempty"`
+	// CiphertextCrc32c: Optional. A CRC32C checksum of the
+	// DecapsulateRequest.ciphertext. If specified, KeyManagementService will
+	// verify the integrity of the received DecapsulateRequest.ciphertext using
+	// this checksum. KeyManagementService will report an error if the checksum
+	// verification fails. If you receive a checksum error, your client should
+	// verify that CRC32C(DecapsulateRequest.ciphertext) is equal to
+	// DecapsulateRequest.ciphertext_crc32c, and if so, perform a limited number of
+	// retries. A persistent mismatch may indicate an issue in your computation of
+	// the CRC32C checksum. Note: This field is defined as int64 for reasons of
+	// compatibility across different languages. However, it is a non-negative
+	// integer, which will never exceed 2^32-1, and can be safely downconverted to
+	// uint32 in languages that support this type.
+	CiphertextCrc32c int64 `json:"ciphertextCrc32c,omitempty,string"`
+	// ForceSendFields is a list of field names (e.g. "Ciphertext") to
+	// unconditionally include in API requests. By default, fields with empty or
+	// default values are omitted from API requests. See
+	// https://pkg.go.dev/google.golang.org/api#hdr-ForceSendFields for more
+	// details.
+	ForceSendFields []string `json:"-"`
+	// NullFields is a list of field names (e.g. "Ciphertext") to include in API
+	// requests with the JSON null value. By default, fields with empty values are
+	// omitted from API requests. See
+	// https://pkg.go.dev/google.golang.org/api#hdr-NullFields for more details.
+	NullFields []string `json:"-"`
+}
+
+func (s DecapsulateRequest) MarshalJSON() ([]byte, error) {
+	type NoMethod DecapsulateRequest
+	return gensupport.MarshalJSON(NoMethod(s), s.ForceSendFields, s.NullFields)
+}
+
+// DecapsulateResponse: Response message for KeyManagementService.Decapsulate.
+type DecapsulateResponse struct {
+	// Name: The resource name of the CryptoKeyVersion used for decapsulation.
+	// Check this field to verify that the intended resource was used for
+	// decapsulation.
+	Name string `json:"name,omitempty"`
+	// ProtectionLevel: The ProtectionLevel of the CryptoKeyVersion used in
+	// decapsulation.
+	//
+	// Possible values:
+	//   "PROTECTION_LEVEL_UNSPECIFIED" - Not specified.
+	//   "SOFTWARE" - Crypto operations are performed in software.
+	//   "HSM" - Crypto operations are performed in a Hardware Security Module.
+	//   "EXTERNAL" - Crypto operations are performed by an external key manager.
+	//   "EXTERNAL_VPC" - Crypto operations are performed in an EKM-over-VPC
+	// backend.
+	//   "HSM_SINGLE_TENANT" - Crypto operations are performed in a single-tenant
+	// HSM.
+	ProtectionLevel string `json:"protectionLevel,omitempty"`
+	// SharedSecret: The decapsulated shared_secret originally encapsulated with
+	// the matching public key.
+	SharedSecret string `json:"sharedSecret,omitempty"`
+	// SharedSecretCrc32c: Integrity verification field. A CRC32C checksum of the
+	// returned DecapsulateResponse.shared_secret. An integrity check of
+	// DecapsulateResponse.shared_secret can be performed by computing the CRC32C
+	// checksum of DecapsulateResponse.shared_secret and comparing your results to
+	// this field. Discard the response in case of non-matching checksum values,
+	// and perform a limited number of retries. A persistent mismatch may indicate
+	// an issue in your computation of the CRC32C checksum. Note: receiving this
+	// response message indicates that KeyManagementService is able to successfully
+	// decrypt the ciphertext. Note: This field is defined as int64 for reasons of
+	// compatibility across different languages. However, it is a non-negative
+	// integer, which will never exceed 2^32-1, and can be safely downconverted to
+	// uint32 in languages that support this type.
+	SharedSecretCrc32c int64 `json:"sharedSecretCrc32c,omitempty,string"`
+	// VerifiedCiphertextCrc32c: Integrity verification field. A flag indicating
+	// whether DecapsulateRequest.ciphertext_crc32c was received by
+	// KeyManagementService and used for the integrity verification of the
+	// ciphertext. A false value of this field indicates either that
+	// DecapsulateRequest.ciphertext_crc32c was left unset or that it was not
+	// delivered to KeyManagementService. If you've set
+	// DecapsulateRequest.ciphertext_crc32c but this field is still false, discard
+	// the response and perform a limited number of retries.
+	VerifiedCiphertextCrc32c bool `json:"verifiedCiphertextCrc32c,omitempty"`
+
+	// ServerResponse contains the HTTP response code and headers from the server.
+	googleapi.ServerResponse `json:"-"`
+	// ForceSendFields is a list of field names (e.g. "Name") to unconditionally
+	// include in API requests. By default, fields with empty or default values are
+	// omitted from API requests. See
+	// https://pkg.go.dev/google.golang.org/api#hdr-ForceSendFields for more
+	// details.
+	ForceSendFields []string `json:"-"`
+	// NullFields is a list of field names (e.g. "Name") to include in API requests
+	// with the JSON null value. By default, fields with empty values are omitted
+	// from API requests. See
+	// https://pkg.go.dev/google.golang.org/api#hdr-NullFields for more details.
+	NullFields []string `json:"-"`
+}
+
+func (s DecapsulateResponse) MarshalJSON() ([]byte, error) {
+	type NoMethod DecapsulateResponse
 	return gensupport.MarshalJSON(NoMethod(s), s.ForceSendFields, s.NullFields)
 }
 
@@ -1255,6 +1612,8 @@ type DecryptResponse struct {
 	//   "EXTERNAL" - Crypto operations are performed by an external key manager.
 	//   "EXTERNAL_VPC" - Crypto operations are performed in an EKM-over-VPC
 	// backend.
+	//   "HSM_SINGLE_TENANT" - Crypto operations are performed in a single-tenant
+	// HSM.
 	ProtectionLevel string `json:"protectionLevel,omitempty"`
 	// UsedPrimary: Whether the Decryption was performed using the primary key
 	// version.
@@ -1278,6 +1637,13 @@ type DecryptResponse struct {
 func (s DecryptResponse) MarshalJSON() ([]byte, error) {
 	type NoMethod DecryptResponse
 	return gensupport.MarshalJSON(NoMethod(s), s.ForceSendFields, s.NullFields)
+}
+
+// DeleteSingleTenantHsmInstance: Delete the SingleTenantHsmInstance. Deleting
+// a SingleTenantHsmInstance will make all CryptoKeys attached to the
+// SingleTenantHsmInstance unusable. The SingleTenantHsmInstance must not be in
+// the DELETING or DELETED state to perform this operation.
+type DeleteSingleTenantHsmInstance struct {
 }
 
 // DestroyCryptoKeyVersionRequest: Request message for
@@ -1309,6 +1675,12 @@ type Digest struct {
 func (s Digest) MarshalJSON() ([]byte, error) {
 	type NoMethod Digest
 	return gensupport.MarshalJSON(NoMethod(s), s.ForceSendFields, s.NullFields)
+}
+
+// DisableSingleTenantHsmInstance: Disable the SingleTenantHsmInstance. The
+// SingleTenantHsmInstance must be in the ACTIVE state to perform this
+// operation.
+type DisableSingleTenantHsmInstance struct {
 }
 
 // EkmConfig: An EkmConfig is a singleton resource that represents
@@ -1380,9 +1752,9 @@ type EkmConnection struct {
 	// Name: Output only. The resource name for the EkmConnection in the format
 	// `projects/*/locations/*/ekmConnections/*`.
 	Name string `json:"name,omitempty"`
-	// ServiceResolvers: A list of ServiceResolvers where the EKM can be reached.
-	// There should be one ServiceResolver per EKM replica. Currently, only a
-	// single ServiceResolver is supported.
+	// ServiceResolvers: Optional. A list of ServiceResolvers where the EKM can be
+	// reached. There should be one ServiceResolver per EKM replica. Currently,
+	// only a single ServiceResolver is supported.
 	ServiceResolvers []*ServiceResolver `json:"serviceResolvers,omitempty"`
 
 	// ServerResponse contains the HTTP response code and headers from the server.
@@ -1403,6 +1775,21 @@ type EkmConnection struct {
 func (s EkmConnection) MarshalJSON() ([]byte, error) {
 	type NoMethod EkmConnection
 	return gensupport.MarshalJSON(NoMethod(s), s.ForceSendFields, s.NullFields)
+}
+
+// Empty: A generic empty message that you can re-use to avoid defining
+// duplicated empty messages in your APIs. A typical example is to use it as
+// the request or the response type of an API method. For instance: service Foo
+// { rpc Bar(google.protobuf.Empty) returns (google.protobuf.Empty); }
+type Empty struct {
+	// ServerResponse contains the HTTP response code and headers from the server.
+	googleapi.ServerResponse `json:"-"`
+}
+
+// EnableSingleTenantHsmInstance: Enable the SingleTenantHsmInstance. The
+// SingleTenantHsmInstance must be in the DISABLED state to perform this
+// operation.
+type EnableSingleTenantHsmInstance struct {
 }
 
 // EncryptRequest: Request message for KeyManagementService.Encrypt.
@@ -1494,6 +1881,8 @@ type EncryptResponse struct {
 	//   "EXTERNAL" - Crypto operations are performed by an external key manager.
 	//   "EXTERNAL_VPC" - Crypto operations are performed in an EKM-over-VPC
 	// backend.
+	//   "HSM_SINGLE_TENANT" - Crypto operations are performed in a single-tenant
+	// HSM.
 	ProtectionLevel string `json:"protectionLevel,omitempty"`
 	// VerifiedAdditionalAuthenticatedDataCrc32c: Integrity verification field. A
 	// flag indicating whether EncryptRequest.additional_authenticated_data_crc32c
@@ -1531,6 +1920,11 @@ type EncryptResponse struct {
 func (s EncryptResponse) MarshalJSON() ([]byte, error) {
 	type NoMethod EncryptResponse
 	return gensupport.MarshalJSON(NoMethod(s), s.ForceSendFields, s.NullFields)
+}
+
+// ExecuteSingleTenantHsmInstanceProposalRequest: Request message for
+// HsmManagement.ExecuteSingleTenantHsmInstanceProposal.
+type ExecuteSingleTenantHsmInstanceProposalRequest struct {
 }
 
 // Expr: Represents a textual expression in the Common Expression Language
@@ -1627,6 +2021,8 @@ type GenerateRandomBytesRequest struct {
 	//   "EXTERNAL" - Crypto operations are performed by an external key manager.
 	//   "EXTERNAL_VPC" - Crypto operations are performed in an EKM-over-VPC
 	// backend.
+	//   "HSM_SINGLE_TENANT" - Crypto operations are performed in a single-tenant
+	// HSM.
 	ProtectionLevel string `json:"protectionLevel,omitempty"`
 	// ForceSendFields is a list of field names (e.g. "LengthBytes") to
 	// unconditionally include in API requests. By default, fields with empty or
@@ -1747,6 +2143,30 @@ type ImportCryptoKeyVersionRequest struct {
 	//   "HMAC_SHA224" - HMAC-SHA224 signing with a 224 bit key.
 	//   "EXTERNAL_SYMMETRIC_ENCRYPTION" - Algorithm representing symmetric
 	// encryption by an external key manager.
+	//   "ML_KEM_768" - ML-KEM-768 (FIPS 203)
+	//   "ML_KEM_1024" - ML-KEM-1024 (FIPS 203)
+	//   "KEM_XWING" - X-Wing hybrid KEM combining ML-KEM-768 with X25519 following
+	// datatracker.ietf.org/doc/draft-connolly-cfrg-xwing-kem/.
+	//   "PQ_SIGN_ML_DSA_44" - The post-quantum Module-Lattice-Based Digital
+	// Signature Algorithm, at security level 1. Randomized version.
+	//   "PQ_SIGN_ML_DSA_65" - The post-quantum Module-Lattice-Based Digital
+	// Signature Algorithm, at security level 3. Randomized version.
+	//   "PQ_SIGN_ML_DSA_87" - The post-quantum Module-Lattice-Based Digital
+	// Signature Algorithm, at security level 5. Randomized version.
+	//   "PQ_SIGN_SLH_DSA_SHA2_128S" - The post-quantum stateless hash-based
+	// digital signature algorithm, at security level 1. Randomized version.
+	//   "PQ_SIGN_HASH_SLH_DSA_SHA2_128S_SHA256" - The post-quantum stateless
+	// hash-based digital signature algorithm, at security level 1. Randomized
+	// pre-hash version supporting SHA256 digests.
+	//   "PQ_SIGN_ML_DSA_44_EXTERNAL_MU" - The post-quantum Module-Lattice-Based
+	// Digital Signature Algorithm, at security level 1. Randomized version
+	// supporting externally-computed message representatives.
+	//   "PQ_SIGN_ML_DSA_65_EXTERNAL_MU" - The post-quantum Module-Lattice-Based
+	// Digital Signature Algorithm, at security level 3. Randomized version
+	// supporting externally-computed message representatives.
+	//   "PQ_SIGN_ML_DSA_87_EXTERNAL_MU" - The post-quantum Module-Lattice-Based
+	// Digital Signature Algorithm, at security level 5. Randomized version
+	// supporting externally-computed message representatives.
 	Algorithm string `json:"algorithm,omitempty"`
 	// CryptoKeyVersion: Optional. The optional name of an existing
 	// CryptoKeyVersion to target for an import operation. If this field is not
@@ -1828,6 +2248,12 @@ type ImportJob struct {
 	Attestation *KeyOperationAttestation `json:"attestation,omitempty"`
 	// CreateTime: Output only. The time at which this ImportJob was created.
 	CreateTime string `json:"createTime,omitempty"`
+	// CryptoKeyBackend: Immutable. The resource name of the backend environment
+	// where the key material for the wrapping key resides and where all related
+	// cryptographic operations are performed. Currently, this field is only
+	// populated for keys stored in HSM_SINGLE_TENANT. Note, this list is
+	// non-exhaustive and may apply to additional ProtectionLevels in the future.
+	CryptoKeyBackend string `json:"cryptoKeyBackend,omitempty"`
 	// ExpireEventTime: Output only. The time this ImportJob expired. Only present
 	// if state is EXPIRED.
 	ExpireEventTime string `json:"expireEventTime,omitempty"`
@@ -1893,6 +2319,8 @@ type ImportJob struct {
 	//   "EXTERNAL" - Crypto operations are performed by an external key manager.
 	//   "EXTERNAL_VPC" - Crypto operations are performed in an EKM-over-VPC
 	// backend.
+	//   "HSM_SINGLE_TENANT" - Crypto operations are performed in a single-tenant
+	// HSM.
 	ProtectionLevel string `json:"protectionLevel,omitempty"`
 	// PublicKey: Output only. The public key with which to wrap key material prior
 	// to import. Only returned if state is ACTIVE.
@@ -1931,6 +2359,32 @@ func (s ImportJob) MarshalJSON() ([]byte, error) {
 	return gensupport.MarshalJSON(NoMethod(s), s.ForceSendFields, s.NullFields)
 }
 
+// KeyAccessJustificationsEnrollmentConfig: The configuration of a protection
+// level for a project's Key Access Justifications enrollment.
+type KeyAccessJustificationsEnrollmentConfig struct {
+	// AuditLogging: Whether the project has KAJ logging enabled.
+	AuditLogging bool `json:"auditLogging,omitempty"`
+	// PolicyEnforcement: Whether the project is enrolled in KAJ policy
+	// enforcement.
+	PolicyEnforcement bool `json:"policyEnforcement,omitempty"`
+	// ForceSendFields is a list of field names (e.g. "AuditLogging") to
+	// unconditionally include in API requests. By default, fields with empty or
+	// default values are omitted from API requests. See
+	// https://pkg.go.dev/google.golang.org/api#hdr-ForceSendFields for more
+	// details.
+	ForceSendFields []string `json:"-"`
+	// NullFields is a list of field names (e.g. "AuditLogging") to include in API
+	// requests with the JSON null value. By default, fields with empty values are
+	// omitted from API requests. See
+	// https://pkg.go.dev/google.golang.org/api#hdr-NullFields for more details.
+	NullFields []string `json:"-"`
+}
+
+func (s KeyAccessJustificationsEnrollmentConfig) MarshalJSON() ([]byte, error) {
+	type NoMethod KeyAccessJustificationsEnrollmentConfig
+	return gensupport.MarshalJSON(NoMethod(s), s.ForceSendFields, s.NullFields)
+}
+
 // KeyAccessJustificationsPolicy: A KeyAccessJustificationsPolicy specifies
 // zero or more allowed AccessReason values for encrypt, decrypt, and sign
 // operations on a CryptoKey.
@@ -1954,20 +2408,28 @@ type KeyAccessJustificationsPolicy struct {
 	// to help optimize the structure of the data or quality for future uses by the
 	// customer.
 	//   "REASON_NOT_EXPECTED" - No reason is expected for this key request.
-	//   "MODIFIED_CUSTOMER_INITIATED_ACCESS" - Customer uses their account to
-	// perform any access to their own data which their IAM policy authorizes, and
+	//   "MODIFIED_CUSTOMER_INITIATED_ACCESS" - Deprecated: This code is no longer
+	// generated by Google Cloud. The GOOGLE_RESPONSE_TO_PRODUCTION_ALERT
+	// justification codes available in both Key Access Justifications and Access
+	// Transparency logs provide customer-visible signals of emergency access in
+	// more precise contexts. Customer uses their account to perform any access to
+	// their own data which their IAM policy authorizes, and one of the following
+	// is true: * A Google administrator has reset the root-access account
+	// associated with the user's organization within the past 7 days. * A
+	// Google-initiated emergency access operation has interacted with a resource
+	// in the same project or folder as the currently accessed resource within the
+	// past 7 days.
+	//   "MODIFIED_GOOGLE_INITIATED_SYSTEM_OPERATION" - Deprecated: This code is no
+	// longer generated by Google Cloud. The GOOGLE_RESPONSE_TO_PRODUCTION_ALERT
+	// justification codes available in both Key Access Justifications and Access
+	// Transparency logs provide customer-visible signals of emergency access in
+	// more precise contexts. Google systems access customer data to help optimize
+	// the structure of the data or quality for future uses by the customer, and
 	// one of the following is true: * A Google administrator has reset the
 	// root-access account associated with the user's organization within the past
 	// 7 days. * A Google-initiated emergency access operation has interacted with
 	// a resource in the same project or folder as the currently accessed resource
 	// within the past 7 days.
-	//   "MODIFIED_GOOGLE_INITIATED_SYSTEM_OPERATION" - Google systems access
-	// customer data to help optimize the structure of the data or quality for
-	// future uses by the customer, and one of the following is true: * A Google
-	// administrator has reset the root-access account associated with the user's
-	// organization within the past 7 days. * A Google-initiated emergency access
-	// operation has interacted with a resource in the same project or folder as
-	// the currently accessed resource within the past 7 days.
 	//   "GOOGLE_RESPONSE_TO_PRODUCTION_ALERT" - Google-initiated access to
 	// maintain system reliability.
 	//   "CUSTOMER_AUTHORIZED_WORKFLOW_SERVICING" - One of the following operations
@@ -1994,6 +2456,41 @@ type KeyAccessJustificationsPolicy struct {
 
 func (s KeyAccessJustificationsPolicy) MarshalJSON() ([]byte, error) {
 	type NoMethod KeyAccessJustificationsPolicy
+	return gensupport.MarshalJSON(NoMethod(s), s.ForceSendFields, s.NullFields)
+}
+
+// KeyAccessJustificationsPolicyConfig: A singleton configuration for Key
+// Access Justifications policies.
+type KeyAccessJustificationsPolicyConfig struct {
+	// DefaultKeyAccessJustificationPolicy: Optional. The default key access
+	// justification policy used when a CryptoKey is created in this folder. This
+	// is only used when a Key Access Justifications policy is not provided in the
+	// CreateCryptoKeyRequest. This overrides any default policies in its ancestry.
+	DefaultKeyAccessJustificationPolicy *KeyAccessJustificationsPolicy `json:"defaultKeyAccessJustificationPolicy,omitempty"`
+	// Name: Identifier. The resource name for this
+	// KeyAccessJustificationsPolicyConfig in the format of
+	// "{organizations|folders|projects}/*/kajPolicyConfig".
+	Name string `json:"name,omitempty"`
+
+	// ServerResponse contains the HTTP response code and headers from the server.
+	googleapi.ServerResponse `json:"-"`
+	// ForceSendFields is a list of field names (e.g.
+	// "DefaultKeyAccessJustificationPolicy") to unconditionally include in API
+	// requests. By default, fields with empty or default values are omitted from
+	// API requests. See
+	// https://pkg.go.dev/google.golang.org/api#hdr-ForceSendFields for more
+	// details.
+	ForceSendFields []string `json:"-"`
+	// NullFields is a list of field names (e.g.
+	// "DefaultKeyAccessJustificationPolicy") to include in API requests with the
+	// JSON null value. By default, fields with empty values are omitted from API
+	// requests. See https://pkg.go.dev/google.golang.org/api#hdr-NullFields for
+	// more details.
+	NullFields []string `json:"-"`
+}
+
+func (s KeyAccessJustificationsPolicyConfig) MarshalJSON() ([]byte, error) {
+	type NoMethod KeyAccessJustificationsPolicyConfig
 	return gensupport.MarshalJSON(NoMethod(s), s.ForceSendFields, s.NullFields)
 }
 
@@ -2113,6 +2610,8 @@ type ListCryptoKeyVersionsResponse struct {
 	// results.
 	NextPageToken string `json:"nextPageToken,omitempty"`
 	// TotalSize: The total number of CryptoKeyVersions that matched the query.
+	// This field is not populated if ListCryptoKeyVersionsRequest.filter is
+	// applied.
 	TotalSize int64 `json:"totalSize,omitempty"`
 
 	// ServerResponse contains the HTTP response code and headers from the server.
@@ -2143,7 +2642,8 @@ type ListCryptoKeysResponse struct {
 	// NextPageToken: A token to retrieve next page of results. Pass this value in
 	// ListCryptoKeysRequest.page_token to retrieve the next page of results.
 	NextPageToken string `json:"nextPageToken,omitempty"`
-	// TotalSize: The total number of CryptoKeys that matched the query.
+	// TotalSize: The total number of CryptoKeys that matched the query. This field
+	// is not populated if ListCryptoKeysRequest.filter is applied.
 	TotalSize int64 `json:"totalSize,omitempty"`
 
 	// ServerResponse contains the HTTP response code and headers from the server.
@@ -2174,7 +2674,8 @@ type ListEkmConnectionsResponse struct {
 	// NextPageToken: A token to retrieve next page of results. Pass this value in
 	// ListEkmConnectionsRequest.page_token to retrieve the next page of results.
 	NextPageToken string `json:"nextPageToken,omitempty"`
-	// TotalSize: The total number of EkmConnections that matched the query.
+	// TotalSize: The total number of EkmConnections that matched the query. This
+	// field is not populated if ListEkmConnectionsRequest.filter is applied.
 	TotalSize int64 `json:"totalSize,omitempty"`
 
 	// ServerResponse contains the HTTP response code and headers from the server.
@@ -2205,7 +2706,8 @@ type ListImportJobsResponse struct {
 	// NextPageToken: A token to retrieve next page of results. Pass this value in
 	// ListImportJobsRequest.page_token to retrieve the next page of results.
 	NextPageToken string `json:"nextPageToken,omitempty"`
-	// TotalSize: The total number of ImportJobs that matched the query.
+	// TotalSize: The total number of ImportJobs that matched the query. This field
+	// is not populated if ListImportJobsRequest.filter is applied.
 	TotalSize int64 `json:"totalSize,omitempty"`
 
 	// ServerResponse contains the HTTP response code and headers from the server.
@@ -2232,6 +2734,9 @@ func (s ListImportJobsResponse) MarshalJSON() ([]byte, error) {
 type ListKeyHandlesResponse struct {
 	// KeyHandles: Resulting KeyHandles.
 	KeyHandles []*KeyHandle `json:"keyHandles,omitempty"`
+	// NextPageToken: A token to retrieve next page of results. Pass this value in
+	// ListKeyHandlesRequest.page_token to retrieve the next page of results.
+	NextPageToken string `json:"nextPageToken,omitempty"`
 
 	// ServerResponse contains the HTTP response code and headers from the server.
 	googleapi.ServerResponse `json:"-"`
@@ -2261,7 +2766,8 @@ type ListKeyRingsResponse struct {
 	// NextPageToken: A token to retrieve next page of results. Pass this value in
 	// ListKeyRingsRequest.page_token to retrieve the next page of results.
 	NextPageToken string `json:"nextPageToken,omitempty"`
-	// TotalSize: The total number of KeyRings that matched the query.
+	// TotalSize: The total number of KeyRings that matched the query. This field
+	// is not populated if ListKeyRingsRequest.filter is applied.
 	TotalSize int64 `json:"totalSize,omitempty"`
 
 	// ServerResponse contains the HTTP response code and headers from the server.
@@ -2312,6 +2818,75 @@ func (s ListLocationsResponse) MarshalJSON() ([]byte, error) {
 	return gensupport.MarshalJSON(NoMethod(s), s.ForceSendFields, s.NullFields)
 }
 
+// ListSingleTenantHsmInstanceProposalsResponse: Response message for
+// HsmManagement.ListSingleTenantHsmInstanceProposals.
+type ListSingleTenantHsmInstanceProposalsResponse struct {
+	// NextPageToken: A token to retrieve next page of results. Pass this value in
+	// ListSingleTenantHsmInstanceProposalsRequest.page_token to retrieve the next
+	// page of results.
+	NextPageToken string `json:"nextPageToken,omitempty"`
+	// SingleTenantHsmInstanceProposals: The list of
+	// SingleTenantHsmInstanceProposals.
+	SingleTenantHsmInstanceProposals []*SingleTenantHsmInstanceProposal `json:"singleTenantHsmInstanceProposals,omitempty"`
+	// TotalSize: The total number of SingleTenantHsmInstanceProposals that matched
+	// the query. This field is not populated if
+	// ListSingleTenantHsmInstanceProposalsRequest.filter is applied.
+	TotalSize int64 `json:"totalSize,omitempty"`
+
+	// ServerResponse contains the HTTP response code and headers from the server.
+	googleapi.ServerResponse `json:"-"`
+	// ForceSendFields is a list of field names (e.g. "NextPageToken") to
+	// unconditionally include in API requests. By default, fields with empty or
+	// default values are omitted from API requests. See
+	// https://pkg.go.dev/google.golang.org/api#hdr-ForceSendFields for more
+	// details.
+	ForceSendFields []string `json:"-"`
+	// NullFields is a list of field names (e.g. "NextPageToken") to include in API
+	// requests with the JSON null value. By default, fields with empty values are
+	// omitted from API requests. See
+	// https://pkg.go.dev/google.golang.org/api#hdr-NullFields for more details.
+	NullFields []string `json:"-"`
+}
+
+func (s ListSingleTenantHsmInstanceProposalsResponse) MarshalJSON() ([]byte, error) {
+	type NoMethod ListSingleTenantHsmInstanceProposalsResponse
+	return gensupport.MarshalJSON(NoMethod(s), s.ForceSendFields, s.NullFields)
+}
+
+// ListSingleTenantHsmInstancesResponse: Response message for
+// HsmManagement.ListSingleTenantHsmInstances.
+type ListSingleTenantHsmInstancesResponse struct {
+	// NextPageToken: A token to retrieve next page of results. Pass this value in
+	// ListSingleTenantHsmInstancesRequest.page_token to retrieve the next page of
+	// results.
+	NextPageToken string `json:"nextPageToken,omitempty"`
+	// SingleTenantHsmInstances: The list of SingleTenantHsmInstances.
+	SingleTenantHsmInstances []*SingleTenantHsmInstance `json:"singleTenantHsmInstances,omitempty"`
+	// TotalSize: The total number of SingleTenantHsmInstances that matched the
+	// query. This field is not populated if
+	// ListSingleTenantHsmInstancesRequest.filter is applied.
+	TotalSize int64 `json:"totalSize,omitempty"`
+
+	// ServerResponse contains the HTTP response code and headers from the server.
+	googleapi.ServerResponse `json:"-"`
+	// ForceSendFields is a list of field names (e.g. "NextPageToken") to
+	// unconditionally include in API requests. By default, fields with empty or
+	// default values are omitted from API requests. See
+	// https://pkg.go.dev/google.golang.org/api#hdr-ForceSendFields for more
+	// details.
+	ForceSendFields []string `json:"-"`
+	// NullFields is a list of field names (e.g. "NextPageToken") to include in API
+	// requests with the JSON null value. By default, fields with empty values are
+	// omitted from API requests. See
+	// https://pkg.go.dev/google.golang.org/api#hdr-NullFields for more details.
+	NullFields []string `json:"-"`
+}
+
+func (s ListSingleTenantHsmInstancesResponse) MarshalJSON() ([]byte, error) {
+	type NoMethod ListSingleTenantHsmInstancesResponse
+	return gensupport.MarshalJSON(NoMethod(s), s.ForceSendFields, s.NullFields)
+}
+
 // Location: A resource that represents a Google Cloud location.
 type Location struct {
 	// DisplayName: The friendly name for this location, typically a nearby city
@@ -2359,6 +2934,9 @@ type LocationMetadata struct {
 	// HsmAvailable: Indicates whether CryptoKeys with protection_level HSM can be
 	// created in this location.
 	HsmAvailable bool `json:"hsmAvailable,omitempty"`
+	// HsmSingleTenantAvailable: Indicates whether CryptoKeys with protection_level
+	// HSM_SINGLE_TENANT can be created in this location.
+	HsmSingleTenantAvailable bool `json:"hsmSingleTenantAvailable,omitempty"`
 	// ForceSendFields is a list of field names (e.g. "EkmAvailable") to
 	// unconditionally include in API requests. By default, fields with empty or
 	// default values are omitted from API requests. See
@@ -2440,6 +3018,8 @@ type MacSignResponse struct {
 	//   "EXTERNAL" - Crypto operations are performed by an external key manager.
 	//   "EXTERNAL_VPC" - Crypto operations are performed in an EKM-over-VPC
 	// backend.
+	//   "HSM_SINGLE_TENANT" - Crypto operations are performed in a single-tenant
+	// HSM.
 	ProtectionLevel string `json:"protectionLevel,omitempty"`
 	// VerifiedDataCrc32c: Integrity verification field. A flag indicating whether
 	// MacSignRequest.data_crc32c was received by KeyManagementService and used for
@@ -2495,7 +3075,7 @@ type MacVerifyRequest struct {
 	// integrity of the received MacVerifyRequest.mac using this checksum.
 	// KeyManagementService will report an error if the checksum verification
 	// fails. If you receive a checksum error, your client should verify that
-	// CRC32C(MacVerifyRequest.tag) is equal to MacVerifyRequest.mac_crc32c, and if
+	// CRC32C(MacVerifyRequest.mac) is equal to MacVerifyRequest.mac_crc32c, and if
 	// so, perform a limited number of retries. A persistent mismatch may indicate
 	// an issue in your computation of the CRC32C checksum. Note: This field is
 	// defined as int64 for reasons of compatibility across different languages.
@@ -2535,6 +3115,8 @@ type MacVerifyResponse struct {
 	//   "EXTERNAL" - Crypto operations are performed by an external key manager.
 	//   "EXTERNAL_VPC" - Crypto operations are performed in an EKM-over-VPC
 	// backend.
+	//   "HSM_SINGLE_TENANT" - Crypto operations are performed in a single-tenant
+	// HSM.
 	ProtectionLevel string `json:"protectionLevel,omitempty"`
 	// Success: This field indicates whether or not the verification operation for
 	// MacVerifyRequest.mac over MacVerifyRequest.data was successful.
@@ -2782,6 +3364,30 @@ type PublicKey struct {
 	//   "HMAC_SHA224" - HMAC-SHA224 signing with a 224 bit key.
 	//   "EXTERNAL_SYMMETRIC_ENCRYPTION" - Algorithm representing symmetric
 	// encryption by an external key manager.
+	//   "ML_KEM_768" - ML-KEM-768 (FIPS 203)
+	//   "ML_KEM_1024" - ML-KEM-1024 (FIPS 203)
+	//   "KEM_XWING" - X-Wing hybrid KEM combining ML-KEM-768 with X25519 following
+	// datatracker.ietf.org/doc/draft-connolly-cfrg-xwing-kem/.
+	//   "PQ_SIGN_ML_DSA_44" - The post-quantum Module-Lattice-Based Digital
+	// Signature Algorithm, at security level 1. Randomized version.
+	//   "PQ_SIGN_ML_DSA_65" - The post-quantum Module-Lattice-Based Digital
+	// Signature Algorithm, at security level 3. Randomized version.
+	//   "PQ_SIGN_ML_DSA_87" - The post-quantum Module-Lattice-Based Digital
+	// Signature Algorithm, at security level 5. Randomized version.
+	//   "PQ_SIGN_SLH_DSA_SHA2_128S" - The post-quantum stateless hash-based
+	// digital signature algorithm, at security level 1. Randomized version.
+	//   "PQ_SIGN_HASH_SLH_DSA_SHA2_128S_SHA256" - The post-quantum stateless
+	// hash-based digital signature algorithm, at security level 1. Randomized
+	// pre-hash version supporting SHA256 digests.
+	//   "PQ_SIGN_ML_DSA_44_EXTERNAL_MU" - The post-quantum Module-Lattice-Based
+	// Digital Signature Algorithm, at security level 1. Randomized version
+	// supporting externally-computed message representatives.
+	//   "PQ_SIGN_ML_DSA_65_EXTERNAL_MU" - The post-quantum Module-Lattice-Based
+	// Digital Signature Algorithm, at security level 3. Randomized version
+	// supporting externally-computed message representatives.
+	//   "PQ_SIGN_ML_DSA_87_EXTERNAL_MU" - The post-quantum Module-Lattice-Based
+	// Digital Signature Algorithm, at security level 5. Randomized version
+	// supporting externally-computed message representatives.
 	Algorithm string `json:"algorithm,omitempty"`
 	// Name: The name of the CryptoKeyVersion public key. Provided here for
 	// verification. NOTE: This field is in Beta.
@@ -2799,7 +3405,7 @@ type PublicKey struct {
 	// and perform a limited number of retries. A persistent mismatch may indicate
 	// an issue in your computation of the CRC32C checksum. Note: This field is
 	// defined as int64 for reasons of compatibility across different languages.
-	// However, it is a non-negative integer, which will never exceed 2^32-1, and
+	// However, it is a non-negative integer, which will never exceed `2^32-1`, and
 	// can be safely downconverted to uint32 in languages that support this type.
 	// NOTE: This field is in Beta.
 	PemCrc32c int64 `json:"pemCrc32c,omitempty,string"`
@@ -2812,7 +3418,35 @@ type PublicKey struct {
 	//   "EXTERNAL" - Crypto operations are performed by an external key manager.
 	//   "EXTERNAL_VPC" - Crypto operations are performed in an EKM-over-VPC
 	// backend.
+	//   "HSM_SINGLE_TENANT" - Crypto operations are performed in a single-tenant
+	// HSM.
 	ProtectionLevel string `json:"protectionLevel,omitempty"`
+	// PublicKey: This field contains the public key (with integrity verification),
+	// formatted according to the public_key_format field.
+	PublicKey *ChecksummedData `json:"publicKey,omitempty"`
+	// PublicKeyFormat: The PublicKey format specified by the customer through the
+	// public_key_format field.
+	//
+	// Possible values:
+	//   "PUBLIC_KEY_FORMAT_UNSPECIFIED" - If the public_key_format field is not
+	// specified: - For PQC algorithms, an error will be returned. - For non-PQC
+	// algorithms, the default format is PEM, and the field pem will be populated.
+	// Otherwise, the public key will be exported through the public_key field in
+	// the requested format.
+	//   "PEM" - The returned public key will be encoded in PEM format. See the
+	// [RFC7468](https://tools.ietf.org/html/rfc7468) sections for [General
+	// Considerations](https://tools.ietf.org/html/rfc7468#section-2) and [Textual
+	// Encoding of Subject Public Key Info]
+	// (https://tools.ietf.org/html/rfc7468#section-13) for more information.
+	//   "DER" - The returned public key will be encoded in DER format (the
+	// PrivateKeyInfo structure from RFC 5208).
+	//   "NIST_PQC" - This is supported only for PQC algorithms. The key material
+	// is returned in the format defined by NIST PQC standards (FIPS 203, FIPS 204,
+	// and FIPS 205).
+	//   "XWING_RAW_BYTES" - The returned public key is in raw bytes format defined
+	// in its standard
+	// https://datatracker.ietf.org/doc/draft-connolly-cfrg-xwing-kem.
+	PublicKeyFormat string `json:"publicKeyFormat,omitempty"`
 
 	// ServerResponse contains the HTTP response code and headers from the server.
 	googleapi.ServerResponse `json:"-"`
@@ -2831,6 +3465,95 @@ type PublicKey struct {
 
 func (s PublicKey) MarshalJSON() ([]byte, error) {
 	type NoMethod PublicKey
+	return gensupport.MarshalJSON(NoMethod(s), s.ForceSendFields, s.NullFields)
+}
+
+// QuorumAuth: Configuration for M of N quorum auth.
+type QuorumAuth struct {
+	// RequiredApproverCount: Output only. The required numbers of approvers. The M
+	// value used for M of N quorum auth. Must be greater than or equal to 2 and
+	// less than or equal to total_approver_count - 1.
+	RequiredApproverCount int64 `json:"requiredApproverCount,omitempty"`
+	// TotalApproverCount: Required. The total number of approvers. This is the N
+	// value used for M of N quorum auth. Must be greater than or equal to 3 and
+	// less than or equal to 16.
+	TotalApproverCount int64 `json:"totalApproverCount,omitempty"`
+	// TwoFactorPublicKeyPems: Output only. The public keys associated with the 2FA
+	// keys for M of N quorum auth.
+	TwoFactorPublicKeyPems []string `json:"twoFactorPublicKeyPems,omitempty"`
+	// ForceSendFields is a list of field names (e.g. "RequiredApproverCount") to
+	// unconditionally include in API requests. By default, fields with empty or
+	// default values are omitted from API requests. See
+	// https://pkg.go.dev/google.golang.org/api#hdr-ForceSendFields for more
+	// details.
+	ForceSendFields []string `json:"-"`
+	// NullFields is a list of field names (e.g. "RequiredApproverCount") to
+	// include in API requests with the JSON null value. By default, fields with
+	// empty values are omitted from API requests. See
+	// https://pkg.go.dev/google.golang.org/api#hdr-NullFields for more details.
+	NullFields []string `json:"-"`
+}
+
+func (s QuorumAuth) MarshalJSON() ([]byte, error) {
+	type NoMethod QuorumAuth
+	return gensupport.MarshalJSON(NoMethod(s), s.ForceSendFields, s.NullFields)
+}
+
+// QuorumParameters: Parameters of quorum approval for the
+// SingleTenantHsmInstanceProposal.
+type QuorumParameters struct {
+	// ApprovedTwoFactorPublicKeyPems: Output only. The public keys associated with
+	// the 2FA keys that have already approved the SingleTenantHsmInstanceProposal
+	// by signing the challenge.
+	ApprovedTwoFactorPublicKeyPems []string `json:"approvedTwoFactorPublicKeyPems,omitempty"`
+	// Challenges: Output only. The challenges to be signed by 2FA keys for quorum
+	// auth. M of N of these challenges are required to be signed to approve the
+	// operation.
+	Challenges []*Challenge `json:"challenges,omitempty"`
+	// RequiredApproverCount: Output only. The required numbers of approvers. This
+	// is the M value used for M of N quorum auth. It is less than the number of
+	// public keys.
+	RequiredApproverCount int64 `json:"requiredApproverCount,omitempty"`
+	// ForceSendFields is a list of field names (e.g.
+	// "ApprovedTwoFactorPublicKeyPems") to unconditionally include in API
+	// requests. By default, fields with empty or default values are omitted from
+	// API requests. See
+	// https://pkg.go.dev/google.golang.org/api#hdr-ForceSendFields for more
+	// details.
+	ForceSendFields []string `json:"-"`
+	// NullFields is a list of field names (e.g. "ApprovedTwoFactorPublicKeyPems")
+	// to include in API requests with the JSON null value. By default, fields with
+	// empty values are omitted from API requests. See
+	// https://pkg.go.dev/google.golang.org/api#hdr-NullFields for more details.
+	NullFields []string `json:"-"`
+}
+
+func (s QuorumParameters) MarshalJSON() ([]byte, error) {
+	type NoMethod QuorumParameters
+	return gensupport.MarshalJSON(NoMethod(s), s.ForceSendFields, s.NullFields)
+}
+
+// QuorumReply: The reply to QuorumParameters for approving the proposal.
+type QuorumReply struct {
+	// ChallengeReplies: Required. The challenge replies to approve the proposal.
+	// Challenge replies can be sent across multiple requests. The proposal will be
+	// approved when required_approver_count challenge replies are provided.
+	ChallengeReplies []*ChallengeReply `json:"challengeReplies,omitempty"`
+	// ForceSendFields is a list of field names (e.g. "ChallengeReplies") to
+	// unconditionally include in API requests. By default, fields with empty or
+	// default values are omitted from API requests. See
+	// https://pkg.go.dev/google.golang.org/api#hdr-ForceSendFields for more
+	// details.
+	ForceSendFields []string `json:"-"`
+	// NullFields is a list of field names (e.g. "ChallengeReplies") to include in
+	// API requests with the JSON null value. By default, fields with empty values
+	// are omitted from API requests. See
+	// https://pkg.go.dev/google.golang.org/api#hdr-NullFields for more details.
+	NullFields []string `json:"-"`
+}
+
+func (s QuorumReply) MarshalJSON() ([]byte, error) {
+	type NoMethod QuorumReply
 	return gensupport.MarshalJSON(NoMethod(s), s.ForceSendFields, s.NullFields)
 }
 
@@ -2933,6 +3656,8 @@ type RawDecryptResponse struct {
 	//   "EXTERNAL" - Crypto operations are performed by an external key manager.
 	//   "EXTERNAL_VPC" - Crypto operations are performed in an EKM-over-VPC
 	// backend.
+	//   "HSM_SINGLE_TENANT" - Crypto operations are performed in a single-tenant
+	// HSM.
 	ProtectionLevel string `json:"protectionLevel,omitempty"`
 	// VerifiedAdditionalAuthenticatedDataCrc32c: Integrity verification field. A
 	// flag indicating whether
@@ -3106,6 +3831,8 @@ type RawEncryptResponse struct {
 	//   "EXTERNAL" - Crypto operations are performed by an external key manager.
 	//   "EXTERNAL_VPC" - Crypto operations are performed in an EKM-over-VPC
 	// backend.
+	//   "HSM_SINGLE_TENANT" - Crypto operations are performed in a single-tenant
+	// HSM.
 	ProtectionLevel string `json:"protectionLevel,omitempty"`
 	// TagLength: The length of the authentication tag that is appended to the end
 	// of the ciphertext.
@@ -3156,6 +3883,138 @@ type RawEncryptResponse struct {
 
 func (s RawEncryptResponse) MarshalJSON() ([]byte, error) {
 	type NoMethod RawEncryptResponse
+	return gensupport.MarshalJSON(NoMethod(s), s.ForceSendFields, s.NullFields)
+}
+
+// RefreshSingleTenantHsmInstance: Refreshes the SingleTenantHsmInstance. This
+// operation must be performed periodically to keep the SingleTenantHsmInstance
+// active. This operation must be performed before
+// unrefreshed_duration_until_disable has passed. The SingleTenantHsmInstance
+// must be in the ACTIVE state to perform this operation.
+type RefreshSingleTenantHsmInstance struct {
+}
+
+// RegisterTwoFactorAuthKeys: Register 2FA keys for the
+// SingleTenantHsmInstance. This operation requires all Challenges to be signed
+// by 2FA keys. The SingleTenantHsmInstance must be in the
+// PENDING_TWO_FACTOR_AUTH_REGISTRATION state to perform this operation.
+type RegisterTwoFactorAuthKeys struct {
+	// RequiredApproverCount: Required. The required numbers of approvers to set
+	// for the SingleTenantHsmInstance. This is the M value used for M of N quorum
+	// auth. Must be greater than or equal to 2 and less than or equal to
+	// total_approver_count - 1.
+	RequiredApproverCount int64 `json:"requiredApproverCount,omitempty"`
+	// TwoFactorPublicKeyPems: Required. The public keys associated with the 2FA
+	// keys for M of N quorum auth. Public keys must be associated with RSA 2048
+	// keys.
+	TwoFactorPublicKeyPems []string `json:"twoFactorPublicKeyPems,omitempty"`
+	// ForceSendFields is a list of field names (e.g. "RequiredApproverCount") to
+	// unconditionally include in API requests. By default, fields with empty or
+	// default values are omitted from API requests. See
+	// https://pkg.go.dev/google.golang.org/api#hdr-ForceSendFields for more
+	// details.
+	ForceSendFields []string `json:"-"`
+	// NullFields is a list of field names (e.g. "RequiredApproverCount") to
+	// include in API requests with the JSON null value. By default, fields with
+	// empty values are omitted from API requests. See
+	// https://pkg.go.dev/google.golang.org/api#hdr-NullFields for more details.
+	NullFields []string `json:"-"`
+}
+
+func (s RegisterTwoFactorAuthKeys) MarshalJSON() ([]byte, error) {
+	type NoMethod RegisterTwoFactorAuthKeys
+	return gensupport.MarshalJSON(NoMethod(s), s.ForceSendFields, s.NullFields)
+}
+
+// RemoveQuorumMember: Remove a quorum member from the SingleTenantHsmInstance.
+// This will reduce total_approver_count by 1. The SingleTenantHsmInstance must
+// be in the ACTIVE state to perform this operation.
+type RemoveQuorumMember struct {
+	// TwoFactorPublicKeyPem: Required. The public key associated with the 2FA key
+	// for the quorum member to remove. Public keys must be associated with RSA
+	// 2048 keys.
+	TwoFactorPublicKeyPem string `json:"twoFactorPublicKeyPem,omitempty"`
+	// ForceSendFields is a list of field names (e.g. "TwoFactorPublicKeyPem") to
+	// unconditionally include in API requests. By default, fields with empty or
+	// default values are omitted from API requests. See
+	// https://pkg.go.dev/google.golang.org/api#hdr-ForceSendFields for more
+	// details.
+	ForceSendFields []string `json:"-"`
+	// NullFields is a list of field names (e.g. "TwoFactorPublicKeyPem") to
+	// include in API requests with the JSON null value. By default, fields with
+	// empty values are omitted from API requests. See
+	// https://pkg.go.dev/google.golang.org/api#hdr-NullFields for more details.
+	NullFields []string `json:"-"`
+}
+
+func (s RemoveQuorumMember) MarshalJSON() ([]byte, error) {
+	type NoMethod RemoveQuorumMember
+	return gensupport.MarshalJSON(NoMethod(s), s.ForceSendFields, s.NullFields)
+}
+
+// RequiredActionQuorumParameters: Parameters for an approval that has both
+// required challenges and a quorum.
+type RequiredActionQuorumParameters struct {
+	// ApprovedTwoFactorPublicKeyPems: Output only. The public keys associated with
+	// the 2FA keys that have already approved the SingleTenantHsmInstanceProposal
+	// by signing the challenge.
+	ApprovedTwoFactorPublicKeyPems []string `json:"approvedTwoFactorPublicKeyPems,omitempty"`
+	// QuorumChallenges: Output only. The challenges to be signed by 2FA keys for
+	// quorum auth. M of N of these challenges are required to be signed to approve
+	// the operation.
+	QuorumChallenges []*Challenge `json:"quorumChallenges,omitempty"`
+	// RequiredApproverCount: Output only. The required number of quorum approvers.
+	// This is the M value used for M of N quorum auth. It is less than the number
+	// of public keys.
+	RequiredApproverCount int64 `json:"requiredApproverCount,omitempty"`
+	// RequiredChallenges: Output only. A list of specific challenges that must be
+	// signed. For some operations, this will contain a single challenge.
+	RequiredChallenges []*Challenge `json:"requiredChallenges,omitempty"`
+	// ForceSendFields is a list of field names (e.g.
+	// "ApprovedTwoFactorPublicKeyPems") to unconditionally include in API
+	// requests. By default, fields with empty or default values are omitted from
+	// API requests. See
+	// https://pkg.go.dev/google.golang.org/api#hdr-ForceSendFields for more
+	// details.
+	ForceSendFields []string `json:"-"`
+	// NullFields is a list of field names (e.g. "ApprovedTwoFactorPublicKeyPems")
+	// to include in API requests with the JSON null value. By default, fields with
+	// empty values are omitted from API requests. See
+	// https://pkg.go.dev/google.golang.org/api#hdr-NullFields for more details.
+	NullFields []string `json:"-"`
+}
+
+func (s RequiredActionQuorumParameters) MarshalJSON() ([]byte, error) {
+	type NoMethod RequiredActionQuorumParameters
+	return gensupport.MarshalJSON(NoMethod(s), s.ForceSendFields, s.NullFields)
+}
+
+// RequiredActionQuorumReply: The reply to RequiredActionQuorumParameters for
+// approving the proposal.
+type RequiredActionQuorumReply struct {
+	// QuorumChallengeReplies: Required. Quorum members' signed challenge replies.
+	// These can be provided across multiple requests. The proposal will be
+	// approved when required_approver_count quorum_challenge_replies are provided
+	// and when all required_challenge_replies are provided.
+	QuorumChallengeReplies []*ChallengeReply `json:"quorumChallengeReplies,omitempty"`
+	// RequiredChallengeReplies: Required. All required challenges must be signed
+	// for the proposal to be approved. These can be sent across multiple requests.
+	RequiredChallengeReplies []*ChallengeReply `json:"requiredChallengeReplies,omitempty"`
+	// ForceSendFields is a list of field names (e.g. "QuorumChallengeReplies") to
+	// unconditionally include in API requests. By default, fields with empty or
+	// default values are omitted from API requests. See
+	// https://pkg.go.dev/google.golang.org/api#hdr-ForceSendFields for more
+	// details.
+	ForceSendFields []string `json:"-"`
+	// NullFields is a list of field names (e.g. "QuorumChallengeReplies") to
+	// include in API requests with the JSON null value. By default, fields with
+	// empty values are omitted from API requests. See
+	// https://pkg.go.dev/google.golang.org/api#hdr-NullFields for more details.
+	NullFields []string `json:"-"`
+}
+
+func (s RequiredActionQuorumReply) MarshalJSON() ([]byte, error) {
+	type NoMethod RequiredActionQuorumReply
 	return gensupport.MarshalJSON(NoMethod(s), s.ForceSendFields, s.NullFields)
 }
 
@@ -3255,6 +4114,239 @@ type ShowEffectiveAutokeyConfigResponse struct {
 
 func (s ShowEffectiveAutokeyConfigResponse) MarshalJSON() ([]byte, error) {
 	type NoMethod ShowEffectiveAutokeyConfigResponse
+	return gensupport.MarshalJSON(NoMethod(s), s.ForceSendFields, s.NullFields)
+}
+
+// ShowEffectiveKeyAccessJustificationsEnrollmentConfigResponse: Response
+// message for
+// KeyAccessJustificationsConfig.ShowEffectiveKeyAccessJustificationsEnrollmentC
+// onfig
+type ShowEffectiveKeyAccessJustificationsEnrollmentConfigResponse struct {
+	// ExternalConfig: The effective KeyAccessJustificationsEnrollmentConfig for
+	// external keys.
+	ExternalConfig *KeyAccessJustificationsEnrollmentConfig `json:"externalConfig,omitempty"`
+	// HardwareConfig: The effective KeyAccessJustificationsEnrollmentConfig for
+	// hardware keys.
+	HardwareConfig *KeyAccessJustificationsEnrollmentConfig `json:"hardwareConfig,omitempty"`
+	// SoftwareConfig: The effective KeyAccessJustificationsEnrollmentConfig for
+	// software keys.
+	SoftwareConfig *KeyAccessJustificationsEnrollmentConfig `json:"softwareConfig,omitempty"`
+
+	// ServerResponse contains the HTTP response code and headers from the server.
+	googleapi.ServerResponse `json:"-"`
+	// ForceSendFields is a list of field names (e.g. "ExternalConfig") to
+	// unconditionally include in API requests. By default, fields with empty or
+	// default values are omitted from API requests. See
+	// https://pkg.go.dev/google.golang.org/api#hdr-ForceSendFields for more
+	// details.
+	ForceSendFields []string `json:"-"`
+	// NullFields is a list of field names (e.g. "ExternalConfig") to include in
+	// API requests with the JSON null value. By default, fields with empty values
+	// are omitted from API requests. See
+	// https://pkg.go.dev/google.golang.org/api#hdr-NullFields for more details.
+	NullFields []string `json:"-"`
+}
+
+func (s ShowEffectiveKeyAccessJustificationsEnrollmentConfigResponse) MarshalJSON() ([]byte, error) {
+	type NoMethod ShowEffectiveKeyAccessJustificationsEnrollmentConfigResponse
+	return gensupport.MarshalJSON(NoMethod(s), s.ForceSendFields, s.NullFields)
+}
+
+// ShowEffectiveKeyAccessJustificationsPolicyConfigResponse: Response message
+// for
+// KeyAccessJustificationsConfig.ShowEffectiveKeyAccessJustificationsPolicyConfi
+// g.
+type ShowEffectiveKeyAccessJustificationsPolicyConfigResponse struct {
+	// EffectiveKajPolicy: The effective KeyAccessJustificationsPolicyConfig.
+	EffectiveKajPolicy *KeyAccessJustificationsPolicyConfig `json:"effectiveKajPolicy,omitempty"`
+
+	// ServerResponse contains the HTTP response code and headers from the server.
+	googleapi.ServerResponse `json:"-"`
+	// ForceSendFields is a list of field names (e.g. "EffectiveKajPolicy") to
+	// unconditionally include in API requests. By default, fields with empty or
+	// default values are omitted from API requests. See
+	// https://pkg.go.dev/google.golang.org/api#hdr-ForceSendFields for more
+	// details.
+	ForceSendFields []string `json:"-"`
+	// NullFields is a list of field names (e.g. "EffectiveKajPolicy") to include
+	// in API requests with the JSON null value. By default, fields with empty
+	// values are omitted from API requests. See
+	// https://pkg.go.dev/google.golang.org/api#hdr-NullFields for more details.
+	NullFields []string `json:"-"`
+}
+
+func (s ShowEffectiveKeyAccessJustificationsPolicyConfigResponse) MarshalJSON() ([]byte, error) {
+	type NoMethod ShowEffectiveKeyAccessJustificationsPolicyConfigResponse
+	return gensupport.MarshalJSON(NoMethod(s), s.ForceSendFields, s.NullFields)
+}
+
+// SingleTenantHsmInstance: A SingleTenantHsmInstance represents a
+// single-tenant HSM instance. It can be used for creating CryptoKeys with a
+// ProtectionLevel of HSM_SINGLE_TENANT, as well as performing cryptographic
+// operations using keys created within the SingleTenantHsmInstance.
+type SingleTenantHsmInstance struct {
+	// CreateTime: Output only. The time at which the SingleTenantHsmInstance was
+	// created.
+	CreateTime string `json:"createTime,omitempty"`
+	// DeleteTime: Output only. The time at which the SingleTenantHsmInstance was
+	// deleted.
+	DeleteTime string `json:"deleteTime,omitempty"`
+	// DisableTime: Output only. The time at which the instance will be
+	// automatically disabled if not refreshed. This field is updated upon creation
+	// and after each successful refresh operation and enable. A
+	// RefreshSingleTenantHsmInstance operation must be made via a
+	// SingleTenantHsmInstanceProposal before this time otherwise the
+	// SingleTenantHsmInstance will become disabled.
+	DisableTime string `json:"disableTime,omitempty"`
+	// Name: Identifier. The resource name for this SingleTenantHsmInstance in the
+	// format `projects/*/locations/*/singleTenantHsmInstances/*`.
+	Name string `json:"name,omitempty"`
+	// QuorumAuth: Required. The quorum auth configuration for the
+	// SingleTenantHsmInstance.
+	QuorumAuth *QuorumAuth `json:"quorumAuth,omitempty"`
+	// State: Output only. The state of the SingleTenantHsmInstance.
+	//
+	// Possible values:
+	//   "STATE_UNSPECIFIED" - Not specified.
+	//   "CREATING" - The SingleTenantHsmInstance is being created.
+	//   "PENDING_TWO_FACTOR_AUTH_REGISTRATION" - The SingleTenantHsmInstance is
+	// waiting for 2FA keys to be registered. This can be done by calling
+	// CreateSingleTenantHsmInstanceProposal with the RegisterTwoFactorAuthKeys
+	// operation.
+	//   "ACTIVE" - The SingleTenantHsmInstance is ready to use. A
+	// SingleTenantHsmInstance must be in the ACTIVE state for all CryptoKeys
+	// created within the SingleTenantHsmInstance to be usable.
+	//   "DISABLING" - The SingleTenantHsmInstance is being disabled.
+	//   "DISABLED" - The SingleTenantHsmInstance is disabled.
+	//   "DELETING" - The SingleTenantHsmInstance is being deleted. Requests to the
+	// instance will be rejected in this state.
+	//   "DELETED" - The SingleTenantHsmInstance has been deleted.
+	//   "FAILED" - The SingleTenantHsmInstance has failed and can not be recovered
+	// or used.
+	State string `json:"state,omitempty"`
+	// UnrefreshedDurationUntilDisable: Output only. The system-defined duration
+	// that an instance can remain unrefreshed until it is automatically disabled.
+	// This will have a value of 120 days.
+	UnrefreshedDurationUntilDisable string `json:"unrefreshedDurationUntilDisable,omitempty"`
+
+	// ServerResponse contains the HTTP response code and headers from the server.
+	googleapi.ServerResponse `json:"-"`
+	// ForceSendFields is a list of field names (e.g. "CreateTime") to
+	// unconditionally include in API requests. By default, fields with empty or
+	// default values are omitted from API requests. See
+	// https://pkg.go.dev/google.golang.org/api#hdr-ForceSendFields for more
+	// details.
+	ForceSendFields []string `json:"-"`
+	// NullFields is a list of field names (e.g. "CreateTime") to include in API
+	// requests with the JSON null value. By default, fields with empty values are
+	// omitted from API requests. See
+	// https://pkg.go.dev/google.golang.org/api#hdr-NullFields for more details.
+	NullFields []string `json:"-"`
+}
+
+func (s SingleTenantHsmInstance) MarshalJSON() ([]byte, error) {
+	type NoMethod SingleTenantHsmInstance
+	return gensupport.MarshalJSON(NoMethod(s), s.ForceSendFields, s.NullFields)
+}
+
+// SingleTenantHsmInstanceProposal: A SingleTenantHsmInstanceProposal
+// represents a proposal to perform an operation on a SingleTenantHsmInstance.
+type SingleTenantHsmInstanceProposal struct {
+	// AddQuorumMember: Add a quorum member to the SingleTenantHsmInstance. This
+	// will increase the total_approver_count by 1. The SingleTenantHsmInstance
+	// must be in the ACTIVE state to perform this operation.
+	AddQuorumMember *AddQuorumMember `json:"addQuorumMember,omitempty"`
+	// CreateTime: Output only. The time at which the
+	// SingleTenantHsmInstanceProposal was created.
+	CreateTime string `json:"createTime,omitempty"`
+	// DeleteSingleTenantHsmInstance: Delete the SingleTenantHsmInstance. Deleting
+	// a SingleTenantHsmInstance will make all CryptoKeys attached to the
+	// SingleTenantHsmInstance unusable. The SingleTenantHsmInstance must be in the
+	// DISABLED or PENDING_TWO_FACTOR_AUTH_REGISTRATION state to perform this
+	// operation.
+	DeleteSingleTenantHsmInstance *DeleteSingleTenantHsmInstance `json:"deleteSingleTenantHsmInstance,omitempty"`
+	// DeleteTime: Output only. The time at which the
+	// SingleTenantHsmInstanceProposal was deleted.
+	DeleteTime string `json:"deleteTime,omitempty"`
+	// DisableSingleTenantHsmInstance: Disable the SingleTenantHsmInstance. The
+	// SingleTenantHsmInstance must be in the ACTIVE state to perform this
+	// operation.
+	DisableSingleTenantHsmInstance *DisableSingleTenantHsmInstance `json:"disableSingleTenantHsmInstance,omitempty"`
+	// EnableSingleTenantHsmInstance: Enable the SingleTenantHsmInstance. The
+	// SingleTenantHsmInstance must be in the DISABLED state to perform this
+	// operation.
+	EnableSingleTenantHsmInstance *EnableSingleTenantHsmInstance `json:"enableSingleTenantHsmInstance,omitempty"`
+	// ExpireTime: The time at which the SingleTenantHsmInstanceProposal will
+	// expire if not approved and executed.
+	ExpireTime string `json:"expireTime,omitempty"`
+	// FailureReason: Output only. The root cause of the most recent failure. Only
+	// present if state is FAILED.
+	FailureReason string `json:"failureReason,omitempty"`
+	// Name: Identifier. The resource name for this SingleTenantHsmInstance in the
+	// format `projects/*/locations/*/singleTenantHsmInstances/*/proposals/*`.
+	Name string `json:"name,omitempty"`
+	// PurgeTime: Output only. The time at which the soft-deleted
+	// SingleTenantHsmInstanceProposal will be permanently purged. This field is
+	// only populated when the state is DELETED and will be set a time after
+	// expiration of the proposal, i.e. >= expire_time or (create_time + ttl).
+	PurgeTime string `json:"purgeTime,omitempty"`
+	// QuorumParameters: Output only. The quorum approval parameters for the
+	// SingleTenantHsmInstanceProposal.
+	QuorumParameters *QuorumParameters `json:"quorumParameters,omitempty"`
+	// RefreshSingleTenantHsmInstance: Refreshes the SingleTenantHsmInstance. This
+	// operation must be performed periodically to keep the SingleTenantHsmInstance
+	// active. This operation must be performed before
+	// unrefreshed_duration_until_disable has passed. The SingleTenantHsmInstance
+	// must be in the ACTIVE state to perform this operation.
+	RefreshSingleTenantHsmInstance *RefreshSingleTenantHsmInstance `json:"refreshSingleTenantHsmInstance,omitempty"`
+	// RegisterTwoFactorAuthKeys: Register 2FA keys for the
+	// SingleTenantHsmInstance. This operation requires all N Challenges to be
+	// signed by 2FA keys. The SingleTenantHsmInstance must be in the
+	// PENDING_TWO_FACTOR_AUTH_REGISTRATION state to perform this operation.
+	RegisterTwoFactorAuthKeys *RegisterTwoFactorAuthKeys `json:"registerTwoFactorAuthKeys,omitempty"`
+	// RemoveQuorumMember: Remove a quorum member from the SingleTenantHsmInstance.
+	// This will reduce total_approver_count by 1. The SingleTenantHsmInstance must
+	// be in the ACTIVE state to perform this operation.
+	RemoveQuorumMember *RemoveQuorumMember `json:"removeQuorumMember,omitempty"`
+	// RequiredActionQuorumParameters: Output only. Parameters for an approval of a
+	// SingleTenantHsmInstanceProposal that has both required challenges and a
+	// quorum.
+	RequiredActionQuorumParameters *RequiredActionQuorumParameters `json:"requiredActionQuorumParameters,omitempty"`
+	// State: Output only. The state of the SingleTenantHsmInstanceProposal.
+	//
+	// Possible values:
+	//   "STATE_UNSPECIFIED" - Not specified.
+	//   "CREATING" - The SingleTenantHsmInstanceProposal is being created.
+	//   "PENDING" - The SingleTenantHsmInstanceProposal is pending approval.
+	//   "APPROVED" - The SingleTenantHsmInstanceProposal has been approved.
+	//   "RUNNING" - The SingleTenantHsmInstanceProposal is being executed.
+	//   "SUCCEEDED" - The SingleTenantHsmInstanceProposal has been executed
+	// successfully.
+	//   "FAILED" - The SingleTenantHsmInstanceProposal has failed.
+	//   "DELETED" - The SingleTenantHsmInstanceProposal has been deleted and will
+	// be purged after the purge_time.
+	State string `json:"state,omitempty"`
+	// Ttl: Input only. The TTL for the SingleTenantHsmInstanceProposal. Proposals
+	// will expire after this duration.
+	Ttl string `json:"ttl,omitempty"`
+
+	// ServerResponse contains the HTTP response code and headers from the server.
+	googleapi.ServerResponse `json:"-"`
+	// ForceSendFields is a list of field names (e.g. "AddQuorumMember") to
+	// unconditionally include in API requests. By default, fields with empty or
+	// default values are omitted from API requests. See
+	// https://pkg.go.dev/google.golang.org/api#hdr-ForceSendFields for more
+	// details.
+	ForceSendFields []string `json:"-"`
+	// NullFields is a list of field names (e.g. "AddQuorumMember") to include in
+	// API requests with the JSON null value. By default, fields with empty values
+	// are omitted from API requests. See
+	// https://pkg.go.dev/google.golang.org/api#hdr-NullFields for more details.
+	NullFields []string `json:"-"`
+}
+
+func (s SingleTenantHsmInstanceProposal) MarshalJSON() ([]byte, error) {
+	type NoMethod SingleTenantHsmInstanceProposal
 	return gensupport.MarshalJSON(NoMethod(s), s.ForceSendFields, s.NullFields)
 }
 
@@ -3411,10 +4503,11 @@ type FoldersGetAutokeyConfigCall struct {
 	header_      http.Header
 }
 
-// GetAutokeyConfig: Returns the AutokeyConfig for a folder.
+// GetAutokeyConfig: Returns the AutokeyConfig for a folder or project.
 //
 //   - name: Name of the AutokeyConfig resource, e.g.
-//     `folders/{FOLDER_NUMBER}/autokeyConfig`.
+//     `folders/{FOLDER_NUMBER}/autokeyConfig` or
+//     `projects/{PROJECT_NUMBER}/autokeyConfig`.
 func (r *FoldersService) GetAutokeyConfig(name string) *FoldersGetAutokeyConfigCall {
 	c := &FoldersGetAutokeyConfigCall{s: r.s, urlParams_: make(gensupport.URLParams)}
 	c.name = name
@@ -3457,12 +4550,11 @@ func (c *FoldersGetAutokeyConfigCall) doRequest(alt string) (*http.Response, err
 	if c.ifNoneMatch_ != "" {
 		reqHeaders.Set("If-None-Match", c.ifNoneMatch_)
 	}
-	var body io.Reader = nil
 	c.urlParams_.Set("alt", alt)
 	c.urlParams_.Set("prettyPrint", "false")
 	urls := googleapi.ResolveRelative(c.s.BasePath, "v1/{+name}")
 	urls += "?" + c.urlParams_.Encode()
-	req, err := http.NewRequest("GET", urls, body)
+	req, err := http.NewRequest("GET", urls, nil)
 	if err != nil {
 		return nil, err
 	}
@@ -3470,6 +4562,7 @@ func (c *FoldersGetAutokeyConfigCall) doRequest(alt string) (*http.Response, err
 	googleapi.Expand(req.URL, map[string]string{
 		"name": c.name,
 	})
+	c.s.logger.DebugContext(c.ctx_, "api request", "serviceName", apiName, "rpcName", "cloudkms.folders.getAutokeyConfig", "request", internallog.HTTPRequest(req, nil))
 	return gensupport.SendRequest(c.ctx_, c.s.client, req)
 }
 
@@ -3504,9 +4597,122 @@ func (c *FoldersGetAutokeyConfigCall) Do(opts ...googleapi.CallOption) (*Autokey
 		},
 	}
 	target := &ret
-	if err := gensupport.DecodeResponse(target, res); err != nil {
+	b, err := gensupport.DecodeResponseBytes(target, res)
+	if err != nil {
 		return nil, err
 	}
+	c.s.logger.DebugContext(c.ctx_, "api response", "serviceName", apiName, "rpcName", "cloudkms.folders.getAutokeyConfig", "response", internallog.HTTPResponse(res, b))
+	return ret, nil
+}
+
+type FoldersGetKajPolicyConfigCall struct {
+	s            *Service
+	name         string
+	urlParams_   gensupport.URLParams
+	ifNoneMatch_ string
+	ctx_         context.Context
+	header_      http.Header
+}
+
+// GetKajPolicyConfig: Gets the KeyAccessJustificationsPolicyConfig for a given
+// organization, folder, or project.
+//
+// - name: The name of the KeyAccessJustificationsPolicyConfig to get.
+func (r *FoldersService) GetKajPolicyConfig(name string) *FoldersGetKajPolicyConfigCall {
+	c := &FoldersGetKajPolicyConfigCall{s: r.s, urlParams_: make(gensupport.URLParams)}
+	c.name = name
+	return c
+}
+
+// Fields allows partial responses to be retrieved. See
+// https://developers.google.com/gdata/docs/2.0/basics#PartialResponse for more
+// details.
+func (c *FoldersGetKajPolicyConfigCall) Fields(s ...googleapi.Field) *FoldersGetKajPolicyConfigCall {
+	c.urlParams_.Set("fields", googleapi.CombineFields(s))
+	return c
+}
+
+// IfNoneMatch sets an optional parameter which makes the operation fail if the
+// object's ETag matches the given value. This is useful for getting updates
+// only after the object has changed since the last request.
+func (c *FoldersGetKajPolicyConfigCall) IfNoneMatch(entityTag string) *FoldersGetKajPolicyConfigCall {
+	c.ifNoneMatch_ = entityTag
+	return c
+}
+
+// Context sets the context to be used in this call's Do method.
+func (c *FoldersGetKajPolicyConfigCall) Context(ctx context.Context) *FoldersGetKajPolicyConfigCall {
+	c.ctx_ = ctx
+	return c
+}
+
+// Header returns a http.Header that can be modified by the caller to add
+// headers to the request.
+func (c *FoldersGetKajPolicyConfigCall) Header() http.Header {
+	if c.header_ == nil {
+		c.header_ = make(http.Header)
+	}
+	return c.header_
+}
+
+func (c *FoldersGetKajPolicyConfigCall) doRequest(alt string) (*http.Response, error) {
+	reqHeaders := gensupport.SetHeaders(c.s.userAgent(), "", c.header_)
+	if c.ifNoneMatch_ != "" {
+		reqHeaders.Set("If-None-Match", c.ifNoneMatch_)
+	}
+	c.urlParams_.Set("alt", alt)
+	c.urlParams_.Set("prettyPrint", "false")
+	urls := googleapi.ResolveRelative(c.s.BasePath, "v1/{+name}")
+	urls += "?" + c.urlParams_.Encode()
+	req, err := http.NewRequest("GET", urls, nil)
+	if err != nil {
+		return nil, err
+	}
+	req.Header = reqHeaders
+	googleapi.Expand(req.URL, map[string]string{
+		"name": c.name,
+	})
+	c.s.logger.DebugContext(c.ctx_, "api request", "serviceName", apiName, "rpcName", "cloudkms.folders.getKajPolicyConfig", "request", internallog.HTTPRequest(req, nil))
+	return gensupport.SendRequest(c.ctx_, c.s.client, req)
+}
+
+// Do executes the "cloudkms.folders.getKajPolicyConfig" call.
+// Any non-2xx status code is an error. Response headers are in either
+// *KeyAccessJustificationsPolicyConfig.ServerResponse.Header or (if a response
+// was returned at all) in error.(*googleapi.Error).Header. Use
+// googleapi.IsNotModified to check whether the returned error was because
+// http.StatusNotModified was returned.
+func (c *FoldersGetKajPolicyConfigCall) Do(opts ...googleapi.CallOption) (*KeyAccessJustificationsPolicyConfig, error) {
+	gensupport.SetOptions(c.urlParams_, opts...)
+	res, err := c.doRequest("json")
+	if res != nil && res.StatusCode == http.StatusNotModified {
+		if res.Body != nil {
+			res.Body.Close()
+		}
+		return nil, gensupport.WrapError(&googleapi.Error{
+			Code:   res.StatusCode,
+			Header: res.Header,
+		})
+	}
+	if err != nil {
+		return nil, err
+	}
+	defer googleapi.CloseBody(res)
+	if err := googleapi.CheckResponse(res); err != nil {
+		return nil, gensupport.WrapError(err)
+	}
+	ret := &KeyAccessJustificationsPolicyConfig{
+		ServerResponse: googleapi.ServerResponse{
+			Header:         res.Header,
+			HTTPStatusCode: res.StatusCode,
+		},
+	}
+	target := &ret
+	b, err := gensupport.DecodeResponseBytes(target, res)
+	if err != nil {
+		return nil, err
+	}
+	c.s.logger.DebugContext(c.ctx_, "api response", "serviceName", apiName, "rpcName", "cloudkms.folders.getKajPolicyConfig", "response", internallog.HTTPResponse(res, b))
 	return ret, nil
 }
 
@@ -3519,11 +4725,12 @@ type FoldersUpdateAutokeyConfigCall struct {
 	header_       http.Header
 }
 
-// UpdateAutokeyConfig: Updates the AutokeyConfig for a folder. The caller must
-// have both `cloudkms.autokeyConfigs.update` permission on the parent folder
-// and `cloudkms.cryptoKeys.setIamPolicy` permission on the provided key
-// project. A KeyHandle creation in the folder's descendant projects will use
-// this configuration to determine where to create the resulting CryptoKey.
+// UpdateAutokeyConfig: Updates the AutokeyConfig for a folder or a project.
+// The caller must have both `cloudkms.autokeyConfigs.update` permission on the
+// parent folder and `cloudkms.cryptoKeys.setIamPolicy` permission on the
+// provided key project. A KeyHandle creation in the folder's descendant
+// projects will use this configuration to determine where to create the
+// resulting CryptoKey.
 //
 //   - name: Identifier. Name of the AutokeyConfig resource, e.g.
 //     `folders/{FOLDER_NUMBER}/autokeyConfig`.
@@ -3566,8 +4773,7 @@ func (c *FoldersUpdateAutokeyConfigCall) Header() http.Header {
 
 func (c *FoldersUpdateAutokeyConfigCall) doRequest(alt string) (*http.Response, error) {
 	reqHeaders := gensupport.SetHeaders(c.s.userAgent(), "application/json", c.header_)
-	var body io.Reader = nil
-	body, err := googleapi.WithoutDataWrapper.JSONReader(c.autokeyconfig)
+	body, err := googleapi.WithoutDataWrapper.JSONBuffer(c.autokeyconfig)
 	if err != nil {
 		return nil, err
 	}
@@ -3583,6 +4789,7 @@ func (c *FoldersUpdateAutokeyConfigCall) doRequest(alt string) (*http.Response, 
 	googleapi.Expand(req.URL, map[string]string{
 		"name": c.name,
 	})
+	c.s.logger.DebugContext(c.ctx_, "api request", "serviceName", apiName, "rpcName", "cloudkms.folders.updateAutokeyConfig", "request", internallog.HTTPRequest(req, body.Bytes()))
 	return gensupport.SendRequest(c.ctx_, c.s.client, req)
 }
 
@@ -3617,9 +4824,572 @@ func (c *FoldersUpdateAutokeyConfigCall) Do(opts ...googleapi.CallOption) (*Auto
 		},
 	}
 	target := &ret
-	if err := gensupport.DecodeResponse(target, res); err != nil {
+	b, err := gensupport.DecodeResponseBytes(target, res)
+	if err != nil {
 		return nil, err
 	}
+	c.s.logger.DebugContext(c.ctx_, "api response", "serviceName", apiName, "rpcName", "cloudkms.folders.updateAutokeyConfig", "response", internallog.HTTPResponse(res, b))
+	return ret, nil
+}
+
+type FoldersUpdateKajPolicyConfigCall struct {
+	s                                   *Service
+	name                                string
+	keyaccessjustificationspolicyconfig *KeyAccessJustificationsPolicyConfig
+	urlParams_                          gensupport.URLParams
+	ctx_                                context.Context
+	header_                             http.Header
+}
+
+// UpdateKajPolicyConfig: Updates the KeyAccessJustificationsPolicyConfig for a
+// given organization, folder, or project.
+//
+//   - name: Identifier. The resource name for this
+//     KeyAccessJustificationsPolicyConfig in the format of
+//     "{organizations|folders|projects}/*/kajPolicyConfig".
+func (r *FoldersService) UpdateKajPolicyConfig(name string, keyaccessjustificationspolicyconfig *KeyAccessJustificationsPolicyConfig) *FoldersUpdateKajPolicyConfigCall {
+	c := &FoldersUpdateKajPolicyConfigCall{s: r.s, urlParams_: make(gensupport.URLParams)}
+	c.name = name
+	c.keyaccessjustificationspolicyconfig = keyaccessjustificationspolicyconfig
+	return c
+}
+
+// UpdateMask sets the optional parameter "updateMask": The list of fields to
+// update.
+func (c *FoldersUpdateKajPolicyConfigCall) UpdateMask(updateMask string) *FoldersUpdateKajPolicyConfigCall {
+	c.urlParams_.Set("updateMask", updateMask)
+	return c
+}
+
+// Fields allows partial responses to be retrieved. See
+// https://developers.google.com/gdata/docs/2.0/basics#PartialResponse for more
+// details.
+func (c *FoldersUpdateKajPolicyConfigCall) Fields(s ...googleapi.Field) *FoldersUpdateKajPolicyConfigCall {
+	c.urlParams_.Set("fields", googleapi.CombineFields(s))
+	return c
+}
+
+// Context sets the context to be used in this call's Do method.
+func (c *FoldersUpdateKajPolicyConfigCall) Context(ctx context.Context) *FoldersUpdateKajPolicyConfigCall {
+	c.ctx_ = ctx
+	return c
+}
+
+// Header returns a http.Header that can be modified by the caller to add
+// headers to the request.
+func (c *FoldersUpdateKajPolicyConfigCall) Header() http.Header {
+	if c.header_ == nil {
+		c.header_ = make(http.Header)
+	}
+	return c.header_
+}
+
+func (c *FoldersUpdateKajPolicyConfigCall) doRequest(alt string) (*http.Response, error) {
+	reqHeaders := gensupport.SetHeaders(c.s.userAgent(), "application/json", c.header_)
+	body, err := googleapi.WithoutDataWrapper.JSONBuffer(c.keyaccessjustificationspolicyconfig)
+	if err != nil {
+		return nil, err
+	}
+	c.urlParams_.Set("alt", alt)
+	c.urlParams_.Set("prettyPrint", "false")
+	urls := googleapi.ResolveRelative(c.s.BasePath, "v1/{+name}")
+	urls += "?" + c.urlParams_.Encode()
+	req, err := http.NewRequest("PATCH", urls, body)
+	if err != nil {
+		return nil, err
+	}
+	req.Header = reqHeaders
+	googleapi.Expand(req.URL, map[string]string{
+		"name": c.name,
+	})
+	c.s.logger.DebugContext(c.ctx_, "api request", "serviceName", apiName, "rpcName", "cloudkms.folders.updateKajPolicyConfig", "request", internallog.HTTPRequest(req, body.Bytes()))
+	return gensupport.SendRequest(c.ctx_, c.s.client, req)
+}
+
+// Do executes the "cloudkms.folders.updateKajPolicyConfig" call.
+// Any non-2xx status code is an error. Response headers are in either
+// *KeyAccessJustificationsPolicyConfig.ServerResponse.Header or (if a response
+// was returned at all) in error.(*googleapi.Error).Header. Use
+// googleapi.IsNotModified to check whether the returned error was because
+// http.StatusNotModified was returned.
+func (c *FoldersUpdateKajPolicyConfigCall) Do(opts ...googleapi.CallOption) (*KeyAccessJustificationsPolicyConfig, error) {
+	gensupport.SetOptions(c.urlParams_, opts...)
+	res, err := c.doRequest("json")
+	if res != nil && res.StatusCode == http.StatusNotModified {
+		if res.Body != nil {
+			res.Body.Close()
+		}
+		return nil, gensupport.WrapError(&googleapi.Error{
+			Code:   res.StatusCode,
+			Header: res.Header,
+		})
+	}
+	if err != nil {
+		return nil, err
+	}
+	defer googleapi.CloseBody(res)
+	if err := googleapi.CheckResponse(res); err != nil {
+		return nil, gensupport.WrapError(err)
+	}
+	ret := &KeyAccessJustificationsPolicyConfig{
+		ServerResponse: googleapi.ServerResponse{
+			Header:         res.Header,
+			HTTPStatusCode: res.StatusCode,
+		},
+	}
+	target := &ret
+	b, err := gensupport.DecodeResponseBytes(target, res)
+	if err != nil {
+		return nil, err
+	}
+	c.s.logger.DebugContext(c.ctx_, "api response", "serviceName", apiName, "rpcName", "cloudkms.folders.updateKajPolicyConfig", "response", internallog.HTTPResponse(res, b))
+	return ret, nil
+}
+
+type OrganizationsGetKajPolicyConfigCall struct {
+	s            *Service
+	name         string
+	urlParams_   gensupport.URLParams
+	ifNoneMatch_ string
+	ctx_         context.Context
+	header_      http.Header
+}
+
+// GetKajPolicyConfig: Gets the KeyAccessJustificationsPolicyConfig for a given
+// organization, folder, or project.
+//
+// - name: The name of the KeyAccessJustificationsPolicyConfig to get.
+func (r *OrganizationsService) GetKajPolicyConfig(name string) *OrganizationsGetKajPolicyConfigCall {
+	c := &OrganizationsGetKajPolicyConfigCall{s: r.s, urlParams_: make(gensupport.URLParams)}
+	c.name = name
+	return c
+}
+
+// Fields allows partial responses to be retrieved. See
+// https://developers.google.com/gdata/docs/2.0/basics#PartialResponse for more
+// details.
+func (c *OrganizationsGetKajPolicyConfigCall) Fields(s ...googleapi.Field) *OrganizationsGetKajPolicyConfigCall {
+	c.urlParams_.Set("fields", googleapi.CombineFields(s))
+	return c
+}
+
+// IfNoneMatch sets an optional parameter which makes the operation fail if the
+// object's ETag matches the given value. This is useful for getting updates
+// only after the object has changed since the last request.
+func (c *OrganizationsGetKajPolicyConfigCall) IfNoneMatch(entityTag string) *OrganizationsGetKajPolicyConfigCall {
+	c.ifNoneMatch_ = entityTag
+	return c
+}
+
+// Context sets the context to be used in this call's Do method.
+func (c *OrganizationsGetKajPolicyConfigCall) Context(ctx context.Context) *OrganizationsGetKajPolicyConfigCall {
+	c.ctx_ = ctx
+	return c
+}
+
+// Header returns a http.Header that can be modified by the caller to add
+// headers to the request.
+func (c *OrganizationsGetKajPolicyConfigCall) Header() http.Header {
+	if c.header_ == nil {
+		c.header_ = make(http.Header)
+	}
+	return c.header_
+}
+
+func (c *OrganizationsGetKajPolicyConfigCall) doRequest(alt string) (*http.Response, error) {
+	reqHeaders := gensupport.SetHeaders(c.s.userAgent(), "", c.header_)
+	if c.ifNoneMatch_ != "" {
+		reqHeaders.Set("If-None-Match", c.ifNoneMatch_)
+	}
+	c.urlParams_.Set("alt", alt)
+	c.urlParams_.Set("prettyPrint", "false")
+	urls := googleapi.ResolveRelative(c.s.BasePath, "v1/{+name}")
+	urls += "?" + c.urlParams_.Encode()
+	req, err := http.NewRequest("GET", urls, nil)
+	if err != nil {
+		return nil, err
+	}
+	req.Header = reqHeaders
+	googleapi.Expand(req.URL, map[string]string{
+		"name": c.name,
+	})
+	c.s.logger.DebugContext(c.ctx_, "api request", "serviceName", apiName, "rpcName", "cloudkms.organizations.getKajPolicyConfig", "request", internallog.HTTPRequest(req, nil))
+	return gensupport.SendRequest(c.ctx_, c.s.client, req)
+}
+
+// Do executes the "cloudkms.organizations.getKajPolicyConfig" call.
+// Any non-2xx status code is an error. Response headers are in either
+// *KeyAccessJustificationsPolicyConfig.ServerResponse.Header or (if a response
+// was returned at all) in error.(*googleapi.Error).Header. Use
+// googleapi.IsNotModified to check whether the returned error was because
+// http.StatusNotModified was returned.
+func (c *OrganizationsGetKajPolicyConfigCall) Do(opts ...googleapi.CallOption) (*KeyAccessJustificationsPolicyConfig, error) {
+	gensupport.SetOptions(c.urlParams_, opts...)
+	res, err := c.doRequest("json")
+	if res != nil && res.StatusCode == http.StatusNotModified {
+		if res.Body != nil {
+			res.Body.Close()
+		}
+		return nil, gensupport.WrapError(&googleapi.Error{
+			Code:   res.StatusCode,
+			Header: res.Header,
+		})
+	}
+	if err != nil {
+		return nil, err
+	}
+	defer googleapi.CloseBody(res)
+	if err := googleapi.CheckResponse(res); err != nil {
+		return nil, gensupport.WrapError(err)
+	}
+	ret := &KeyAccessJustificationsPolicyConfig{
+		ServerResponse: googleapi.ServerResponse{
+			Header:         res.Header,
+			HTTPStatusCode: res.StatusCode,
+		},
+	}
+	target := &ret
+	b, err := gensupport.DecodeResponseBytes(target, res)
+	if err != nil {
+		return nil, err
+	}
+	c.s.logger.DebugContext(c.ctx_, "api response", "serviceName", apiName, "rpcName", "cloudkms.organizations.getKajPolicyConfig", "response", internallog.HTTPResponse(res, b))
+	return ret, nil
+}
+
+type OrganizationsUpdateKajPolicyConfigCall struct {
+	s                                   *Service
+	name                                string
+	keyaccessjustificationspolicyconfig *KeyAccessJustificationsPolicyConfig
+	urlParams_                          gensupport.URLParams
+	ctx_                                context.Context
+	header_                             http.Header
+}
+
+// UpdateKajPolicyConfig: Updates the KeyAccessJustificationsPolicyConfig for a
+// given organization, folder, or project.
+//
+//   - name: Identifier. The resource name for this
+//     KeyAccessJustificationsPolicyConfig in the format of
+//     "{organizations|folders|projects}/*/kajPolicyConfig".
+func (r *OrganizationsService) UpdateKajPolicyConfig(name string, keyaccessjustificationspolicyconfig *KeyAccessJustificationsPolicyConfig) *OrganizationsUpdateKajPolicyConfigCall {
+	c := &OrganizationsUpdateKajPolicyConfigCall{s: r.s, urlParams_: make(gensupport.URLParams)}
+	c.name = name
+	c.keyaccessjustificationspolicyconfig = keyaccessjustificationspolicyconfig
+	return c
+}
+
+// UpdateMask sets the optional parameter "updateMask": The list of fields to
+// update.
+func (c *OrganizationsUpdateKajPolicyConfigCall) UpdateMask(updateMask string) *OrganizationsUpdateKajPolicyConfigCall {
+	c.urlParams_.Set("updateMask", updateMask)
+	return c
+}
+
+// Fields allows partial responses to be retrieved. See
+// https://developers.google.com/gdata/docs/2.0/basics#PartialResponse for more
+// details.
+func (c *OrganizationsUpdateKajPolicyConfigCall) Fields(s ...googleapi.Field) *OrganizationsUpdateKajPolicyConfigCall {
+	c.urlParams_.Set("fields", googleapi.CombineFields(s))
+	return c
+}
+
+// Context sets the context to be used in this call's Do method.
+func (c *OrganizationsUpdateKajPolicyConfigCall) Context(ctx context.Context) *OrganizationsUpdateKajPolicyConfigCall {
+	c.ctx_ = ctx
+	return c
+}
+
+// Header returns a http.Header that can be modified by the caller to add
+// headers to the request.
+func (c *OrganizationsUpdateKajPolicyConfigCall) Header() http.Header {
+	if c.header_ == nil {
+		c.header_ = make(http.Header)
+	}
+	return c.header_
+}
+
+func (c *OrganizationsUpdateKajPolicyConfigCall) doRequest(alt string) (*http.Response, error) {
+	reqHeaders := gensupport.SetHeaders(c.s.userAgent(), "application/json", c.header_)
+	body, err := googleapi.WithoutDataWrapper.JSONBuffer(c.keyaccessjustificationspolicyconfig)
+	if err != nil {
+		return nil, err
+	}
+	c.urlParams_.Set("alt", alt)
+	c.urlParams_.Set("prettyPrint", "false")
+	urls := googleapi.ResolveRelative(c.s.BasePath, "v1/{+name}")
+	urls += "?" + c.urlParams_.Encode()
+	req, err := http.NewRequest("PATCH", urls, body)
+	if err != nil {
+		return nil, err
+	}
+	req.Header = reqHeaders
+	googleapi.Expand(req.URL, map[string]string{
+		"name": c.name,
+	})
+	c.s.logger.DebugContext(c.ctx_, "api request", "serviceName", apiName, "rpcName", "cloudkms.organizations.updateKajPolicyConfig", "request", internallog.HTTPRequest(req, body.Bytes()))
+	return gensupport.SendRequest(c.ctx_, c.s.client, req)
+}
+
+// Do executes the "cloudkms.organizations.updateKajPolicyConfig" call.
+// Any non-2xx status code is an error. Response headers are in either
+// *KeyAccessJustificationsPolicyConfig.ServerResponse.Header or (if a response
+// was returned at all) in error.(*googleapi.Error).Header. Use
+// googleapi.IsNotModified to check whether the returned error was because
+// http.StatusNotModified was returned.
+func (c *OrganizationsUpdateKajPolicyConfigCall) Do(opts ...googleapi.CallOption) (*KeyAccessJustificationsPolicyConfig, error) {
+	gensupport.SetOptions(c.urlParams_, opts...)
+	res, err := c.doRequest("json")
+	if res != nil && res.StatusCode == http.StatusNotModified {
+		if res.Body != nil {
+			res.Body.Close()
+		}
+		return nil, gensupport.WrapError(&googleapi.Error{
+			Code:   res.StatusCode,
+			Header: res.Header,
+		})
+	}
+	if err != nil {
+		return nil, err
+	}
+	defer googleapi.CloseBody(res)
+	if err := googleapi.CheckResponse(res); err != nil {
+		return nil, gensupport.WrapError(err)
+	}
+	ret := &KeyAccessJustificationsPolicyConfig{
+		ServerResponse: googleapi.ServerResponse{
+			Header:         res.Header,
+			HTTPStatusCode: res.StatusCode,
+		},
+	}
+	target := &ret
+	b, err := gensupport.DecodeResponseBytes(target, res)
+	if err != nil {
+		return nil, err
+	}
+	c.s.logger.DebugContext(c.ctx_, "api response", "serviceName", apiName, "rpcName", "cloudkms.organizations.updateKajPolicyConfig", "response", internallog.HTTPResponse(res, b))
+	return ret, nil
+}
+
+type ProjectsGetAutokeyConfigCall struct {
+	s            *Service
+	name         string
+	urlParams_   gensupport.URLParams
+	ifNoneMatch_ string
+	ctx_         context.Context
+	header_      http.Header
+}
+
+// GetAutokeyConfig: Returns the AutokeyConfig for a folder or project.
+//
+//   - name: Name of the AutokeyConfig resource, e.g.
+//     `folders/{FOLDER_NUMBER}/autokeyConfig` or
+//     `projects/{PROJECT_NUMBER}/autokeyConfig`.
+func (r *ProjectsService) GetAutokeyConfig(name string) *ProjectsGetAutokeyConfigCall {
+	c := &ProjectsGetAutokeyConfigCall{s: r.s, urlParams_: make(gensupport.URLParams)}
+	c.name = name
+	return c
+}
+
+// Fields allows partial responses to be retrieved. See
+// https://developers.google.com/gdata/docs/2.0/basics#PartialResponse for more
+// details.
+func (c *ProjectsGetAutokeyConfigCall) Fields(s ...googleapi.Field) *ProjectsGetAutokeyConfigCall {
+	c.urlParams_.Set("fields", googleapi.CombineFields(s))
+	return c
+}
+
+// IfNoneMatch sets an optional parameter which makes the operation fail if the
+// object's ETag matches the given value. This is useful for getting updates
+// only after the object has changed since the last request.
+func (c *ProjectsGetAutokeyConfigCall) IfNoneMatch(entityTag string) *ProjectsGetAutokeyConfigCall {
+	c.ifNoneMatch_ = entityTag
+	return c
+}
+
+// Context sets the context to be used in this call's Do method.
+func (c *ProjectsGetAutokeyConfigCall) Context(ctx context.Context) *ProjectsGetAutokeyConfigCall {
+	c.ctx_ = ctx
+	return c
+}
+
+// Header returns a http.Header that can be modified by the caller to add
+// headers to the request.
+func (c *ProjectsGetAutokeyConfigCall) Header() http.Header {
+	if c.header_ == nil {
+		c.header_ = make(http.Header)
+	}
+	return c.header_
+}
+
+func (c *ProjectsGetAutokeyConfigCall) doRequest(alt string) (*http.Response, error) {
+	reqHeaders := gensupport.SetHeaders(c.s.userAgent(), "", c.header_)
+	if c.ifNoneMatch_ != "" {
+		reqHeaders.Set("If-None-Match", c.ifNoneMatch_)
+	}
+	c.urlParams_.Set("alt", alt)
+	c.urlParams_.Set("prettyPrint", "false")
+	urls := googleapi.ResolveRelative(c.s.BasePath, "v1/{+name}")
+	urls += "?" + c.urlParams_.Encode()
+	req, err := http.NewRequest("GET", urls, nil)
+	if err != nil {
+		return nil, err
+	}
+	req.Header = reqHeaders
+	googleapi.Expand(req.URL, map[string]string{
+		"name": c.name,
+	})
+	c.s.logger.DebugContext(c.ctx_, "api request", "serviceName", apiName, "rpcName", "cloudkms.projects.getAutokeyConfig", "request", internallog.HTTPRequest(req, nil))
+	return gensupport.SendRequest(c.ctx_, c.s.client, req)
+}
+
+// Do executes the "cloudkms.projects.getAutokeyConfig" call.
+// Any non-2xx status code is an error. Response headers are in either
+// *AutokeyConfig.ServerResponse.Header or (if a response was returned at all)
+// in error.(*googleapi.Error).Header. Use googleapi.IsNotModified to check
+// whether the returned error was because http.StatusNotModified was returned.
+func (c *ProjectsGetAutokeyConfigCall) Do(opts ...googleapi.CallOption) (*AutokeyConfig, error) {
+	gensupport.SetOptions(c.urlParams_, opts...)
+	res, err := c.doRequest("json")
+	if res != nil && res.StatusCode == http.StatusNotModified {
+		if res.Body != nil {
+			res.Body.Close()
+		}
+		return nil, gensupport.WrapError(&googleapi.Error{
+			Code:   res.StatusCode,
+			Header: res.Header,
+		})
+	}
+	if err != nil {
+		return nil, err
+	}
+	defer googleapi.CloseBody(res)
+	if err := googleapi.CheckResponse(res); err != nil {
+		return nil, gensupport.WrapError(err)
+	}
+	ret := &AutokeyConfig{
+		ServerResponse: googleapi.ServerResponse{
+			Header:         res.Header,
+			HTTPStatusCode: res.StatusCode,
+		},
+	}
+	target := &ret
+	b, err := gensupport.DecodeResponseBytes(target, res)
+	if err != nil {
+		return nil, err
+	}
+	c.s.logger.DebugContext(c.ctx_, "api response", "serviceName", apiName, "rpcName", "cloudkms.projects.getAutokeyConfig", "response", internallog.HTTPResponse(res, b))
+	return ret, nil
+}
+
+type ProjectsGetKajPolicyConfigCall struct {
+	s            *Service
+	name         string
+	urlParams_   gensupport.URLParams
+	ifNoneMatch_ string
+	ctx_         context.Context
+	header_      http.Header
+}
+
+// GetKajPolicyConfig: Gets the KeyAccessJustificationsPolicyConfig for a given
+// organization, folder, or project.
+//
+// - name: The name of the KeyAccessJustificationsPolicyConfig to get.
+func (r *ProjectsService) GetKajPolicyConfig(name string) *ProjectsGetKajPolicyConfigCall {
+	c := &ProjectsGetKajPolicyConfigCall{s: r.s, urlParams_: make(gensupport.URLParams)}
+	c.name = name
+	return c
+}
+
+// Fields allows partial responses to be retrieved. See
+// https://developers.google.com/gdata/docs/2.0/basics#PartialResponse for more
+// details.
+func (c *ProjectsGetKajPolicyConfigCall) Fields(s ...googleapi.Field) *ProjectsGetKajPolicyConfigCall {
+	c.urlParams_.Set("fields", googleapi.CombineFields(s))
+	return c
+}
+
+// IfNoneMatch sets an optional parameter which makes the operation fail if the
+// object's ETag matches the given value. This is useful for getting updates
+// only after the object has changed since the last request.
+func (c *ProjectsGetKajPolicyConfigCall) IfNoneMatch(entityTag string) *ProjectsGetKajPolicyConfigCall {
+	c.ifNoneMatch_ = entityTag
+	return c
+}
+
+// Context sets the context to be used in this call's Do method.
+func (c *ProjectsGetKajPolicyConfigCall) Context(ctx context.Context) *ProjectsGetKajPolicyConfigCall {
+	c.ctx_ = ctx
+	return c
+}
+
+// Header returns a http.Header that can be modified by the caller to add
+// headers to the request.
+func (c *ProjectsGetKajPolicyConfigCall) Header() http.Header {
+	if c.header_ == nil {
+		c.header_ = make(http.Header)
+	}
+	return c.header_
+}
+
+func (c *ProjectsGetKajPolicyConfigCall) doRequest(alt string) (*http.Response, error) {
+	reqHeaders := gensupport.SetHeaders(c.s.userAgent(), "", c.header_)
+	if c.ifNoneMatch_ != "" {
+		reqHeaders.Set("If-None-Match", c.ifNoneMatch_)
+	}
+	c.urlParams_.Set("alt", alt)
+	c.urlParams_.Set("prettyPrint", "false")
+	urls := googleapi.ResolveRelative(c.s.BasePath, "v1/{+name}")
+	urls += "?" + c.urlParams_.Encode()
+	req, err := http.NewRequest("GET", urls, nil)
+	if err != nil {
+		return nil, err
+	}
+	req.Header = reqHeaders
+	googleapi.Expand(req.URL, map[string]string{
+		"name": c.name,
+	})
+	c.s.logger.DebugContext(c.ctx_, "api request", "serviceName", apiName, "rpcName", "cloudkms.projects.getKajPolicyConfig", "request", internallog.HTTPRequest(req, nil))
+	return gensupport.SendRequest(c.ctx_, c.s.client, req)
+}
+
+// Do executes the "cloudkms.projects.getKajPolicyConfig" call.
+// Any non-2xx status code is an error. Response headers are in either
+// *KeyAccessJustificationsPolicyConfig.ServerResponse.Header or (if a response
+// was returned at all) in error.(*googleapi.Error).Header. Use
+// googleapi.IsNotModified to check whether the returned error was because
+// http.StatusNotModified was returned.
+func (c *ProjectsGetKajPolicyConfigCall) Do(opts ...googleapi.CallOption) (*KeyAccessJustificationsPolicyConfig, error) {
+	gensupport.SetOptions(c.urlParams_, opts...)
+	res, err := c.doRequest("json")
+	if res != nil && res.StatusCode == http.StatusNotModified {
+		if res.Body != nil {
+			res.Body.Close()
+		}
+		return nil, gensupport.WrapError(&googleapi.Error{
+			Code:   res.StatusCode,
+			Header: res.Header,
+		})
+	}
+	if err != nil {
+		return nil, err
+	}
+	defer googleapi.CloseBody(res)
+	if err := googleapi.CheckResponse(res); err != nil {
+		return nil, gensupport.WrapError(err)
+	}
+	ret := &KeyAccessJustificationsPolicyConfig{
+		ServerResponse: googleapi.ServerResponse{
+			Header:         res.Header,
+			HTTPStatusCode: res.StatusCode,
+		},
+	}
+	target := &ret
+	b, err := gensupport.DecodeResponseBytes(target, res)
+	if err != nil {
+		return nil, err
+	}
+	c.s.logger.DebugContext(c.ctx_, "api response", "serviceName", apiName, "rpcName", "cloudkms.projects.getKajPolicyConfig", "response", internallog.HTTPResponse(res, b))
 	return ret, nil
 }
 
@@ -3680,12 +5450,11 @@ func (c *ProjectsShowEffectiveAutokeyConfigCall) doRequest(alt string) (*http.Re
 	if c.ifNoneMatch_ != "" {
 		reqHeaders.Set("If-None-Match", c.ifNoneMatch_)
 	}
-	var body io.Reader = nil
 	c.urlParams_.Set("alt", alt)
 	c.urlParams_.Set("prettyPrint", "false")
 	urls := googleapi.ResolveRelative(c.s.BasePath, "v1/{+parent}:showEffectiveAutokeyConfig")
 	urls += "?" + c.urlParams_.Encode()
-	req, err := http.NewRequest("GET", urls, body)
+	req, err := http.NewRequest("GET", urls, nil)
 	if err != nil {
 		return nil, err
 	}
@@ -3693,6 +5462,7 @@ func (c *ProjectsShowEffectiveAutokeyConfigCall) doRequest(alt string) (*http.Re
 	googleapi.Expand(req.URL, map[string]string{
 		"parent": c.parent,
 	})
+	c.s.logger.DebugContext(c.ctx_, "api request", "serviceName", apiName, "rpcName", "cloudkms.projects.showEffectiveAutokeyConfig", "request", internallog.HTTPRequest(req, nil))
 	return gensupport.SendRequest(c.ctx_, c.s.client, req)
 }
 
@@ -3728,9 +5498,467 @@ func (c *ProjectsShowEffectiveAutokeyConfigCall) Do(opts ...googleapi.CallOption
 		},
 	}
 	target := &ret
-	if err := gensupport.DecodeResponse(target, res); err != nil {
+	b, err := gensupport.DecodeResponseBytes(target, res)
+	if err != nil {
 		return nil, err
 	}
+	c.s.logger.DebugContext(c.ctx_, "api response", "serviceName", apiName, "rpcName", "cloudkms.projects.showEffectiveAutokeyConfig", "response", internallog.HTTPResponse(res, b))
+	return ret, nil
+}
+
+type ProjectsShowEffectiveKeyAccessJustificationsEnrollmentConfigCall struct {
+	s            *Service
+	project      string
+	urlParams_   gensupport.URLParams
+	ifNoneMatch_ string
+	ctx_         context.Context
+	header_      http.Header
+}
+
+// ShowEffectiveKeyAccessJustificationsEnrollmentConfig: Returns the
+// KeyAccessJustificationsEnrollmentConfig of the resource closest to the given
+// project in hierarchy.
+//
+//   - project: The number or id of the project to get the effective
+//     KeyAccessJustificationsEnrollmentConfig for.
+func (r *ProjectsService) ShowEffectiveKeyAccessJustificationsEnrollmentConfig(project string) *ProjectsShowEffectiveKeyAccessJustificationsEnrollmentConfigCall {
+	c := &ProjectsShowEffectiveKeyAccessJustificationsEnrollmentConfigCall{s: r.s, urlParams_: make(gensupport.URLParams)}
+	c.project = project
+	return c
+}
+
+// Fields allows partial responses to be retrieved. See
+// https://developers.google.com/gdata/docs/2.0/basics#PartialResponse for more
+// details.
+func (c *ProjectsShowEffectiveKeyAccessJustificationsEnrollmentConfigCall) Fields(s ...googleapi.Field) *ProjectsShowEffectiveKeyAccessJustificationsEnrollmentConfigCall {
+	c.urlParams_.Set("fields", googleapi.CombineFields(s))
+	return c
+}
+
+// IfNoneMatch sets an optional parameter which makes the operation fail if the
+// object's ETag matches the given value. This is useful for getting updates
+// only after the object has changed since the last request.
+func (c *ProjectsShowEffectiveKeyAccessJustificationsEnrollmentConfigCall) IfNoneMatch(entityTag string) *ProjectsShowEffectiveKeyAccessJustificationsEnrollmentConfigCall {
+	c.ifNoneMatch_ = entityTag
+	return c
+}
+
+// Context sets the context to be used in this call's Do method.
+func (c *ProjectsShowEffectiveKeyAccessJustificationsEnrollmentConfigCall) Context(ctx context.Context) *ProjectsShowEffectiveKeyAccessJustificationsEnrollmentConfigCall {
+	c.ctx_ = ctx
+	return c
+}
+
+// Header returns a http.Header that can be modified by the caller to add
+// headers to the request.
+func (c *ProjectsShowEffectiveKeyAccessJustificationsEnrollmentConfigCall) Header() http.Header {
+	if c.header_ == nil {
+		c.header_ = make(http.Header)
+	}
+	return c.header_
+}
+
+func (c *ProjectsShowEffectiveKeyAccessJustificationsEnrollmentConfigCall) doRequest(alt string) (*http.Response, error) {
+	reqHeaders := gensupport.SetHeaders(c.s.userAgent(), "", c.header_)
+	if c.ifNoneMatch_ != "" {
+		reqHeaders.Set("If-None-Match", c.ifNoneMatch_)
+	}
+	c.urlParams_.Set("alt", alt)
+	c.urlParams_.Set("prettyPrint", "false")
+	urls := googleapi.ResolveRelative(c.s.BasePath, "v1/{+project}:showEffectiveKeyAccessJustificationsEnrollmentConfig")
+	urls += "?" + c.urlParams_.Encode()
+	req, err := http.NewRequest("GET", urls, nil)
+	if err != nil {
+		return nil, err
+	}
+	req.Header = reqHeaders
+	googleapi.Expand(req.URL, map[string]string{
+		"project": c.project,
+	})
+	c.s.logger.DebugContext(c.ctx_, "api request", "serviceName", apiName, "rpcName", "cloudkms.projects.showEffectiveKeyAccessJustificationsEnrollmentConfig", "request", internallog.HTTPRequest(req, nil))
+	return gensupport.SendRequest(c.ctx_, c.s.client, req)
+}
+
+// Do executes the "cloudkms.projects.showEffectiveKeyAccessJustificationsEnrollmentConfig" call.
+// Any non-2xx status code is an error. Response headers are in either
+// *ShowEffectiveKeyAccessJustificationsEnrollmentConfigResponse.ServerResponse.
+// Header or (if a response was returned at all) in
+// error.(*googleapi.Error).Header. Use googleapi.IsNotModified to check
+// whether the returned error was because http.StatusNotModified was returned.
+func (c *ProjectsShowEffectiveKeyAccessJustificationsEnrollmentConfigCall) Do(opts ...googleapi.CallOption) (*ShowEffectiveKeyAccessJustificationsEnrollmentConfigResponse, error) {
+	gensupport.SetOptions(c.urlParams_, opts...)
+	res, err := c.doRequest("json")
+	if res != nil && res.StatusCode == http.StatusNotModified {
+		if res.Body != nil {
+			res.Body.Close()
+		}
+		return nil, gensupport.WrapError(&googleapi.Error{
+			Code:   res.StatusCode,
+			Header: res.Header,
+		})
+	}
+	if err != nil {
+		return nil, err
+	}
+	defer googleapi.CloseBody(res)
+	if err := googleapi.CheckResponse(res); err != nil {
+		return nil, gensupport.WrapError(err)
+	}
+	ret := &ShowEffectiveKeyAccessJustificationsEnrollmentConfigResponse{
+		ServerResponse: googleapi.ServerResponse{
+			Header:         res.Header,
+			HTTPStatusCode: res.StatusCode,
+		},
+	}
+	target := &ret
+	b, err := gensupport.DecodeResponseBytes(target, res)
+	if err != nil {
+		return nil, err
+	}
+	c.s.logger.DebugContext(c.ctx_, "api response", "serviceName", apiName, "rpcName", "cloudkms.projects.showEffectiveKeyAccessJustificationsEnrollmentConfig", "response", internallog.HTTPResponse(res, b))
+	return ret, nil
+}
+
+type ProjectsShowEffectiveKeyAccessJustificationsPolicyConfigCall struct {
+	s            *Service
+	project      string
+	urlParams_   gensupport.URLParams
+	ifNoneMatch_ string
+	ctx_         context.Context
+	header_      http.Header
+}
+
+// ShowEffectiveKeyAccessJustificationsPolicyConfig: Returns the
+// KeyAccessJustificationsPolicyConfig of the resource closest to the given
+// project in hierarchy.
+//
+//   - project: The number or id of the project to get the effective
+//     KeyAccessJustificationsPolicyConfig. In the format of "projects/{|}".
+func (r *ProjectsService) ShowEffectiveKeyAccessJustificationsPolicyConfig(project string) *ProjectsShowEffectiveKeyAccessJustificationsPolicyConfigCall {
+	c := &ProjectsShowEffectiveKeyAccessJustificationsPolicyConfigCall{s: r.s, urlParams_: make(gensupport.URLParams)}
+	c.project = project
+	return c
+}
+
+// Fields allows partial responses to be retrieved. See
+// https://developers.google.com/gdata/docs/2.0/basics#PartialResponse for more
+// details.
+func (c *ProjectsShowEffectiveKeyAccessJustificationsPolicyConfigCall) Fields(s ...googleapi.Field) *ProjectsShowEffectiveKeyAccessJustificationsPolicyConfigCall {
+	c.urlParams_.Set("fields", googleapi.CombineFields(s))
+	return c
+}
+
+// IfNoneMatch sets an optional parameter which makes the operation fail if the
+// object's ETag matches the given value. This is useful for getting updates
+// only after the object has changed since the last request.
+func (c *ProjectsShowEffectiveKeyAccessJustificationsPolicyConfigCall) IfNoneMatch(entityTag string) *ProjectsShowEffectiveKeyAccessJustificationsPolicyConfigCall {
+	c.ifNoneMatch_ = entityTag
+	return c
+}
+
+// Context sets the context to be used in this call's Do method.
+func (c *ProjectsShowEffectiveKeyAccessJustificationsPolicyConfigCall) Context(ctx context.Context) *ProjectsShowEffectiveKeyAccessJustificationsPolicyConfigCall {
+	c.ctx_ = ctx
+	return c
+}
+
+// Header returns a http.Header that can be modified by the caller to add
+// headers to the request.
+func (c *ProjectsShowEffectiveKeyAccessJustificationsPolicyConfigCall) Header() http.Header {
+	if c.header_ == nil {
+		c.header_ = make(http.Header)
+	}
+	return c.header_
+}
+
+func (c *ProjectsShowEffectiveKeyAccessJustificationsPolicyConfigCall) doRequest(alt string) (*http.Response, error) {
+	reqHeaders := gensupport.SetHeaders(c.s.userAgent(), "", c.header_)
+	if c.ifNoneMatch_ != "" {
+		reqHeaders.Set("If-None-Match", c.ifNoneMatch_)
+	}
+	c.urlParams_.Set("alt", alt)
+	c.urlParams_.Set("prettyPrint", "false")
+	urls := googleapi.ResolveRelative(c.s.BasePath, "v1/{+project}:showEffectiveKeyAccessJustificationsPolicyConfig")
+	urls += "?" + c.urlParams_.Encode()
+	req, err := http.NewRequest("GET", urls, nil)
+	if err != nil {
+		return nil, err
+	}
+	req.Header = reqHeaders
+	googleapi.Expand(req.URL, map[string]string{
+		"project": c.project,
+	})
+	c.s.logger.DebugContext(c.ctx_, "api request", "serviceName", apiName, "rpcName", "cloudkms.projects.showEffectiveKeyAccessJustificationsPolicyConfig", "request", internallog.HTTPRequest(req, nil))
+	return gensupport.SendRequest(c.ctx_, c.s.client, req)
+}
+
+// Do executes the "cloudkms.projects.showEffectiveKeyAccessJustificationsPolicyConfig" call.
+// Any non-2xx status code is an error. Response headers are in either
+// *ShowEffectiveKeyAccessJustificationsPolicyConfigResponse.ServerResponse.Head
+// er or (if a response was returned at all) in
+// error.(*googleapi.Error).Header. Use googleapi.IsNotModified to check
+// whether the returned error was because http.StatusNotModified was returned.
+func (c *ProjectsShowEffectiveKeyAccessJustificationsPolicyConfigCall) Do(opts ...googleapi.CallOption) (*ShowEffectiveKeyAccessJustificationsPolicyConfigResponse, error) {
+	gensupport.SetOptions(c.urlParams_, opts...)
+	res, err := c.doRequest("json")
+	if res != nil && res.StatusCode == http.StatusNotModified {
+		if res.Body != nil {
+			res.Body.Close()
+		}
+		return nil, gensupport.WrapError(&googleapi.Error{
+			Code:   res.StatusCode,
+			Header: res.Header,
+		})
+	}
+	if err != nil {
+		return nil, err
+	}
+	defer googleapi.CloseBody(res)
+	if err := googleapi.CheckResponse(res); err != nil {
+		return nil, gensupport.WrapError(err)
+	}
+	ret := &ShowEffectiveKeyAccessJustificationsPolicyConfigResponse{
+		ServerResponse: googleapi.ServerResponse{
+			Header:         res.Header,
+			HTTPStatusCode: res.StatusCode,
+		},
+	}
+	target := &ret
+	b, err := gensupport.DecodeResponseBytes(target, res)
+	if err != nil {
+		return nil, err
+	}
+	c.s.logger.DebugContext(c.ctx_, "api response", "serviceName", apiName, "rpcName", "cloudkms.projects.showEffectiveKeyAccessJustificationsPolicyConfig", "response", internallog.HTTPResponse(res, b))
+	return ret, nil
+}
+
+type ProjectsUpdateAutokeyConfigCall struct {
+	s             *Service
+	name          string
+	autokeyconfig *AutokeyConfig
+	urlParams_    gensupport.URLParams
+	ctx_          context.Context
+	header_       http.Header
+}
+
+// UpdateAutokeyConfig: Updates the AutokeyConfig for a folder or a project.
+// The caller must have both `cloudkms.autokeyConfigs.update` permission on the
+// parent folder and `cloudkms.cryptoKeys.setIamPolicy` permission on the
+// provided key project. A KeyHandle creation in the folder's descendant
+// projects will use this configuration to determine where to create the
+// resulting CryptoKey.
+//
+//   - name: Identifier. Name of the AutokeyConfig resource, e.g.
+//     `folders/{FOLDER_NUMBER}/autokeyConfig`.
+func (r *ProjectsService) UpdateAutokeyConfig(name string, autokeyconfig *AutokeyConfig) *ProjectsUpdateAutokeyConfigCall {
+	c := &ProjectsUpdateAutokeyConfigCall{s: r.s, urlParams_: make(gensupport.URLParams)}
+	c.name = name
+	c.autokeyconfig = autokeyconfig
+	return c
+}
+
+// UpdateMask sets the optional parameter "updateMask": Required. Masks which
+// fields of the AutokeyConfig to update, e.g. `keyProject`.
+func (c *ProjectsUpdateAutokeyConfigCall) UpdateMask(updateMask string) *ProjectsUpdateAutokeyConfigCall {
+	c.urlParams_.Set("updateMask", updateMask)
+	return c
+}
+
+// Fields allows partial responses to be retrieved. See
+// https://developers.google.com/gdata/docs/2.0/basics#PartialResponse for more
+// details.
+func (c *ProjectsUpdateAutokeyConfigCall) Fields(s ...googleapi.Field) *ProjectsUpdateAutokeyConfigCall {
+	c.urlParams_.Set("fields", googleapi.CombineFields(s))
+	return c
+}
+
+// Context sets the context to be used in this call's Do method.
+func (c *ProjectsUpdateAutokeyConfigCall) Context(ctx context.Context) *ProjectsUpdateAutokeyConfigCall {
+	c.ctx_ = ctx
+	return c
+}
+
+// Header returns a http.Header that can be modified by the caller to add
+// headers to the request.
+func (c *ProjectsUpdateAutokeyConfigCall) Header() http.Header {
+	if c.header_ == nil {
+		c.header_ = make(http.Header)
+	}
+	return c.header_
+}
+
+func (c *ProjectsUpdateAutokeyConfigCall) doRequest(alt string) (*http.Response, error) {
+	reqHeaders := gensupport.SetHeaders(c.s.userAgent(), "application/json", c.header_)
+	body, err := googleapi.WithoutDataWrapper.JSONBuffer(c.autokeyconfig)
+	if err != nil {
+		return nil, err
+	}
+	c.urlParams_.Set("alt", alt)
+	c.urlParams_.Set("prettyPrint", "false")
+	urls := googleapi.ResolveRelative(c.s.BasePath, "v1/{+name}")
+	urls += "?" + c.urlParams_.Encode()
+	req, err := http.NewRequest("PATCH", urls, body)
+	if err != nil {
+		return nil, err
+	}
+	req.Header = reqHeaders
+	googleapi.Expand(req.URL, map[string]string{
+		"name": c.name,
+	})
+	c.s.logger.DebugContext(c.ctx_, "api request", "serviceName", apiName, "rpcName", "cloudkms.projects.updateAutokeyConfig", "request", internallog.HTTPRequest(req, body.Bytes()))
+	return gensupport.SendRequest(c.ctx_, c.s.client, req)
+}
+
+// Do executes the "cloudkms.projects.updateAutokeyConfig" call.
+// Any non-2xx status code is an error. Response headers are in either
+// *AutokeyConfig.ServerResponse.Header or (if a response was returned at all)
+// in error.(*googleapi.Error).Header. Use googleapi.IsNotModified to check
+// whether the returned error was because http.StatusNotModified was returned.
+func (c *ProjectsUpdateAutokeyConfigCall) Do(opts ...googleapi.CallOption) (*AutokeyConfig, error) {
+	gensupport.SetOptions(c.urlParams_, opts...)
+	res, err := c.doRequest("json")
+	if res != nil && res.StatusCode == http.StatusNotModified {
+		if res.Body != nil {
+			res.Body.Close()
+		}
+		return nil, gensupport.WrapError(&googleapi.Error{
+			Code:   res.StatusCode,
+			Header: res.Header,
+		})
+	}
+	if err != nil {
+		return nil, err
+	}
+	defer googleapi.CloseBody(res)
+	if err := googleapi.CheckResponse(res); err != nil {
+		return nil, gensupport.WrapError(err)
+	}
+	ret := &AutokeyConfig{
+		ServerResponse: googleapi.ServerResponse{
+			Header:         res.Header,
+			HTTPStatusCode: res.StatusCode,
+		},
+	}
+	target := &ret
+	b, err := gensupport.DecodeResponseBytes(target, res)
+	if err != nil {
+		return nil, err
+	}
+	c.s.logger.DebugContext(c.ctx_, "api response", "serviceName", apiName, "rpcName", "cloudkms.projects.updateAutokeyConfig", "response", internallog.HTTPResponse(res, b))
+	return ret, nil
+}
+
+type ProjectsUpdateKajPolicyConfigCall struct {
+	s                                   *Service
+	name                                string
+	keyaccessjustificationspolicyconfig *KeyAccessJustificationsPolicyConfig
+	urlParams_                          gensupport.URLParams
+	ctx_                                context.Context
+	header_                             http.Header
+}
+
+// UpdateKajPolicyConfig: Updates the KeyAccessJustificationsPolicyConfig for a
+// given organization, folder, or project.
+//
+//   - name: Identifier. The resource name for this
+//     KeyAccessJustificationsPolicyConfig in the format of
+//     "{organizations|folders|projects}/*/kajPolicyConfig".
+func (r *ProjectsService) UpdateKajPolicyConfig(name string, keyaccessjustificationspolicyconfig *KeyAccessJustificationsPolicyConfig) *ProjectsUpdateKajPolicyConfigCall {
+	c := &ProjectsUpdateKajPolicyConfigCall{s: r.s, urlParams_: make(gensupport.URLParams)}
+	c.name = name
+	c.keyaccessjustificationspolicyconfig = keyaccessjustificationspolicyconfig
+	return c
+}
+
+// UpdateMask sets the optional parameter "updateMask": The list of fields to
+// update.
+func (c *ProjectsUpdateKajPolicyConfigCall) UpdateMask(updateMask string) *ProjectsUpdateKajPolicyConfigCall {
+	c.urlParams_.Set("updateMask", updateMask)
+	return c
+}
+
+// Fields allows partial responses to be retrieved. See
+// https://developers.google.com/gdata/docs/2.0/basics#PartialResponse for more
+// details.
+func (c *ProjectsUpdateKajPolicyConfigCall) Fields(s ...googleapi.Field) *ProjectsUpdateKajPolicyConfigCall {
+	c.urlParams_.Set("fields", googleapi.CombineFields(s))
+	return c
+}
+
+// Context sets the context to be used in this call's Do method.
+func (c *ProjectsUpdateKajPolicyConfigCall) Context(ctx context.Context) *ProjectsUpdateKajPolicyConfigCall {
+	c.ctx_ = ctx
+	return c
+}
+
+// Header returns a http.Header that can be modified by the caller to add
+// headers to the request.
+func (c *ProjectsUpdateKajPolicyConfigCall) Header() http.Header {
+	if c.header_ == nil {
+		c.header_ = make(http.Header)
+	}
+	return c.header_
+}
+
+func (c *ProjectsUpdateKajPolicyConfigCall) doRequest(alt string) (*http.Response, error) {
+	reqHeaders := gensupport.SetHeaders(c.s.userAgent(), "application/json", c.header_)
+	body, err := googleapi.WithoutDataWrapper.JSONBuffer(c.keyaccessjustificationspolicyconfig)
+	if err != nil {
+		return nil, err
+	}
+	c.urlParams_.Set("alt", alt)
+	c.urlParams_.Set("prettyPrint", "false")
+	urls := googleapi.ResolveRelative(c.s.BasePath, "v1/{+name}")
+	urls += "?" + c.urlParams_.Encode()
+	req, err := http.NewRequest("PATCH", urls, body)
+	if err != nil {
+		return nil, err
+	}
+	req.Header = reqHeaders
+	googleapi.Expand(req.URL, map[string]string{
+		"name": c.name,
+	})
+	c.s.logger.DebugContext(c.ctx_, "api request", "serviceName", apiName, "rpcName", "cloudkms.projects.updateKajPolicyConfig", "request", internallog.HTTPRequest(req, body.Bytes()))
+	return gensupport.SendRequest(c.ctx_, c.s.client, req)
+}
+
+// Do executes the "cloudkms.projects.updateKajPolicyConfig" call.
+// Any non-2xx status code is an error. Response headers are in either
+// *KeyAccessJustificationsPolicyConfig.ServerResponse.Header or (if a response
+// was returned at all) in error.(*googleapi.Error).Header. Use
+// googleapi.IsNotModified to check whether the returned error was because
+// http.StatusNotModified was returned.
+func (c *ProjectsUpdateKajPolicyConfigCall) Do(opts ...googleapi.CallOption) (*KeyAccessJustificationsPolicyConfig, error) {
+	gensupport.SetOptions(c.urlParams_, opts...)
+	res, err := c.doRequest("json")
+	if res != nil && res.StatusCode == http.StatusNotModified {
+		if res.Body != nil {
+			res.Body.Close()
+		}
+		return nil, gensupport.WrapError(&googleapi.Error{
+			Code:   res.StatusCode,
+			Header: res.Header,
+		})
+	}
+	if err != nil {
+		return nil, err
+	}
+	defer googleapi.CloseBody(res)
+	if err := googleapi.CheckResponse(res); err != nil {
+		return nil, gensupport.WrapError(err)
+	}
+	ret := &KeyAccessJustificationsPolicyConfig{
+		ServerResponse: googleapi.ServerResponse{
+			Header:         res.Header,
+			HTTPStatusCode: res.StatusCode,
+		},
+	}
+	target := &ret
+	b, err := gensupport.DecodeResponseBytes(target, res)
+	if err != nil {
+		return nil, err
+	}
+	c.s.logger.DebugContext(c.ctx_, "api response", "serviceName", apiName, "rpcName", "cloudkms.projects.updateKajPolicyConfig", "response", internallog.HTTPResponse(res, b))
 	return ret, nil
 }
 
@@ -3780,8 +6008,7 @@ func (c *ProjectsLocationsGenerateRandomBytesCall) Header() http.Header {
 
 func (c *ProjectsLocationsGenerateRandomBytesCall) doRequest(alt string) (*http.Response, error) {
 	reqHeaders := gensupport.SetHeaders(c.s.userAgent(), "application/json", c.header_)
-	var body io.Reader = nil
-	body, err := googleapi.WithoutDataWrapper.JSONReader(c.generaterandombytesrequest)
+	body, err := googleapi.WithoutDataWrapper.JSONBuffer(c.generaterandombytesrequest)
 	if err != nil {
 		return nil, err
 	}
@@ -3797,6 +6024,7 @@ func (c *ProjectsLocationsGenerateRandomBytesCall) doRequest(alt string) (*http.
 	googleapi.Expand(req.URL, map[string]string{
 		"location": c.location,
 	})
+	c.s.logger.DebugContext(c.ctx_, "api request", "serviceName", apiName, "rpcName", "cloudkms.projects.locations.generateRandomBytes", "request", internallog.HTTPRequest(req, body.Bytes()))
 	return gensupport.SendRequest(c.ctx_, c.s.client, req)
 }
 
@@ -3832,9 +6060,11 @@ func (c *ProjectsLocationsGenerateRandomBytesCall) Do(opts ...googleapi.CallOpti
 		},
 	}
 	target := &ret
-	if err := gensupport.DecodeResponse(target, res); err != nil {
+	b, err := gensupport.DecodeResponseBytes(target, res)
+	if err != nil {
 		return nil, err
 	}
+	c.s.logger.DebugContext(c.ctx_, "api response", "serviceName", apiName, "rpcName", "cloudkms.projects.locations.generateRandomBytes", "response", internallog.HTTPResponse(res, b))
 	return ret, nil
 }
 
@@ -3892,12 +6122,11 @@ func (c *ProjectsLocationsGetCall) doRequest(alt string) (*http.Response, error)
 	if c.ifNoneMatch_ != "" {
 		reqHeaders.Set("If-None-Match", c.ifNoneMatch_)
 	}
-	var body io.Reader = nil
 	c.urlParams_.Set("alt", alt)
 	c.urlParams_.Set("prettyPrint", "false")
 	urls := googleapi.ResolveRelative(c.s.BasePath, "v1/{+name}")
 	urls += "?" + c.urlParams_.Encode()
-	req, err := http.NewRequest("GET", urls, body)
+	req, err := http.NewRequest("GET", urls, nil)
 	if err != nil {
 		return nil, err
 	}
@@ -3905,6 +6134,7 @@ func (c *ProjectsLocationsGetCall) doRequest(alt string) (*http.Response, error)
 	googleapi.Expand(req.URL, map[string]string{
 		"name": c.name,
 	})
+	c.s.logger.DebugContext(c.ctx_, "api request", "serviceName", apiName, "rpcName", "cloudkms.projects.locations.get", "request", internallog.HTTPRequest(req, nil))
 	return gensupport.SendRequest(c.ctx_, c.s.client, req)
 }
 
@@ -3939,9 +6169,11 @@ func (c *ProjectsLocationsGetCall) Do(opts ...googleapi.CallOption) (*Location, 
 		},
 	}
 	target := &ret
-	if err := gensupport.DecodeResponse(target, res); err != nil {
+	b, err := gensupport.DecodeResponseBytes(target, res)
+	if err != nil {
 		return nil, err
 	}
+	c.s.logger.DebugContext(c.ctx_, "api response", "serviceName", apiName, "rpcName", "cloudkms.projects.locations.get", "response", internallog.HTTPResponse(res, b))
 	return ret, nil
 }
 
@@ -4000,12 +6232,11 @@ func (c *ProjectsLocationsGetEkmConfigCall) doRequest(alt string) (*http.Respons
 	if c.ifNoneMatch_ != "" {
 		reqHeaders.Set("If-None-Match", c.ifNoneMatch_)
 	}
-	var body io.Reader = nil
 	c.urlParams_.Set("alt", alt)
 	c.urlParams_.Set("prettyPrint", "false")
 	urls := googleapi.ResolveRelative(c.s.BasePath, "v1/{+name}")
 	urls += "?" + c.urlParams_.Encode()
-	req, err := http.NewRequest("GET", urls, body)
+	req, err := http.NewRequest("GET", urls, nil)
 	if err != nil {
 		return nil, err
 	}
@@ -4013,6 +6244,7 @@ func (c *ProjectsLocationsGetEkmConfigCall) doRequest(alt string) (*http.Respons
 	googleapi.Expand(req.URL, map[string]string{
 		"name": c.name,
 	})
+	c.s.logger.DebugContext(c.ctx_, "api request", "serviceName", apiName, "rpcName", "cloudkms.projects.locations.getEkmConfig", "request", internallog.HTTPRequest(req, nil))
 	return gensupport.SendRequest(c.ctx_, c.s.client, req)
 }
 
@@ -4047,9 +6279,11 @@ func (c *ProjectsLocationsGetEkmConfigCall) Do(opts ...googleapi.CallOption) (*E
 		},
 	}
 	target := &ret
-	if err := gensupport.DecodeResponse(target, res); err != nil {
+	b, err := gensupport.DecodeResponseBytes(target, res)
+	if err != nil {
 		return nil, err
 	}
+	c.s.logger.DebugContext(c.ctx_, "api response", "serviceName", apiName, "rpcName", "cloudkms.projects.locations.getEkmConfig", "response", internallog.HTTPResponse(res, b))
 	return ret, nil
 }
 
@@ -4068,6 +6302,14 @@ type ProjectsLocationsListCall struct {
 func (r *ProjectsLocationsService) List(name string) *ProjectsLocationsListCall {
 	c := &ProjectsLocationsListCall{s: r.s, urlParams_: make(gensupport.URLParams)}
 	c.name = name
+	return c
+}
+
+// ExtraLocationTypes sets the optional parameter "extraLocationTypes": Do not
+// use this field. It is unsupported and is ignored unless explicitly
+// documented otherwise. This is primarily for internal usage.
+func (c *ProjectsLocationsListCall) ExtraLocationTypes(extraLocationTypes ...string) *ProjectsLocationsListCall {
+	c.urlParams_.SetMulti("extraLocationTypes", append([]string{}, extraLocationTypes...))
 	return c
 }
 
@@ -4131,12 +6373,11 @@ func (c *ProjectsLocationsListCall) doRequest(alt string) (*http.Response, error
 	if c.ifNoneMatch_ != "" {
 		reqHeaders.Set("If-None-Match", c.ifNoneMatch_)
 	}
-	var body io.Reader = nil
 	c.urlParams_.Set("alt", alt)
 	c.urlParams_.Set("prettyPrint", "false")
 	urls := googleapi.ResolveRelative(c.s.BasePath, "v1/{+name}/locations")
 	urls += "?" + c.urlParams_.Encode()
-	req, err := http.NewRequest("GET", urls, body)
+	req, err := http.NewRequest("GET", urls, nil)
 	if err != nil {
 		return nil, err
 	}
@@ -4144,6 +6385,7 @@ func (c *ProjectsLocationsListCall) doRequest(alt string) (*http.Response, error
 	googleapi.Expand(req.URL, map[string]string{
 		"name": c.name,
 	})
+	c.s.logger.DebugContext(c.ctx_, "api request", "serviceName", apiName, "rpcName", "cloudkms.projects.locations.list", "request", internallog.HTTPRequest(req, nil))
 	return gensupport.SendRequest(c.ctx_, c.s.client, req)
 }
 
@@ -4179,9 +6421,11 @@ func (c *ProjectsLocationsListCall) Do(opts ...googleapi.CallOption) (*ListLocat
 		},
 	}
 	target := &ret
-	if err := gensupport.DecodeResponse(target, res); err != nil {
+	b, err := gensupport.DecodeResponseBytes(target, res)
+	if err != nil {
 		return nil, err
 	}
+	c.s.logger.DebugContext(c.ctx_, "api response", "serviceName", apiName, "rpcName", "cloudkms.projects.locations.list", "response", internallog.HTTPResponse(res, b))
 	return ret, nil
 }
 
@@ -4259,8 +6503,7 @@ func (c *ProjectsLocationsUpdateEkmConfigCall) Header() http.Header {
 
 func (c *ProjectsLocationsUpdateEkmConfigCall) doRequest(alt string) (*http.Response, error) {
 	reqHeaders := gensupport.SetHeaders(c.s.userAgent(), "application/json", c.header_)
-	var body io.Reader = nil
-	body, err := googleapi.WithoutDataWrapper.JSONReader(c.ekmconfig)
+	body, err := googleapi.WithoutDataWrapper.JSONBuffer(c.ekmconfig)
 	if err != nil {
 		return nil, err
 	}
@@ -4276,6 +6519,7 @@ func (c *ProjectsLocationsUpdateEkmConfigCall) doRequest(alt string) (*http.Resp
 	googleapi.Expand(req.URL, map[string]string{
 		"name": c.name,
 	})
+	c.s.logger.DebugContext(c.ctx_, "api request", "serviceName", apiName, "rpcName", "cloudkms.projects.locations.updateEkmConfig", "request", internallog.HTTPRequest(req, body.Bytes()))
 	return gensupport.SendRequest(c.ctx_, c.s.client, req)
 }
 
@@ -4310,9 +6554,11 @@ func (c *ProjectsLocationsUpdateEkmConfigCall) Do(opts ...googleapi.CallOption) 
 		},
 	}
 	target := &ret
-	if err := gensupport.DecodeResponse(target, res); err != nil {
+	b, err := gensupport.DecodeResponseBytes(target, res)
+	if err != nil {
 		return nil, err
 	}
+	c.s.logger.DebugContext(c.ctx_, "api response", "serviceName", apiName, "rpcName", "cloudkms.projects.locations.updateEkmConfig", "response", internallog.HTTPResponse(res, b))
 	return ret, nil
 }
 
@@ -4390,12 +6636,11 @@ func (c *ProjectsLocationsEkmConfigGetIamPolicyCall) doRequest(alt string) (*htt
 	if c.ifNoneMatch_ != "" {
 		reqHeaders.Set("If-None-Match", c.ifNoneMatch_)
 	}
-	var body io.Reader = nil
 	c.urlParams_.Set("alt", alt)
 	c.urlParams_.Set("prettyPrint", "false")
 	urls := googleapi.ResolveRelative(c.s.BasePath, "v1/{+resource}:getIamPolicy")
 	urls += "?" + c.urlParams_.Encode()
-	req, err := http.NewRequest("GET", urls, body)
+	req, err := http.NewRequest("GET", urls, nil)
 	if err != nil {
 		return nil, err
 	}
@@ -4403,6 +6648,7 @@ func (c *ProjectsLocationsEkmConfigGetIamPolicyCall) doRequest(alt string) (*htt
 	googleapi.Expand(req.URL, map[string]string{
 		"resource": c.resource,
 	})
+	c.s.logger.DebugContext(c.ctx_, "api request", "serviceName", apiName, "rpcName", "cloudkms.projects.locations.ekmConfig.getIamPolicy", "request", internallog.HTTPRequest(req, nil))
 	return gensupport.SendRequest(c.ctx_, c.s.client, req)
 }
 
@@ -4437,9 +6683,11 @@ func (c *ProjectsLocationsEkmConfigGetIamPolicyCall) Do(opts ...googleapi.CallOp
 		},
 	}
 	target := &ret
-	if err := gensupport.DecodeResponse(target, res); err != nil {
+	b, err := gensupport.DecodeResponseBytes(target, res)
+	if err != nil {
 		return nil, err
 	}
+	c.s.logger.DebugContext(c.ctx_, "api response", "serviceName", apiName, "rpcName", "cloudkms.projects.locations.ekmConfig.getIamPolicy", "response", internallog.HTTPResponse(res, b))
 	return ret, nil
 }
 
@@ -4491,8 +6739,7 @@ func (c *ProjectsLocationsEkmConfigSetIamPolicyCall) Header() http.Header {
 
 func (c *ProjectsLocationsEkmConfigSetIamPolicyCall) doRequest(alt string) (*http.Response, error) {
 	reqHeaders := gensupport.SetHeaders(c.s.userAgent(), "application/json", c.header_)
-	var body io.Reader = nil
-	body, err := googleapi.WithoutDataWrapper.JSONReader(c.setiampolicyrequest)
+	body, err := googleapi.WithoutDataWrapper.JSONBuffer(c.setiampolicyrequest)
 	if err != nil {
 		return nil, err
 	}
@@ -4508,6 +6755,7 @@ func (c *ProjectsLocationsEkmConfigSetIamPolicyCall) doRequest(alt string) (*htt
 	googleapi.Expand(req.URL, map[string]string{
 		"resource": c.resource,
 	})
+	c.s.logger.DebugContext(c.ctx_, "api request", "serviceName", apiName, "rpcName", "cloudkms.projects.locations.ekmConfig.setIamPolicy", "request", internallog.HTTPRequest(req, body.Bytes()))
 	return gensupport.SendRequest(c.ctx_, c.s.client, req)
 }
 
@@ -4542,9 +6790,11 @@ func (c *ProjectsLocationsEkmConfigSetIamPolicyCall) Do(opts ...googleapi.CallOp
 		},
 	}
 	target := &ret
-	if err := gensupport.DecodeResponse(target, res); err != nil {
+	b, err := gensupport.DecodeResponseBytes(target, res)
+	if err != nil {
 		return nil, err
 	}
+	c.s.logger.DebugContext(c.ctx_, "api response", "serviceName", apiName, "rpcName", "cloudkms.projects.locations.ekmConfig.setIamPolicy", "response", internallog.HTTPResponse(res, b))
 	return ret, nil
 }
 
@@ -4599,8 +6849,7 @@ func (c *ProjectsLocationsEkmConfigTestIamPermissionsCall) Header() http.Header 
 
 func (c *ProjectsLocationsEkmConfigTestIamPermissionsCall) doRequest(alt string) (*http.Response, error) {
 	reqHeaders := gensupport.SetHeaders(c.s.userAgent(), "application/json", c.header_)
-	var body io.Reader = nil
-	body, err := googleapi.WithoutDataWrapper.JSONReader(c.testiampermissionsrequest)
+	body, err := googleapi.WithoutDataWrapper.JSONBuffer(c.testiampermissionsrequest)
 	if err != nil {
 		return nil, err
 	}
@@ -4616,6 +6865,7 @@ func (c *ProjectsLocationsEkmConfigTestIamPermissionsCall) doRequest(alt string)
 	googleapi.Expand(req.URL, map[string]string{
 		"resource": c.resource,
 	})
+	c.s.logger.DebugContext(c.ctx_, "api request", "serviceName", apiName, "rpcName", "cloudkms.projects.locations.ekmConfig.testIamPermissions", "request", internallog.HTTPRequest(req, body.Bytes()))
 	return gensupport.SendRequest(c.ctx_, c.s.client, req)
 }
 
@@ -4651,9 +6901,11 @@ func (c *ProjectsLocationsEkmConfigTestIamPermissionsCall) Do(opts ...googleapi.
 		},
 	}
 	target := &ret
-	if err := gensupport.DecodeResponse(target, res); err != nil {
+	b, err := gensupport.DecodeResponseBytes(target, res)
+	if err != nil {
 		return nil, err
 	}
+	c.s.logger.DebugContext(c.ctx_, "api response", "serviceName", apiName, "rpcName", "cloudkms.projects.locations.ekmConfig.testIamPermissions", "response", internallog.HTTPResponse(res, b))
 	return ret, nil
 }
 
@@ -4710,8 +6962,7 @@ func (c *ProjectsLocationsEkmConnectionsCreateCall) Header() http.Header {
 
 func (c *ProjectsLocationsEkmConnectionsCreateCall) doRequest(alt string) (*http.Response, error) {
 	reqHeaders := gensupport.SetHeaders(c.s.userAgent(), "application/json", c.header_)
-	var body io.Reader = nil
-	body, err := googleapi.WithoutDataWrapper.JSONReader(c.ekmconnection)
+	body, err := googleapi.WithoutDataWrapper.JSONBuffer(c.ekmconnection)
 	if err != nil {
 		return nil, err
 	}
@@ -4727,6 +6978,7 @@ func (c *ProjectsLocationsEkmConnectionsCreateCall) doRequest(alt string) (*http
 	googleapi.Expand(req.URL, map[string]string{
 		"parent": c.parent,
 	})
+	c.s.logger.DebugContext(c.ctx_, "api request", "serviceName", apiName, "rpcName", "cloudkms.projects.locations.ekmConnections.create", "request", internallog.HTTPRequest(req, body.Bytes()))
 	return gensupport.SendRequest(c.ctx_, c.s.client, req)
 }
 
@@ -4761,9 +7013,11 @@ func (c *ProjectsLocationsEkmConnectionsCreateCall) Do(opts ...googleapi.CallOpt
 		},
 	}
 	target := &ret
-	if err := gensupport.DecodeResponse(target, res); err != nil {
+	b, err := gensupport.DecodeResponseBytes(target, res)
+	if err != nil {
 		return nil, err
 	}
+	c.s.logger.DebugContext(c.ctx_, "api response", "serviceName", apiName, "rpcName", "cloudkms.projects.locations.ekmConnections.create", "response", internallog.HTTPResponse(res, b))
 	return ret, nil
 }
 
@@ -4821,12 +7075,11 @@ func (c *ProjectsLocationsEkmConnectionsGetCall) doRequest(alt string) (*http.Re
 	if c.ifNoneMatch_ != "" {
 		reqHeaders.Set("If-None-Match", c.ifNoneMatch_)
 	}
-	var body io.Reader = nil
 	c.urlParams_.Set("alt", alt)
 	c.urlParams_.Set("prettyPrint", "false")
 	urls := googleapi.ResolveRelative(c.s.BasePath, "v1/{+name}")
 	urls += "?" + c.urlParams_.Encode()
-	req, err := http.NewRequest("GET", urls, body)
+	req, err := http.NewRequest("GET", urls, nil)
 	if err != nil {
 		return nil, err
 	}
@@ -4834,6 +7087,7 @@ func (c *ProjectsLocationsEkmConnectionsGetCall) doRequest(alt string) (*http.Re
 	googleapi.Expand(req.URL, map[string]string{
 		"name": c.name,
 	})
+	c.s.logger.DebugContext(c.ctx_, "api request", "serviceName", apiName, "rpcName", "cloudkms.projects.locations.ekmConnections.get", "request", internallog.HTTPRequest(req, nil))
 	return gensupport.SendRequest(c.ctx_, c.s.client, req)
 }
 
@@ -4868,9 +7122,11 @@ func (c *ProjectsLocationsEkmConnectionsGetCall) Do(opts ...googleapi.CallOption
 		},
 	}
 	target := &ret
-	if err := gensupport.DecodeResponse(target, res); err != nil {
+	b, err := gensupport.DecodeResponseBytes(target, res)
+	if err != nil {
 		return nil, err
 	}
+	c.s.logger.DebugContext(c.ctx_, "api response", "serviceName", apiName, "rpcName", "cloudkms.projects.locations.ekmConnections.get", "response", internallog.HTTPResponse(res, b))
 	return ret, nil
 }
 
@@ -4948,12 +7204,11 @@ func (c *ProjectsLocationsEkmConnectionsGetIamPolicyCall) doRequest(alt string) 
 	if c.ifNoneMatch_ != "" {
 		reqHeaders.Set("If-None-Match", c.ifNoneMatch_)
 	}
-	var body io.Reader = nil
 	c.urlParams_.Set("alt", alt)
 	c.urlParams_.Set("prettyPrint", "false")
 	urls := googleapi.ResolveRelative(c.s.BasePath, "v1/{+resource}:getIamPolicy")
 	urls += "?" + c.urlParams_.Encode()
-	req, err := http.NewRequest("GET", urls, body)
+	req, err := http.NewRequest("GET", urls, nil)
 	if err != nil {
 		return nil, err
 	}
@@ -4961,6 +7216,7 @@ func (c *ProjectsLocationsEkmConnectionsGetIamPolicyCall) doRequest(alt string) 
 	googleapi.Expand(req.URL, map[string]string{
 		"resource": c.resource,
 	})
+	c.s.logger.DebugContext(c.ctx_, "api request", "serviceName", apiName, "rpcName", "cloudkms.projects.locations.ekmConnections.getIamPolicy", "request", internallog.HTTPRequest(req, nil))
 	return gensupport.SendRequest(c.ctx_, c.s.client, req)
 }
 
@@ -4995,9 +7251,11 @@ func (c *ProjectsLocationsEkmConnectionsGetIamPolicyCall) Do(opts ...googleapi.C
 		},
 	}
 	target := &ret
-	if err := gensupport.DecodeResponse(target, res); err != nil {
+	b, err := gensupport.DecodeResponseBytes(target, res)
+	if err != nil {
 		return nil, err
 	}
+	c.s.logger.DebugContext(c.ctx_, "api response", "serviceName", apiName, "rpcName", "cloudkms.projects.locations.ekmConnections.getIamPolicy", "response", internallog.HTTPResponse(res, b))
 	return ret, nil
 }
 
@@ -5091,12 +7349,11 @@ func (c *ProjectsLocationsEkmConnectionsListCall) doRequest(alt string) (*http.R
 	if c.ifNoneMatch_ != "" {
 		reqHeaders.Set("If-None-Match", c.ifNoneMatch_)
 	}
-	var body io.Reader = nil
 	c.urlParams_.Set("alt", alt)
 	c.urlParams_.Set("prettyPrint", "false")
 	urls := googleapi.ResolveRelative(c.s.BasePath, "v1/{+parent}/ekmConnections")
 	urls += "?" + c.urlParams_.Encode()
-	req, err := http.NewRequest("GET", urls, body)
+	req, err := http.NewRequest("GET", urls, nil)
 	if err != nil {
 		return nil, err
 	}
@@ -5104,6 +7361,7 @@ func (c *ProjectsLocationsEkmConnectionsListCall) doRequest(alt string) (*http.R
 	googleapi.Expand(req.URL, map[string]string{
 		"parent": c.parent,
 	})
+	c.s.logger.DebugContext(c.ctx_, "api request", "serviceName", apiName, "rpcName", "cloudkms.projects.locations.ekmConnections.list", "request", internallog.HTTPRequest(req, nil))
 	return gensupport.SendRequest(c.ctx_, c.s.client, req)
 }
 
@@ -5139,9 +7397,11 @@ func (c *ProjectsLocationsEkmConnectionsListCall) Do(opts ...googleapi.CallOptio
 		},
 	}
 	target := &ret
-	if err := gensupport.DecodeResponse(target, res); err != nil {
+	b, err := gensupport.DecodeResponseBytes(target, res)
+	if err != nil {
 		return nil, err
 	}
+	c.s.logger.DebugContext(c.ctx_, "api response", "serviceName", apiName, "rpcName", "cloudkms.projects.locations.ekmConnections.list", "response", internallog.HTTPResponse(res, b))
 	return ret, nil
 }
 
@@ -5218,8 +7478,7 @@ func (c *ProjectsLocationsEkmConnectionsPatchCall) Header() http.Header {
 
 func (c *ProjectsLocationsEkmConnectionsPatchCall) doRequest(alt string) (*http.Response, error) {
 	reqHeaders := gensupport.SetHeaders(c.s.userAgent(), "application/json", c.header_)
-	var body io.Reader = nil
-	body, err := googleapi.WithoutDataWrapper.JSONReader(c.ekmconnection)
+	body, err := googleapi.WithoutDataWrapper.JSONBuffer(c.ekmconnection)
 	if err != nil {
 		return nil, err
 	}
@@ -5235,6 +7494,7 @@ func (c *ProjectsLocationsEkmConnectionsPatchCall) doRequest(alt string) (*http.
 	googleapi.Expand(req.URL, map[string]string{
 		"name": c.name,
 	})
+	c.s.logger.DebugContext(c.ctx_, "api request", "serviceName", apiName, "rpcName", "cloudkms.projects.locations.ekmConnections.patch", "request", internallog.HTTPRequest(req, body.Bytes()))
 	return gensupport.SendRequest(c.ctx_, c.s.client, req)
 }
 
@@ -5269,9 +7529,11 @@ func (c *ProjectsLocationsEkmConnectionsPatchCall) Do(opts ...googleapi.CallOpti
 		},
 	}
 	target := &ret
-	if err := gensupport.DecodeResponse(target, res); err != nil {
+	b, err := gensupport.DecodeResponseBytes(target, res)
+	if err != nil {
 		return nil, err
 	}
+	c.s.logger.DebugContext(c.ctx_, "api response", "serviceName", apiName, "rpcName", "cloudkms.projects.locations.ekmConnections.patch", "response", internallog.HTTPResponse(res, b))
 	return ret, nil
 }
 
@@ -5323,8 +7585,7 @@ func (c *ProjectsLocationsEkmConnectionsSetIamPolicyCall) Header() http.Header {
 
 func (c *ProjectsLocationsEkmConnectionsSetIamPolicyCall) doRequest(alt string) (*http.Response, error) {
 	reqHeaders := gensupport.SetHeaders(c.s.userAgent(), "application/json", c.header_)
-	var body io.Reader = nil
-	body, err := googleapi.WithoutDataWrapper.JSONReader(c.setiampolicyrequest)
+	body, err := googleapi.WithoutDataWrapper.JSONBuffer(c.setiampolicyrequest)
 	if err != nil {
 		return nil, err
 	}
@@ -5340,6 +7601,7 @@ func (c *ProjectsLocationsEkmConnectionsSetIamPolicyCall) doRequest(alt string) 
 	googleapi.Expand(req.URL, map[string]string{
 		"resource": c.resource,
 	})
+	c.s.logger.DebugContext(c.ctx_, "api request", "serviceName", apiName, "rpcName", "cloudkms.projects.locations.ekmConnections.setIamPolicy", "request", internallog.HTTPRequest(req, body.Bytes()))
 	return gensupport.SendRequest(c.ctx_, c.s.client, req)
 }
 
@@ -5374,9 +7636,11 @@ func (c *ProjectsLocationsEkmConnectionsSetIamPolicyCall) Do(opts ...googleapi.C
 		},
 	}
 	target := &ret
-	if err := gensupport.DecodeResponse(target, res); err != nil {
+	b, err := gensupport.DecodeResponseBytes(target, res)
+	if err != nil {
 		return nil, err
 	}
+	c.s.logger.DebugContext(c.ctx_, "api response", "serviceName", apiName, "rpcName", "cloudkms.projects.locations.ekmConnections.setIamPolicy", "response", internallog.HTTPResponse(res, b))
 	return ret, nil
 }
 
@@ -5431,8 +7695,7 @@ func (c *ProjectsLocationsEkmConnectionsTestIamPermissionsCall) Header() http.He
 
 func (c *ProjectsLocationsEkmConnectionsTestIamPermissionsCall) doRequest(alt string) (*http.Response, error) {
 	reqHeaders := gensupport.SetHeaders(c.s.userAgent(), "application/json", c.header_)
-	var body io.Reader = nil
-	body, err := googleapi.WithoutDataWrapper.JSONReader(c.testiampermissionsrequest)
+	body, err := googleapi.WithoutDataWrapper.JSONBuffer(c.testiampermissionsrequest)
 	if err != nil {
 		return nil, err
 	}
@@ -5448,6 +7711,7 @@ func (c *ProjectsLocationsEkmConnectionsTestIamPermissionsCall) doRequest(alt st
 	googleapi.Expand(req.URL, map[string]string{
 		"resource": c.resource,
 	})
+	c.s.logger.DebugContext(c.ctx_, "api request", "serviceName", apiName, "rpcName", "cloudkms.projects.locations.ekmConnections.testIamPermissions", "request", internallog.HTTPRequest(req, body.Bytes()))
 	return gensupport.SendRequest(c.ctx_, c.s.client, req)
 }
 
@@ -5483,9 +7747,11 @@ func (c *ProjectsLocationsEkmConnectionsTestIamPermissionsCall) Do(opts ...googl
 		},
 	}
 	target := &ret
-	if err := gensupport.DecodeResponse(target, res); err != nil {
+	b, err := gensupport.DecodeResponseBytes(target, res)
+	if err != nil {
 		return nil, err
 	}
+	c.s.logger.DebugContext(c.ctx_, "api response", "serviceName", apiName, "rpcName", "cloudkms.projects.locations.ekmConnections.testIamPermissions", "response", internallog.HTTPResponse(res, b))
 	return ret, nil
 }
 
@@ -5547,12 +7813,11 @@ func (c *ProjectsLocationsEkmConnectionsVerifyConnectivityCall) doRequest(alt st
 	if c.ifNoneMatch_ != "" {
 		reqHeaders.Set("If-None-Match", c.ifNoneMatch_)
 	}
-	var body io.Reader = nil
 	c.urlParams_.Set("alt", alt)
 	c.urlParams_.Set("prettyPrint", "false")
 	urls := googleapi.ResolveRelative(c.s.BasePath, "v1/{+name}:verifyConnectivity")
 	urls += "?" + c.urlParams_.Encode()
-	req, err := http.NewRequest("GET", urls, body)
+	req, err := http.NewRequest("GET", urls, nil)
 	if err != nil {
 		return nil, err
 	}
@@ -5560,6 +7825,7 @@ func (c *ProjectsLocationsEkmConnectionsVerifyConnectivityCall) doRequest(alt st
 	googleapi.Expand(req.URL, map[string]string{
 		"name": c.name,
 	})
+	c.s.logger.DebugContext(c.ctx_, "api request", "serviceName", apiName, "rpcName", "cloudkms.projects.locations.ekmConnections.verifyConnectivity", "request", internallog.HTTPRequest(req, nil))
 	return gensupport.SendRequest(c.ctx_, c.s.client, req)
 }
 
@@ -5595,9 +7861,11 @@ func (c *ProjectsLocationsEkmConnectionsVerifyConnectivityCall) Do(opts ...googl
 		},
 	}
 	target := &ret
-	if err := gensupport.DecodeResponse(target, res); err != nil {
+	b, err := gensupport.DecodeResponseBytes(target, res)
+	if err != nil {
 		return nil, err
 	}
+	c.s.logger.DebugContext(c.ctx_, "api response", "serviceName", apiName, "rpcName", "cloudkms.projects.locations.ekmConnections.verifyConnectivity", "response", internallog.HTTPResponse(res, b))
 	return ret, nil
 }
 
@@ -5658,8 +7926,7 @@ func (c *ProjectsLocationsKeyHandlesCreateCall) Header() http.Header {
 
 func (c *ProjectsLocationsKeyHandlesCreateCall) doRequest(alt string) (*http.Response, error) {
 	reqHeaders := gensupport.SetHeaders(c.s.userAgent(), "application/json", c.header_)
-	var body io.Reader = nil
-	body, err := googleapi.WithoutDataWrapper.JSONReader(c.keyhandle)
+	body, err := googleapi.WithoutDataWrapper.JSONBuffer(c.keyhandle)
 	if err != nil {
 		return nil, err
 	}
@@ -5675,6 +7942,7 @@ func (c *ProjectsLocationsKeyHandlesCreateCall) doRequest(alt string) (*http.Res
 	googleapi.Expand(req.URL, map[string]string{
 		"parent": c.parent,
 	})
+	c.s.logger.DebugContext(c.ctx_, "api request", "serviceName", apiName, "rpcName", "cloudkms.projects.locations.keyHandles.create", "request", internallog.HTTPRequest(req, body.Bytes()))
 	return gensupport.SendRequest(c.ctx_, c.s.client, req)
 }
 
@@ -5709,9 +7977,11 @@ func (c *ProjectsLocationsKeyHandlesCreateCall) Do(opts ...googleapi.CallOption)
 		},
 	}
 	target := &ret
-	if err := gensupport.DecodeResponse(target, res); err != nil {
+	b, err := gensupport.DecodeResponseBytes(target, res)
+	if err != nil {
 		return nil, err
 	}
+	c.s.logger.DebugContext(c.ctx_, "api response", "serviceName", apiName, "rpcName", "cloudkms.projects.locations.keyHandles.create", "response", internallog.HTTPResponse(res, b))
 	return ret, nil
 }
 
@@ -5770,12 +8040,11 @@ func (c *ProjectsLocationsKeyHandlesGetCall) doRequest(alt string) (*http.Respon
 	if c.ifNoneMatch_ != "" {
 		reqHeaders.Set("If-None-Match", c.ifNoneMatch_)
 	}
-	var body io.Reader = nil
 	c.urlParams_.Set("alt", alt)
 	c.urlParams_.Set("prettyPrint", "false")
 	urls := googleapi.ResolveRelative(c.s.BasePath, "v1/{+name}")
 	urls += "?" + c.urlParams_.Encode()
-	req, err := http.NewRequest("GET", urls, body)
+	req, err := http.NewRequest("GET", urls, nil)
 	if err != nil {
 		return nil, err
 	}
@@ -5783,6 +8052,7 @@ func (c *ProjectsLocationsKeyHandlesGetCall) doRequest(alt string) (*http.Respon
 	googleapi.Expand(req.URL, map[string]string{
 		"name": c.name,
 	})
+	c.s.logger.DebugContext(c.ctx_, "api request", "serviceName", apiName, "rpcName", "cloudkms.projects.locations.keyHandles.get", "request", internallog.HTTPRequest(req, nil))
 	return gensupport.SendRequest(c.ctx_, c.s.client, req)
 }
 
@@ -5817,9 +8087,11 @@ func (c *ProjectsLocationsKeyHandlesGetCall) Do(opts ...googleapi.CallOption) (*
 		},
 	}
 	target := &ret
-	if err := gensupport.DecodeResponse(target, res); err != nil {
+	b, err := gensupport.DecodeResponseBytes(target, res)
+	if err != nil {
 		return nil, err
 	}
+	c.s.logger.DebugContext(c.ctx_, "api response", "serviceName", apiName, "rpcName", "cloudkms.projects.locations.keyHandles.get", "response", internallog.HTTPResponse(res, b))
 	return ret, nil
 }
 
@@ -5846,6 +8118,23 @@ func (r *ProjectsLocationsKeyHandlesService) List(parent string) *ProjectsLocati
 // KeyHandles, e.g. `resource_type_selector="{SERVICE}.googleapis.com/{TYPE}".
 func (c *ProjectsLocationsKeyHandlesListCall) Filter(filter string) *ProjectsLocationsKeyHandlesListCall {
 	c.urlParams_.Set("filter", filter)
+	return c
+}
+
+// PageSize sets the optional parameter "pageSize": Optional limit on the
+// number of KeyHandles to include in the response. The service may return
+// fewer than this value. Further KeyHandles can subsequently be obtained by
+// including the ListKeyHandlesResponse.next_page_token in a subsequent
+// request. If unspecified, at most 100 KeyHandles will be returned.
+func (c *ProjectsLocationsKeyHandlesListCall) PageSize(pageSize int64) *ProjectsLocationsKeyHandlesListCall {
+	c.urlParams_.Set("pageSize", fmt.Sprint(pageSize))
+	return c
+}
+
+// PageToken sets the optional parameter "pageToken": Optional pagination
+// token, returned earlier via ListKeyHandlesResponse.next_page_token.
+func (c *ProjectsLocationsKeyHandlesListCall) PageToken(pageToken string) *ProjectsLocationsKeyHandlesListCall {
+	c.urlParams_.Set("pageToken", pageToken)
 	return c
 }
 
@@ -5885,12 +8174,11 @@ func (c *ProjectsLocationsKeyHandlesListCall) doRequest(alt string) (*http.Respo
 	if c.ifNoneMatch_ != "" {
 		reqHeaders.Set("If-None-Match", c.ifNoneMatch_)
 	}
-	var body io.Reader = nil
 	c.urlParams_.Set("alt", alt)
 	c.urlParams_.Set("prettyPrint", "false")
 	urls := googleapi.ResolveRelative(c.s.BasePath, "v1/{+parent}/keyHandles")
 	urls += "?" + c.urlParams_.Encode()
-	req, err := http.NewRequest("GET", urls, body)
+	req, err := http.NewRequest("GET", urls, nil)
 	if err != nil {
 		return nil, err
 	}
@@ -5898,6 +8186,7 @@ func (c *ProjectsLocationsKeyHandlesListCall) doRequest(alt string) (*http.Respo
 	googleapi.Expand(req.URL, map[string]string{
 		"parent": c.parent,
 	})
+	c.s.logger.DebugContext(c.ctx_, "api request", "serviceName", apiName, "rpcName", "cloudkms.projects.locations.keyHandles.list", "request", internallog.HTTPRequest(req, nil))
 	return gensupport.SendRequest(c.ctx_, c.s.client, req)
 }
 
@@ -5933,10 +8222,33 @@ func (c *ProjectsLocationsKeyHandlesListCall) Do(opts ...googleapi.CallOption) (
 		},
 	}
 	target := &ret
-	if err := gensupport.DecodeResponse(target, res); err != nil {
+	b, err := gensupport.DecodeResponseBytes(target, res)
+	if err != nil {
 		return nil, err
 	}
+	c.s.logger.DebugContext(c.ctx_, "api response", "serviceName", apiName, "rpcName", "cloudkms.projects.locations.keyHandles.list", "response", internallog.HTTPResponse(res, b))
 	return ret, nil
+}
+
+// Pages invokes f for each page of results.
+// A non-nil error returned from f will halt the iteration.
+// The provided context supersedes any context provided to the Context method.
+func (c *ProjectsLocationsKeyHandlesListCall) Pages(ctx context.Context, f func(*ListKeyHandlesResponse) error) error {
+	c.ctx_ = ctx
+	defer c.PageToken(c.urlParams_.Get("pageToken"))
+	for {
+		x, err := c.Do()
+		if err != nil {
+			return err
+		}
+		if err := f(x); err != nil {
+			return err
+		}
+		if x.NextPageToken == "" {
+			return nil
+		}
+		c.PageToken(x.NextPageToken)
+	}
 }
 
 type ProjectsLocationsKeyRingsCreateCall struct {
@@ -5992,8 +8304,7 @@ func (c *ProjectsLocationsKeyRingsCreateCall) Header() http.Header {
 
 func (c *ProjectsLocationsKeyRingsCreateCall) doRequest(alt string) (*http.Response, error) {
 	reqHeaders := gensupport.SetHeaders(c.s.userAgent(), "application/json", c.header_)
-	var body io.Reader = nil
-	body, err := googleapi.WithoutDataWrapper.JSONReader(c.keyring)
+	body, err := googleapi.WithoutDataWrapper.JSONBuffer(c.keyring)
 	if err != nil {
 		return nil, err
 	}
@@ -6009,6 +8320,7 @@ func (c *ProjectsLocationsKeyRingsCreateCall) doRequest(alt string) (*http.Respo
 	googleapi.Expand(req.URL, map[string]string{
 		"parent": c.parent,
 	})
+	c.s.logger.DebugContext(c.ctx_, "api request", "serviceName", apiName, "rpcName", "cloudkms.projects.locations.keyRings.create", "request", internallog.HTTPRequest(req, body.Bytes()))
 	return gensupport.SendRequest(c.ctx_, c.s.client, req)
 }
 
@@ -6043,9 +8355,11 @@ func (c *ProjectsLocationsKeyRingsCreateCall) Do(opts ...googleapi.CallOption) (
 		},
 	}
 	target := &ret
-	if err := gensupport.DecodeResponse(target, res); err != nil {
+	b, err := gensupport.DecodeResponseBytes(target, res)
+	if err != nil {
 		return nil, err
 	}
+	c.s.logger.DebugContext(c.ctx_, "api response", "serviceName", apiName, "rpcName", "cloudkms.projects.locations.keyRings.create", "response", internallog.HTTPResponse(res, b))
 	return ret, nil
 }
 
@@ -6103,12 +8417,11 @@ func (c *ProjectsLocationsKeyRingsGetCall) doRequest(alt string) (*http.Response
 	if c.ifNoneMatch_ != "" {
 		reqHeaders.Set("If-None-Match", c.ifNoneMatch_)
 	}
-	var body io.Reader = nil
 	c.urlParams_.Set("alt", alt)
 	c.urlParams_.Set("prettyPrint", "false")
 	urls := googleapi.ResolveRelative(c.s.BasePath, "v1/{+name}")
 	urls += "?" + c.urlParams_.Encode()
-	req, err := http.NewRequest("GET", urls, body)
+	req, err := http.NewRequest("GET", urls, nil)
 	if err != nil {
 		return nil, err
 	}
@@ -6116,6 +8429,7 @@ func (c *ProjectsLocationsKeyRingsGetCall) doRequest(alt string) (*http.Response
 	googleapi.Expand(req.URL, map[string]string{
 		"name": c.name,
 	})
+	c.s.logger.DebugContext(c.ctx_, "api request", "serviceName", apiName, "rpcName", "cloudkms.projects.locations.keyRings.get", "request", internallog.HTTPRequest(req, nil))
 	return gensupport.SendRequest(c.ctx_, c.s.client, req)
 }
 
@@ -6150,9 +8464,11 @@ func (c *ProjectsLocationsKeyRingsGetCall) Do(opts ...googleapi.CallOption) (*Ke
 		},
 	}
 	target := &ret
-	if err := gensupport.DecodeResponse(target, res); err != nil {
+	b, err := gensupport.DecodeResponseBytes(target, res)
+	if err != nil {
 		return nil, err
 	}
+	c.s.logger.DebugContext(c.ctx_, "api response", "serviceName", apiName, "rpcName", "cloudkms.projects.locations.keyRings.get", "response", internallog.HTTPResponse(res, b))
 	return ret, nil
 }
 
@@ -6230,12 +8546,11 @@ func (c *ProjectsLocationsKeyRingsGetIamPolicyCall) doRequest(alt string) (*http
 	if c.ifNoneMatch_ != "" {
 		reqHeaders.Set("If-None-Match", c.ifNoneMatch_)
 	}
-	var body io.Reader = nil
 	c.urlParams_.Set("alt", alt)
 	c.urlParams_.Set("prettyPrint", "false")
 	urls := googleapi.ResolveRelative(c.s.BasePath, "v1/{+resource}:getIamPolicy")
 	urls += "?" + c.urlParams_.Encode()
-	req, err := http.NewRequest("GET", urls, body)
+	req, err := http.NewRequest("GET", urls, nil)
 	if err != nil {
 		return nil, err
 	}
@@ -6243,6 +8558,7 @@ func (c *ProjectsLocationsKeyRingsGetIamPolicyCall) doRequest(alt string) (*http
 	googleapi.Expand(req.URL, map[string]string{
 		"resource": c.resource,
 	})
+	c.s.logger.DebugContext(c.ctx_, "api request", "serviceName", apiName, "rpcName", "cloudkms.projects.locations.keyRings.getIamPolicy", "request", internallog.HTTPRequest(req, nil))
 	return gensupport.SendRequest(c.ctx_, c.s.client, req)
 }
 
@@ -6277,9 +8593,11 @@ func (c *ProjectsLocationsKeyRingsGetIamPolicyCall) Do(opts ...googleapi.CallOpt
 		},
 	}
 	target := &ret
-	if err := gensupport.DecodeResponse(target, res); err != nil {
+	b, err := gensupport.DecodeResponseBytes(target, res)
+	if err != nil {
 		return nil, err
 	}
+	c.s.logger.DebugContext(c.ctx_, "api response", "serviceName", apiName, "rpcName", "cloudkms.projects.locations.keyRings.getIamPolicy", "response", internallog.HTTPResponse(res, b))
 	return ret, nil
 }
 
@@ -6373,12 +8691,11 @@ func (c *ProjectsLocationsKeyRingsListCall) doRequest(alt string) (*http.Respons
 	if c.ifNoneMatch_ != "" {
 		reqHeaders.Set("If-None-Match", c.ifNoneMatch_)
 	}
-	var body io.Reader = nil
 	c.urlParams_.Set("alt", alt)
 	c.urlParams_.Set("prettyPrint", "false")
 	urls := googleapi.ResolveRelative(c.s.BasePath, "v1/{+parent}/keyRings")
 	urls += "?" + c.urlParams_.Encode()
-	req, err := http.NewRequest("GET", urls, body)
+	req, err := http.NewRequest("GET", urls, nil)
 	if err != nil {
 		return nil, err
 	}
@@ -6386,6 +8703,7 @@ func (c *ProjectsLocationsKeyRingsListCall) doRequest(alt string) (*http.Respons
 	googleapi.Expand(req.URL, map[string]string{
 		"parent": c.parent,
 	})
+	c.s.logger.DebugContext(c.ctx_, "api request", "serviceName", apiName, "rpcName", "cloudkms.projects.locations.keyRings.list", "request", internallog.HTTPRequest(req, nil))
 	return gensupport.SendRequest(c.ctx_, c.s.client, req)
 }
 
@@ -6421,9 +8739,11 @@ func (c *ProjectsLocationsKeyRingsListCall) Do(opts ...googleapi.CallOption) (*L
 		},
 	}
 	target := &ret
-	if err := gensupport.DecodeResponse(target, res); err != nil {
+	b, err := gensupport.DecodeResponseBytes(target, res)
+	if err != nil {
 		return nil, err
 	}
+	c.s.logger.DebugContext(c.ctx_, "api response", "serviceName", apiName, "rpcName", "cloudkms.projects.locations.keyRings.list", "response", internallog.HTTPResponse(res, b))
 	return ret, nil
 }
 
@@ -6496,8 +8816,7 @@ func (c *ProjectsLocationsKeyRingsSetIamPolicyCall) Header() http.Header {
 
 func (c *ProjectsLocationsKeyRingsSetIamPolicyCall) doRequest(alt string) (*http.Response, error) {
 	reqHeaders := gensupport.SetHeaders(c.s.userAgent(), "application/json", c.header_)
-	var body io.Reader = nil
-	body, err := googleapi.WithoutDataWrapper.JSONReader(c.setiampolicyrequest)
+	body, err := googleapi.WithoutDataWrapper.JSONBuffer(c.setiampolicyrequest)
 	if err != nil {
 		return nil, err
 	}
@@ -6513,6 +8832,7 @@ func (c *ProjectsLocationsKeyRingsSetIamPolicyCall) doRequest(alt string) (*http
 	googleapi.Expand(req.URL, map[string]string{
 		"resource": c.resource,
 	})
+	c.s.logger.DebugContext(c.ctx_, "api request", "serviceName", apiName, "rpcName", "cloudkms.projects.locations.keyRings.setIamPolicy", "request", internallog.HTTPRequest(req, body.Bytes()))
 	return gensupport.SendRequest(c.ctx_, c.s.client, req)
 }
 
@@ -6547,9 +8867,11 @@ func (c *ProjectsLocationsKeyRingsSetIamPolicyCall) Do(opts ...googleapi.CallOpt
 		},
 	}
 	target := &ret
-	if err := gensupport.DecodeResponse(target, res); err != nil {
+	b, err := gensupport.DecodeResponseBytes(target, res)
+	if err != nil {
 		return nil, err
 	}
+	c.s.logger.DebugContext(c.ctx_, "api response", "serviceName", apiName, "rpcName", "cloudkms.projects.locations.keyRings.setIamPolicy", "response", internallog.HTTPResponse(res, b))
 	return ret, nil
 }
 
@@ -6604,8 +8926,7 @@ func (c *ProjectsLocationsKeyRingsTestIamPermissionsCall) Header() http.Header {
 
 func (c *ProjectsLocationsKeyRingsTestIamPermissionsCall) doRequest(alt string) (*http.Response, error) {
 	reqHeaders := gensupport.SetHeaders(c.s.userAgent(), "application/json", c.header_)
-	var body io.Reader = nil
-	body, err := googleapi.WithoutDataWrapper.JSONReader(c.testiampermissionsrequest)
+	body, err := googleapi.WithoutDataWrapper.JSONBuffer(c.testiampermissionsrequest)
 	if err != nil {
 		return nil, err
 	}
@@ -6621,6 +8942,7 @@ func (c *ProjectsLocationsKeyRingsTestIamPermissionsCall) doRequest(alt string) 
 	googleapi.Expand(req.URL, map[string]string{
 		"resource": c.resource,
 	})
+	c.s.logger.DebugContext(c.ctx_, "api request", "serviceName", apiName, "rpcName", "cloudkms.projects.locations.keyRings.testIamPermissions", "request", internallog.HTTPRequest(req, body.Bytes()))
 	return gensupport.SendRequest(c.ctx_, c.s.client, req)
 }
 
@@ -6656,9 +8978,11 @@ func (c *ProjectsLocationsKeyRingsTestIamPermissionsCall) Do(opts ...googleapi.C
 		},
 	}
 	target := &ret
-	if err := gensupport.DecodeResponse(target, res); err != nil {
+	b, err := gensupport.DecodeResponseBytes(target, res)
+	if err != nil {
 		return nil, err
 	}
+	c.s.logger.DebugContext(c.ctx_, "api response", "serviceName", apiName, "rpcName", "cloudkms.projects.locations.keyRings.testIamPermissions", "response", internallog.HTTPResponse(res, b))
 	return ret, nil
 }
 
@@ -6725,8 +9049,7 @@ func (c *ProjectsLocationsKeyRingsCryptoKeysCreateCall) Header() http.Header {
 
 func (c *ProjectsLocationsKeyRingsCryptoKeysCreateCall) doRequest(alt string) (*http.Response, error) {
 	reqHeaders := gensupport.SetHeaders(c.s.userAgent(), "application/json", c.header_)
-	var body io.Reader = nil
-	body, err := googleapi.WithoutDataWrapper.JSONReader(c.cryptokey)
+	body, err := googleapi.WithoutDataWrapper.JSONBuffer(c.cryptokey)
 	if err != nil {
 		return nil, err
 	}
@@ -6742,6 +9065,7 @@ func (c *ProjectsLocationsKeyRingsCryptoKeysCreateCall) doRequest(alt string) (*
 	googleapi.Expand(req.URL, map[string]string{
 		"parent": c.parent,
 	})
+	c.s.logger.DebugContext(c.ctx_, "api request", "serviceName", apiName, "rpcName", "cloudkms.projects.locations.keyRings.cryptoKeys.create", "request", internallog.HTTPRequest(req, body.Bytes()))
 	return gensupport.SendRequest(c.ctx_, c.s.client, req)
 }
 
@@ -6776,9 +9100,11 @@ func (c *ProjectsLocationsKeyRingsCryptoKeysCreateCall) Do(opts ...googleapi.Cal
 		},
 	}
 	target := &ret
-	if err := gensupport.DecodeResponse(target, res); err != nil {
+	b, err := gensupport.DecodeResponseBytes(target, res)
+	if err != nil {
 		return nil, err
 	}
+	c.s.logger.DebugContext(c.ctx_, "api response", "serviceName", apiName, "rpcName", "cloudkms.projects.locations.keyRings.cryptoKeys.create", "response", internallog.HTTPResponse(res, b))
 	return ret, nil
 }
 
@@ -6828,8 +9154,7 @@ func (c *ProjectsLocationsKeyRingsCryptoKeysDecryptCall) Header() http.Header {
 
 func (c *ProjectsLocationsKeyRingsCryptoKeysDecryptCall) doRequest(alt string) (*http.Response, error) {
 	reqHeaders := gensupport.SetHeaders(c.s.userAgent(), "application/json", c.header_)
-	var body io.Reader = nil
-	body, err := googleapi.WithoutDataWrapper.JSONReader(c.decryptrequest)
+	body, err := googleapi.WithoutDataWrapper.JSONBuffer(c.decryptrequest)
 	if err != nil {
 		return nil, err
 	}
@@ -6845,6 +9170,7 @@ func (c *ProjectsLocationsKeyRingsCryptoKeysDecryptCall) doRequest(alt string) (
 	googleapi.Expand(req.URL, map[string]string{
 		"name": c.name,
 	})
+	c.s.logger.DebugContext(c.ctx_, "api request", "serviceName", apiName, "rpcName", "cloudkms.projects.locations.keyRings.cryptoKeys.decrypt", "request", internallog.HTTPRequest(req, body.Bytes()))
 	return gensupport.SendRequest(c.ctx_, c.s.client, req)
 }
 
@@ -6880,9 +9206,11 @@ func (c *ProjectsLocationsKeyRingsCryptoKeysDecryptCall) Do(opts ...googleapi.Ca
 		},
 	}
 	target := &ret
-	if err := gensupport.DecodeResponse(target, res); err != nil {
+	b, err := gensupport.DecodeResponseBytes(target, res)
+	if err != nil {
 		return nil, err
 	}
+	c.s.logger.DebugContext(c.ctx_, "api response", "serviceName", apiName, "rpcName", "cloudkms.projects.locations.keyRings.cryptoKeys.decrypt", "response", internallog.HTTPResponse(res, b))
 	return ret, nil
 }
 
@@ -6933,8 +9261,7 @@ func (c *ProjectsLocationsKeyRingsCryptoKeysEncryptCall) Header() http.Header {
 
 func (c *ProjectsLocationsKeyRingsCryptoKeysEncryptCall) doRequest(alt string) (*http.Response, error) {
 	reqHeaders := gensupport.SetHeaders(c.s.userAgent(), "application/json", c.header_)
-	var body io.Reader = nil
-	body, err := googleapi.WithoutDataWrapper.JSONReader(c.encryptrequest)
+	body, err := googleapi.WithoutDataWrapper.JSONBuffer(c.encryptrequest)
 	if err != nil {
 		return nil, err
 	}
@@ -6950,6 +9277,7 @@ func (c *ProjectsLocationsKeyRingsCryptoKeysEncryptCall) doRequest(alt string) (
 	googleapi.Expand(req.URL, map[string]string{
 		"name": c.name,
 	})
+	c.s.logger.DebugContext(c.ctx_, "api request", "serviceName", apiName, "rpcName", "cloudkms.projects.locations.keyRings.cryptoKeys.encrypt", "request", internallog.HTTPRequest(req, body.Bytes()))
 	return gensupport.SendRequest(c.ctx_, c.s.client, req)
 }
 
@@ -6985,9 +9313,11 @@ func (c *ProjectsLocationsKeyRingsCryptoKeysEncryptCall) Do(opts ...googleapi.Ca
 		},
 	}
 	target := &ret
-	if err := gensupport.DecodeResponse(target, res); err != nil {
+	b, err := gensupport.DecodeResponseBytes(target, res)
+	if err != nil {
 		return nil, err
 	}
+	c.s.logger.DebugContext(c.ctx_, "api response", "serviceName", apiName, "rpcName", "cloudkms.projects.locations.keyRings.cryptoKeys.encrypt", "response", internallog.HTTPResponse(res, b))
 	return ret, nil
 }
 
@@ -7046,12 +9376,11 @@ func (c *ProjectsLocationsKeyRingsCryptoKeysGetCall) doRequest(alt string) (*htt
 	if c.ifNoneMatch_ != "" {
 		reqHeaders.Set("If-None-Match", c.ifNoneMatch_)
 	}
-	var body io.Reader = nil
 	c.urlParams_.Set("alt", alt)
 	c.urlParams_.Set("prettyPrint", "false")
 	urls := googleapi.ResolveRelative(c.s.BasePath, "v1/{+name}")
 	urls += "?" + c.urlParams_.Encode()
-	req, err := http.NewRequest("GET", urls, body)
+	req, err := http.NewRequest("GET", urls, nil)
 	if err != nil {
 		return nil, err
 	}
@@ -7059,6 +9388,7 @@ func (c *ProjectsLocationsKeyRingsCryptoKeysGetCall) doRequest(alt string) (*htt
 	googleapi.Expand(req.URL, map[string]string{
 		"name": c.name,
 	})
+	c.s.logger.DebugContext(c.ctx_, "api request", "serviceName", apiName, "rpcName", "cloudkms.projects.locations.keyRings.cryptoKeys.get", "request", internallog.HTTPRequest(req, nil))
 	return gensupport.SendRequest(c.ctx_, c.s.client, req)
 }
 
@@ -7093,9 +9423,11 @@ func (c *ProjectsLocationsKeyRingsCryptoKeysGetCall) Do(opts ...googleapi.CallOp
 		},
 	}
 	target := &ret
-	if err := gensupport.DecodeResponse(target, res); err != nil {
+	b, err := gensupport.DecodeResponseBytes(target, res)
+	if err != nil {
 		return nil, err
 	}
+	c.s.logger.DebugContext(c.ctx_, "api response", "serviceName", apiName, "rpcName", "cloudkms.projects.locations.keyRings.cryptoKeys.get", "response", internallog.HTTPResponse(res, b))
 	return ret, nil
 }
 
@@ -7173,12 +9505,11 @@ func (c *ProjectsLocationsKeyRingsCryptoKeysGetIamPolicyCall) doRequest(alt stri
 	if c.ifNoneMatch_ != "" {
 		reqHeaders.Set("If-None-Match", c.ifNoneMatch_)
 	}
-	var body io.Reader = nil
 	c.urlParams_.Set("alt", alt)
 	c.urlParams_.Set("prettyPrint", "false")
 	urls := googleapi.ResolveRelative(c.s.BasePath, "v1/{+resource}:getIamPolicy")
 	urls += "?" + c.urlParams_.Encode()
-	req, err := http.NewRequest("GET", urls, body)
+	req, err := http.NewRequest("GET", urls, nil)
 	if err != nil {
 		return nil, err
 	}
@@ -7186,6 +9517,7 @@ func (c *ProjectsLocationsKeyRingsCryptoKeysGetIamPolicyCall) doRequest(alt stri
 	googleapi.Expand(req.URL, map[string]string{
 		"resource": c.resource,
 	})
+	c.s.logger.DebugContext(c.ctx_, "api request", "serviceName", apiName, "rpcName", "cloudkms.projects.locations.keyRings.cryptoKeys.getIamPolicy", "request", internallog.HTTPRequest(req, nil))
 	return gensupport.SendRequest(c.ctx_, c.s.client, req)
 }
 
@@ -7220,9 +9552,11 @@ func (c *ProjectsLocationsKeyRingsCryptoKeysGetIamPolicyCall) Do(opts ...googlea
 		},
 	}
 	target := &ret
-	if err := gensupport.DecodeResponse(target, res); err != nil {
+	b, err := gensupport.DecodeResponseBytes(target, res)
+	if err != nil {
 		return nil, err
 	}
+	c.s.logger.DebugContext(c.ctx_, "api response", "serviceName", apiName, "rpcName", "cloudkms.projects.locations.keyRings.cryptoKeys.getIamPolicy", "response", internallog.HTTPResponse(res, b))
 	return ret, nil
 }
 
@@ -7333,12 +9667,11 @@ func (c *ProjectsLocationsKeyRingsCryptoKeysListCall) doRequest(alt string) (*ht
 	if c.ifNoneMatch_ != "" {
 		reqHeaders.Set("If-None-Match", c.ifNoneMatch_)
 	}
-	var body io.Reader = nil
 	c.urlParams_.Set("alt", alt)
 	c.urlParams_.Set("prettyPrint", "false")
 	urls := googleapi.ResolveRelative(c.s.BasePath, "v1/{+parent}/cryptoKeys")
 	urls += "?" + c.urlParams_.Encode()
-	req, err := http.NewRequest("GET", urls, body)
+	req, err := http.NewRequest("GET", urls, nil)
 	if err != nil {
 		return nil, err
 	}
@@ -7346,6 +9679,7 @@ func (c *ProjectsLocationsKeyRingsCryptoKeysListCall) doRequest(alt string) (*ht
 	googleapi.Expand(req.URL, map[string]string{
 		"parent": c.parent,
 	})
+	c.s.logger.DebugContext(c.ctx_, "api request", "serviceName", apiName, "rpcName", "cloudkms.projects.locations.keyRings.cryptoKeys.list", "request", internallog.HTTPRequest(req, nil))
 	return gensupport.SendRequest(c.ctx_, c.s.client, req)
 }
 
@@ -7381,9 +9715,11 @@ func (c *ProjectsLocationsKeyRingsCryptoKeysListCall) Do(opts ...googleapi.CallO
 		},
 	}
 	target := &ret
-	if err := gensupport.DecodeResponse(target, res); err != nil {
+	b, err := gensupport.DecodeResponseBytes(target, res)
+	if err != nil {
 		return nil, err
 	}
+	c.s.logger.DebugContext(c.ctx_, "api response", "serviceName", apiName, "rpcName", "cloudkms.projects.locations.keyRings.cryptoKeys.list", "response", internallog.HTTPResponse(res, b))
 	return ret, nil
 }
 
@@ -7460,8 +9796,7 @@ func (c *ProjectsLocationsKeyRingsCryptoKeysPatchCall) Header() http.Header {
 
 func (c *ProjectsLocationsKeyRingsCryptoKeysPatchCall) doRequest(alt string) (*http.Response, error) {
 	reqHeaders := gensupport.SetHeaders(c.s.userAgent(), "application/json", c.header_)
-	var body io.Reader = nil
-	body, err := googleapi.WithoutDataWrapper.JSONReader(c.cryptokey)
+	body, err := googleapi.WithoutDataWrapper.JSONBuffer(c.cryptokey)
 	if err != nil {
 		return nil, err
 	}
@@ -7477,6 +9812,7 @@ func (c *ProjectsLocationsKeyRingsCryptoKeysPatchCall) doRequest(alt string) (*h
 	googleapi.Expand(req.URL, map[string]string{
 		"name": c.name,
 	})
+	c.s.logger.DebugContext(c.ctx_, "api request", "serviceName", apiName, "rpcName", "cloudkms.projects.locations.keyRings.cryptoKeys.patch", "request", internallog.HTTPRequest(req, body.Bytes()))
 	return gensupport.SendRequest(c.ctx_, c.s.client, req)
 }
 
@@ -7511,9 +9847,11 @@ func (c *ProjectsLocationsKeyRingsCryptoKeysPatchCall) Do(opts ...googleapi.Call
 		},
 	}
 	target := &ret
-	if err := gensupport.DecodeResponse(target, res); err != nil {
+	b, err := gensupport.DecodeResponseBytes(target, res)
+	if err != nil {
 		return nil, err
 	}
+	c.s.logger.DebugContext(c.ctx_, "api response", "serviceName", apiName, "rpcName", "cloudkms.projects.locations.keyRings.cryptoKeys.patch", "response", internallog.HTTPResponse(res, b))
 	return ret, nil
 }
 
@@ -7565,8 +9903,7 @@ func (c *ProjectsLocationsKeyRingsCryptoKeysSetIamPolicyCall) Header() http.Head
 
 func (c *ProjectsLocationsKeyRingsCryptoKeysSetIamPolicyCall) doRequest(alt string) (*http.Response, error) {
 	reqHeaders := gensupport.SetHeaders(c.s.userAgent(), "application/json", c.header_)
-	var body io.Reader = nil
-	body, err := googleapi.WithoutDataWrapper.JSONReader(c.setiampolicyrequest)
+	body, err := googleapi.WithoutDataWrapper.JSONBuffer(c.setiampolicyrequest)
 	if err != nil {
 		return nil, err
 	}
@@ -7582,6 +9919,7 @@ func (c *ProjectsLocationsKeyRingsCryptoKeysSetIamPolicyCall) doRequest(alt stri
 	googleapi.Expand(req.URL, map[string]string{
 		"resource": c.resource,
 	})
+	c.s.logger.DebugContext(c.ctx_, "api request", "serviceName", apiName, "rpcName", "cloudkms.projects.locations.keyRings.cryptoKeys.setIamPolicy", "request", internallog.HTTPRequest(req, body.Bytes()))
 	return gensupport.SendRequest(c.ctx_, c.s.client, req)
 }
 
@@ -7616,9 +9954,11 @@ func (c *ProjectsLocationsKeyRingsCryptoKeysSetIamPolicyCall) Do(opts ...googlea
 		},
 	}
 	target := &ret
-	if err := gensupport.DecodeResponse(target, res); err != nil {
+	b, err := gensupport.DecodeResponseBytes(target, res)
+	if err != nil {
 		return nil, err
 	}
+	c.s.logger.DebugContext(c.ctx_, "api response", "serviceName", apiName, "rpcName", "cloudkms.projects.locations.keyRings.cryptoKeys.setIamPolicy", "response", internallog.HTTPResponse(res, b))
 	return ret, nil
 }
 
@@ -7673,8 +10013,7 @@ func (c *ProjectsLocationsKeyRingsCryptoKeysTestIamPermissionsCall) Header() htt
 
 func (c *ProjectsLocationsKeyRingsCryptoKeysTestIamPermissionsCall) doRequest(alt string) (*http.Response, error) {
 	reqHeaders := gensupport.SetHeaders(c.s.userAgent(), "application/json", c.header_)
-	var body io.Reader = nil
-	body, err := googleapi.WithoutDataWrapper.JSONReader(c.testiampermissionsrequest)
+	body, err := googleapi.WithoutDataWrapper.JSONBuffer(c.testiampermissionsrequest)
 	if err != nil {
 		return nil, err
 	}
@@ -7690,6 +10029,7 @@ func (c *ProjectsLocationsKeyRingsCryptoKeysTestIamPermissionsCall) doRequest(al
 	googleapi.Expand(req.URL, map[string]string{
 		"resource": c.resource,
 	})
+	c.s.logger.DebugContext(c.ctx_, "api request", "serviceName", apiName, "rpcName", "cloudkms.projects.locations.keyRings.cryptoKeys.testIamPermissions", "request", internallog.HTTPRequest(req, body.Bytes()))
 	return gensupport.SendRequest(c.ctx_, c.s.client, req)
 }
 
@@ -7725,9 +10065,11 @@ func (c *ProjectsLocationsKeyRingsCryptoKeysTestIamPermissionsCall) Do(opts ...g
 		},
 	}
 	target := &ret
-	if err := gensupport.DecodeResponse(target, res); err != nil {
+	b, err := gensupport.DecodeResponseBytes(target, res)
+	if err != nil {
 		return nil, err
 	}
+	c.s.logger.DebugContext(c.ctx_, "api response", "serviceName", apiName, "rpcName", "cloudkms.projects.locations.keyRings.cryptoKeys.testIamPermissions", "response", internallog.HTTPResponse(res, b))
 	return ret, nil
 }
 
@@ -7777,8 +10119,7 @@ func (c *ProjectsLocationsKeyRingsCryptoKeysUpdatePrimaryVersionCall) Header() h
 
 func (c *ProjectsLocationsKeyRingsCryptoKeysUpdatePrimaryVersionCall) doRequest(alt string) (*http.Response, error) {
 	reqHeaders := gensupport.SetHeaders(c.s.userAgent(), "application/json", c.header_)
-	var body io.Reader = nil
-	body, err := googleapi.WithoutDataWrapper.JSONReader(c.updatecryptokeyprimaryversionrequest)
+	body, err := googleapi.WithoutDataWrapper.JSONBuffer(c.updatecryptokeyprimaryversionrequest)
 	if err != nil {
 		return nil, err
 	}
@@ -7794,6 +10135,7 @@ func (c *ProjectsLocationsKeyRingsCryptoKeysUpdatePrimaryVersionCall) doRequest(
 	googleapi.Expand(req.URL, map[string]string{
 		"name": c.name,
 	})
+	c.s.logger.DebugContext(c.ctx_, "api request", "serviceName", apiName, "rpcName", "cloudkms.projects.locations.keyRings.cryptoKeys.updatePrimaryVersion", "request", internallog.HTTPRequest(req, body.Bytes()))
 	return gensupport.SendRequest(c.ctx_, c.s.client, req)
 }
 
@@ -7828,9 +10170,11 @@ func (c *ProjectsLocationsKeyRingsCryptoKeysUpdatePrimaryVersionCall) Do(opts ..
 		},
 	}
 	target := &ret
-	if err := gensupport.DecodeResponse(target, res); err != nil {
+	b, err := gensupport.DecodeResponseBytes(target, res)
+	if err != nil {
 		return nil, err
 	}
+	c.s.logger.DebugContext(c.ctx_, "api response", "serviceName", apiName, "rpcName", "cloudkms.projects.locations.keyRings.cryptoKeys.updatePrimaryVersion", "response", internallog.HTTPResponse(res, b))
 	return ret, nil
 }
 
@@ -7880,8 +10224,7 @@ func (c *ProjectsLocationsKeyRingsCryptoKeysCryptoKeyVersionsAsymmetricDecryptCa
 
 func (c *ProjectsLocationsKeyRingsCryptoKeysCryptoKeyVersionsAsymmetricDecryptCall) doRequest(alt string) (*http.Response, error) {
 	reqHeaders := gensupport.SetHeaders(c.s.userAgent(), "application/json", c.header_)
-	var body io.Reader = nil
-	body, err := googleapi.WithoutDataWrapper.JSONReader(c.asymmetricdecryptrequest)
+	body, err := googleapi.WithoutDataWrapper.JSONBuffer(c.asymmetricdecryptrequest)
 	if err != nil {
 		return nil, err
 	}
@@ -7897,6 +10240,7 @@ func (c *ProjectsLocationsKeyRingsCryptoKeysCryptoKeyVersionsAsymmetricDecryptCa
 	googleapi.Expand(req.URL, map[string]string{
 		"name": c.name,
 	})
+	c.s.logger.DebugContext(c.ctx_, "api request", "serviceName", apiName, "rpcName", "cloudkms.projects.locations.keyRings.cryptoKeys.cryptoKeyVersions.asymmetricDecrypt", "request", internallog.HTTPRequest(req, body.Bytes()))
 	return gensupport.SendRequest(c.ctx_, c.s.client, req)
 }
 
@@ -7932,9 +10276,11 @@ func (c *ProjectsLocationsKeyRingsCryptoKeysCryptoKeyVersionsAsymmetricDecryptCa
 		},
 	}
 	target := &ret
-	if err := gensupport.DecodeResponse(target, res); err != nil {
+	b, err := gensupport.DecodeResponseBytes(target, res)
+	if err != nil {
 		return nil, err
 	}
+	c.s.logger.DebugContext(c.ctx_, "api response", "serviceName", apiName, "rpcName", "cloudkms.projects.locations.keyRings.cryptoKeys.cryptoKeyVersions.asymmetricDecrypt", "response", internallog.HTTPResponse(res, b))
 	return ret, nil
 }
 
@@ -7984,8 +10330,7 @@ func (c *ProjectsLocationsKeyRingsCryptoKeysCryptoKeyVersionsAsymmetricSignCall)
 
 func (c *ProjectsLocationsKeyRingsCryptoKeysCryptoKeyVersionsAsymmetricSignCall) doRequest(alt string) (*http.Response, error) {
 	reqHeaders := gensupport.SetHeaders(c.s.userAgent(), "application/json", c.header_)
-	var body io.Reader = nil
-	body, err := googleapi.WithoutDataWrapper.JSONReader(c.asymmetricsignrequest)
+	body, err := googleapi.WithoutDataWrapper.JSONBuffer(c.asymmetricsignrequest)
 	if err != nil {
 		return nil, err
 	}
@@ -8001,6 +10346,7 @@ func (c *ProjectsLocationsKeyRingsCryptoKeysCryptoKeyVersionsAsymmetricSignCall)
 	googleapi.Expand(req.URL, map[string]string{
 		"name": c.name,
 	})
+	c.s.logger.DebugContext(c.ctx_, "api request", "serviceName", apiName, "rpcName", "cloudkms.projects.locations.keyRings.cryptoKeys.cryptoKeyVersions.asymmetricSign", "request", internallog.HTTPRequest(req, body.Bytes()))
 	return gensupport.SendRequest(c.ctx_, c.s.client, req)
 }
 
@@ -8036,9 +10382,11 @@ func (c *ProjectsLocationsKeyRingsCryptoKeysCryptoKeyVersionsAsymmetricSignCall)
 		},
 	}
 	target := &ret
-	if err := gensupport.DecodeResponse(target, res); err != nil {
+	b, err := gensupport.DecodeResponseBytes(target, res)
+	if err != nil {
 		return nil, err
 	}
+	c.s.logger.DebugContext(c.ctx_, "api response", "serviceName", apiName, "rpcName", "cloudkms.projects.locations.keyRings.cryptoKeys.cryptoKeyVersions.asymmetricSign", "response", internallog.HTTPResponse(res, b))
 	return ret, nil
 }
 
@@ -8087,8 +10435,7 @@ func (c *ProjectsLocationsKeyRingsCryptoKeysCryptoKeyVersionsCreateCall) Header(
 
 func (c *ProjectsLocationsKeyRingsCryptoKeysCryptoKeyVersionsCreateCall) doRequest(alt string) (*http.Response, error) {
 	reqHeaders := gensupport.SetHeaders(c.s.userAgent(), "application/json", c.header_)
-	var body io.Reader = nil
-	body, err := googleapi.WithoutDataWrapper.JSONReader(c.cryptokeyversion)
+	body, err := googleapi.WithoutDataWrapper.JSONBuffer(c.cryptokeyversion)
 	if err != nil {
 		return nil, err
 	}
@@ -8104,6 +10451,7 @@ func (c *ProjectsLocationsKeyRingsCryptoKeysCryptoKeyVersionsCreateCall) doReque
 	googleapi.Expand(req.URL, map[string]string{
 		"parent": c.parent,
 	})
+	c.s.logger.DebugContext(c.ctx_, "api request", "serviceName", apiName, "rpcName", "cloudkms.projects.locations.keyRings.cryptoKeys.cryptoKeyVersions.create", "request", internallog.HTTPRequest(req, body.Bytes()))
 	return gensupport.SendRequest(c.ctx_, c.s.client, req)
 }
 
@@ -8139,9 +10487,117 @@ func (c *ProjectsLocationsKeyRingsCryptoKeysCryptoKeyVersionsCreateCall) Do(opts
 		},
 	}
 	target := &ret
-	if err := gensupport.DecodeResponse(target, res); err != nil {
+	b, err := gensupport.DecodeResponseBytes(target, res)
+	if err != nil {
 		return nil, err
 	}
+	c.s.logger.DebugContext(c.ctx_, "api response", "serviceName", apiName, "rpcName", "cloudkms.projects.locations.keyRings.cryptoKeys.cryptoKeyVersions.create", "response", internallog.HTTPResponse(res, b))
+	return ret, nil
+}
+
+type ProjectsLocationsKeyRingsCryptoKeysCryptoKeyVersionsDecapsulateCall struct {
+	s                  *Service
+	name               string
+	decapsulaterequest *DecapsulateRequest
+	urlParams_         gensupport.URLParams
+	ctx_               context.Context
+	header_            http.Header
+}
+
+// Decapsulate: Decapsulates data that was encapsulated with a public key
+// retrieved from GetPublicKey corresponding to a CryptoKeyVersion with
+// CryptoKey.purpose KEY_ENCAPSULATION.
+//
+// - name: The resource name of the CryptoKeyVersion to use for decapsulation.
+func (r *ProjectsLocationsKeyRingsCryptoKeysCryptoKeyVersionsService) Decapsulate(name string, decapsulaterequest *DecapsulateRequest) *ProjectsLocationsKeyRingsCryptoKeysCryptoKeyVersionsDecapsulateCall {
+	c := &ProjectsLocationsKeyRingsCryptoKeysCryptoKeyVersionsDecapsulateCall{s: r.s, urlParams_: make(gensupport.URLParams)}
+	c.name = name
+	c.decapsulaterequest = decapsulaterequest
+	return c
+}
+
+// Fields allows partial responses to be retrieved. See
+// https://developers.google.com/gdata/docs/2.0/basics#PartialResponse for more
+// details.
+func (c *ProjectsLocationsKeyRingsCryptoKeysCryptoKeyVersionsDecapsulateCall) Fields(s ...googleapi.Field) *ProjectsLocationsKeyRingsCryptoKeysCryptoKeyVersionsDecapsulateCall {
+	c.urlParams_.Set("fields", googleapi.CombineFields(s))
+	return c
+}
+
+// Context sets the context to be used in this call's Do method.
+func (c *ProjectsLocationsKeyRingsCryptoKeysCryptoKeyVersionsDecapsulateCall) Context(ctx context.Context) *ProjectsLocationsKeyRingsCryptoKeysCryptoKeyVersionsDecapsulateCall {
+	c.ctx_ = ctx
+	return c
+}
+
+// Header returns a http.Header that can be modified by the caller to add
+// headers to the request.
+func (c *ProjectsLocationsKeyRingsCryptoKeysCryptoKeyVersionsDecapsulateCall) Header() http.Header {
+	if c.header_ == nil {
+		c.header_ = make(http.Header)
+	}
+	return c.header_
+}
+
+func (c *ProjectsLocationsKeyRingsCryptoKeysCryptoKeyVersionsDecapsulateCall) doRequest(alt string) (*http.Response, error) {
+	reqHeaders := gensupport.SetHeaders(c.s.userAgent(), "application/json", c.header_)
+	body, err := googleapi.WithoutDataWrapper.JSONBuffer(c.decapsulaterequest)
+	if err != nil {
+		return nil, err
+	}
+	c.urlParams_.Set("alt", alt)
+	c.urlParams_.Set("prettyPrint", "false")
+	urls := googleapi.ResolveRelative(c.s.BasePath, "v1/{+name}:decapsulate")
+	urls += "?" + c.urlParams_.Encode()
+	req, err := http.NewRequest("POST", urls, body)
+	if err != nil {
+		return nil, err
+	}
+	req.Header = reqHeaders
+	googleapi.Expand(req.URL, map[string]string{
+		"name": c.name,
+	})
+	c.s.logger.DebugContext(c.ctx_, "api request", "serviceName", apiName, "rpcName", "cloudkms.projects.locations.keyRings.cryptoKeys.cryptoKeyVersions.decapsulate", "request", internallog.HTTPRequest(req, body.Bytes()))
+	return gensupport.SendRequest(c.ctx_, c.s.client, req)
+}
+
+// Do executes the "cloudkms.projects.locations.keyRings.cryptoKeys.cryptoKeyVersions.decapsulate" call.
+// Any non-2xx status code is an error. Response headers are in either
+// *DecapsulateResponse.ServerResponse.Header or (if a response was returned at
+// all) in error.(*googleapi.Error).Header. Use googleapi.IsNotModified to
+// check whether the returned error was because http.StatusNotModified was
+// returned.
+func (c *ProjectsLocationsKeyRingsCryptoKeysCryptoKeyVersionsDecapsulateCall) Do(opts ...googleapi.CallOption) (*DecapsulateResponse, error) {
+	gensupport.SetOptions(c.urlParams_, opts...)
+	res, err := c.doRequest("json")
+	if res != nil && res.StatusCode == http.StatusNotModified {
+		if res.Body != nil {
+			res.Body.Close()
+		}
+		return nil, gensupport.WrapError(&googleapi.Error{
+			Code:   res.StatusCode,
+			Header: res.Header,
+		})
+	}
+	if err != nil {
+		return nil, err
+	}
+	defer googleapi.CloseBody(res)
+	if err := googleapi.CheckResponse(res); err != nil {
+		return nil, gensupport.WrapError(err)
+	}
+	ret := &DecapsulateResponse{
+		ServerResponse: googleapi.ServerResponse{
+			Header:         res.Header,
+			HTTPStatusCode: res.StatusCode,
+		},
+	}
+	target := &ret
+	b, err := gensupport.DecodeResponseBytes(target, res)
+	if err != nil {
+		return nil, err
+	}
+	c.s.logger.DebugContext(c.ctx_, "api response", "serviceName", apiName, "rpcName", "cloudkms.projects.locations.keyRings.cryptoKeys.cryptoKeyVersions.decapsulate", "response", internallog.HTTPResponse(res, b))
 	return ret, nil
 }
 
@@ -8194,8 +10650,7 @@ func (c *ProjectsLocationsKeyRingsCryptoKeysCryptoKeyVersionsDestroyCall) Header
 
 func (c *ProjectsLocationsKeyRingsCryptoKeysCryptoKeyVersionsDestroyCall) doRequest(alt string) (*http.Response, error) {
 	reqHeaders := gensupport.SetHeaders(c.s.userAgent(), "application/json", c.header_)
-	var body io.Reader = nil
-	body, err := googleapi.WithoutDataWrapper.JSONReader(c.destroycryptokeyversionrequest)
+	body, err := googleapi.WithoutDataWrapper.JSONBuffer(c.destroycryptokeyversionrequest)
 	if err != nil {
 		return nil, err
 	}
@@ -8211,6 +10666,7 @@ func (c *ProjectsLocationsKeyRingsCryptoKeysCryptoKeyVersionsDestroyCall) doRequ
 	googleapi.Expand(req.URL, map[string]string{
 		"name": c.name,
 	})
+	c.s.logger.DebugContext(c.ctx_, "api request", "serviceName", apiName, "rpcName", "cloudkms.projects.locations.keyRings.cryptoKeys.cryptoKeyVersions.destroy", "request", internallog.HTTPRequest(req, body.Bytes()))
 	return gensupport.SendRequest(c.ctx_, c.s.client, req)
 }
 
@@ -8246,9 +10702,11 @@ func (c *ProjectsLocationsKeyRingsCryptoKeysCryptoKeyVersionsDestroyCall) Do(opt
 		},
 	}
 	target := &ret
-	if err := gensupport.DecodeResponse(target, res); err != nil {
+	b, err := gensupport.DecodeResponseBytes(target, res)
+	if err != nil {
 		return nil, err
 	}
+	c.s.logger.DebugContext(c.ctx_, "api response", "serviceName", apiName, "rpcName", "cloudkms.projects.locations.keyRings.cryptoKeys.cryptoKeyVersions.destroy", "response", internallog.HTTPResponse(res, b))
 	return ret, nil
 }
 
@@ -8306,12 +10764,11 @@ func (c *ProjectsLocationsKeyRingsCryptoKeysCryptoKeyVersionsGetCall) doRequest(
 	if c.ifNoneMatch_ != "" {
 		reqHeaders.Set("If-None-Match", c.ifNoneMatch_)
 	}
-	var body io.Reader = nil
 	c.urlParams_.Set("alt", alt)
 	c.urlParams_.Set("prettyPrint", "false")
 	urls := googleapi.ResolveRelative(c.s.BasePath, "v1/{+name}")
 	urls += "?" + c.urlParams_.Encode()
-	req, err := http.NewRequest("GET", urls, body)
+	req, err := http.NewRequest("GET", urls, nil)
 	if err != nil {
 		return nil, err
 	}
@@ -8319,6 +10776,7 @@ func (c *ProjectsLocationsKeyRingsCryptoKeysCryptoKeyVersionsGetCall) doRequest(
 	googleapi.Expand(req.URL, map[string]string{
 		"name": c.name,
 	})
+	c.s.logger.DebugContext(c.ctx_, "api request", "serviceName", apiName, "rpcName", "cloudkms.projects.locations.keyRings.cryptoKeys.cryptoKeyVersions.get", "request", internallog.HTTPRequest(req, nil))
 	return gensupport.SendRequest(c.ctx_, c.s.client, req)
 }
 
@@ -8354,9 +10812,11 @@ func (c *ProjectsLocationsKeyRingsCryptoKeysCryptoKeyVersionsGetCall) Do(opts ..
 		},
 	}
 	target := &ret
-	if err := gensupport.DecodeResponse(target, res); err != nil {
+	b, err := gensupport.DecodeResponseBytes(target, res)
+	if err != nil {
 		return nil, err
 	}
+	c.s.logger.DebugContext(c.ctx_, "api response", "serviceName", apiName, "rpcName", "cloudkms.projects.locations.keyRings.cryptoKeys.cryptoKeyVersions.get", "response", internallog.HTTPResponse(res, b))
 	return ret, nil
 }
 
@@ -8376,6 +10836,46 @@ type ProjectsLocationsKeyRingsCryptoKeysCryptoKeyVersionsGetPublicKeyCall struct
 func (r *ProjectsLocationsKeyRingsCryptoKeysCryptoKeyVersionsService) GetPublicKey(name string) *ProjectsLocationsKeyRingsCryptoKeysCryptoKeyVersionsGetPublicKeyCall {
 	c := &ProjectsLocationsKeyRingsCryptoKeysCryptoKeyVersionsGetPublicKeyCall{s: r.s, urlParams_: make(gensupport.URLParams)}
 	c.name = name
+	return c
+}
+
+// PublicKeyFormat sets the optional parameter "publicKeyFormat": The PublicKey
+// format specified by the user. This field is required for PQC algorithms. If
+// specified, the public key will be exported through the public_key field in
+// the requested format. Otherwise, the pem field will be populated for non-PQC
+// algorithms, and an error will be returned for PQC algorithms.
+//
+// Possible values:
+//
+//	"PUBLIC_KEY_FORMAT_UNSPECIFIED" - If the public_key_format field is not
+//
+// specified: - For PQC algorithms, an error will be returned. - For non-PQC
+// algorithms, the default format is PEM, and the field pem will be populated.
+// Otherwise, the public key will be exported through the public_key field in
+// the requested format.
+//
+//	"PEM" - The returned public key will be encoded in PEM format. See the
+//
+// [RFC7468](https://tools.ietf.org/html/rfc7468) sections for [General
+// Considerations](https://tools.ietf.org/html/rfc7468#section-2) and [Textual
+// Encoding of Subject Public Key Info]
+// (https://tools.ietf.org/html/rfc7468#section-13) for more information.
+//
+//	"DER" - The returned public key will be encoded in DER format (the
+//
+// PrivateKeyInfo structure from RFC 5208).
+//
+//	"NIST_PQC" - This is supported only for PQC algorithms. The key material
+//
+// is returned in the format defined by NIST PQC standards (FIPS 203, FIPS 204,
+// and FIPS 205).
+//
+//	"XWING_RAW_BYTES" - The returned public key is in raw bytes format defined
+//
+// in its standard
+// https://datatracker.ietf.org/doc/draft-connolly-cfrg-xwing-kem.
+func (c *ProjectsLocationsKeyRingsCryptoKeysCryptoKeyVersionsGetPublicKeyCall) PublicKeyFormat(publicKeyFormat string) *ProjectsLocationsKeyRingsCryptoKeysCryptoKeyVersionsGetPublicKeyCall {
+	c.urlParams_.Set("publicKeyFormat", publicKeyFormat)
 	return c
 }
 
@@ -8415,12 +10915,11 @@ func (c *ProjectsLocationsKeyRingsCryptoKeysCryptoKeyVersionsGetPublicKeyCall) d
 	if c.ifNoneMatch_ != "" {
 		reqHeaders.Set("If-None-Match", c.ifNoneMatch_)
 	}
-	var body io.Reader = nil
 	c.urlParams_.Set("alt", alt)
 	c.urlParams_.Set("prettyPrint", "false")
 	urls := googleapi.ResolveRelative(c.s.BasePath, "v1/{+name}/publicKey")
 	urls += "?" + c.urlParams_.Encode()
-	req, err := http.NewRequest("GET", urls, body)
+	req, err := http.NewRequest("GET", urls, nil)
 	if err != nil {
 		return nil, err
 	}
@@ -8428,6 +10927,7 @@ func (c *ProjectsLocationsKeyRingsCryptoKeysCryptoKeyVersionsGetPublicKeyCall) d
 	googleapi.Expand(req.URL, map[string]string{
 		"name": c.name,
 	})
+	c.s.logger.DebugContext(c.ctx_, "api request", "serviceName", apiName, "rpcName", "cloudkms.projects.locations.keyRings.cryptoKeys.cryptoKeyVersions.getPublicKey", "request", internallog.HTTPRequest(req, nil))
 	return gensupport.SendRequest(c.ctx_, c.s.client, req)
 }
 
@@ -8462,9 +10962,11 @@ func (c *ProjectsLocationsKeyRingsCryptoKeysCryptoKeyVersionsGetPublicKeyCall) D
 		},
 	}
 	target := &ret
-	if err := gensupport.DecodeResponse(target, res); err != nil {
+	b, err := gensupport.DecodeResponseBytes(target, res)
+	if err != nil {
 		return nil, err
 	}
+	c.s.logger.DebugContext(c.ctx_, "api response", "serviceName", apiName, "rpcName", "cloudkms.projects.locations.keyRings.cryptoKeys.cryptoKeyVersions.getPublicKey", "response", internallog.HTTPResponse(res, b))
 	return ret, nil
 }
 
@@ -8518,8 +11020,7 @@ func (c *ProjectsLocationsKeyRingsCryptoKeysCryptoKeyVersionsImportCall) Header(
 
 func (c *ProjectsLocationsKeyRingsCryptoKeysCryptoKeyVersionsImportCall) doRequest(alt string) (*http.Response, error) {
 	reqHeaders := gensupport.SetHeaders(c.s.userAgent(), "application/json", c.header_)
-	var body io.Reader = nil
-	body, err := googleapi.WithoutDataWrapper.JSONReader(c.importcryptokeyversionrequest)
+	body, err := googleapi.WithoutDataWrapper.JSONBuffer(c.importcryptokeyversionrequest)
 	if err != nil {
 		return nil, err
 	}
@@ -8535,6 +11036,7 @@ func (c *ProjectsLocationsKeyRingsCryptoKeysCryptoKeyVersionsImportCall) doReque
 	googleapi.Expand(req.URL, map[string]string{
 		"parent": c.parent,
 	})
+	c.s.logger.DebugContext(c.ctx_, "api request", "serviceName", apiName, "rpcName", "cloudkms.projects.locations.keyRings.cryptoKeys.cryptoKeyVersions.import", "request", internallog.HTTPRequest(req, body.Bytes()))
 	return gensupport.SendRequest(c.ctx_, c.s.client, req)
 }
 
@@ -8570,9 +11072,11 @@ func (c *ProjectsLocationsKeyRingsCryptoKeysCryptoKeyVersionsImportCall) Do(opts
 		},
 	}
 	target := &ret
-	if err := gensupport.DecodeResponse(target, res); err != nil {
+	b, err := gensupport.DecodeResponseBytes(target, res)
+	if err != nil {
 		return nil, err
 	}
+	c.s.logger.DebugContext(c.ctx_, "api response", "serviceName", apiName, "rpcName", "cloudkms.projects.locations.keyRings.cryptoKeys.cryptoKeyVersions.import", "response", internallog.HTTPResponse(res, b))
 	return ret, nil
 }
 
@@ -8683,12 +11187,11 @@ func (c *ProjectsLocationsKeyRingsCryptoKeysCryptoKeyVersionsListCall) doRequest
 	if c.ifNoneMatch_ != "" {
 		reqHeaders.Set("If-None-Match", c.ifNoneMatch_)
 	}
-	var body io.Reader = nil
 	c.urlParams_.Set("alt", alt)
 	c.urlParams_.Set("prettyPrint", "false")
 	urls := googleapi.ResolveRelative(c.s.BasePath, "v1/{+parent}/cryptoKeyVersions")
 	urls += "?" + c.urlParams_.Encode()
-	req, err := http.NewRequest("GET", urls, body)
+	req, err := http.NewRequest("GET", urls, nil)
 	if err != nil {
 		return nil, err
 	}
@@ -8696,6 +11199,7 @@ func (c *ProjectsLocationsKeyRingsCryptoKeysCryptoKeyVersionsListCall) doRequest
 	googleapi.Expand(req.URL, map[string]string{
 		"parent": c.parent,
 	})
+	c.s.logger.DebugContext(c.ctx_, "api request", "serviceName", apiName, "rpcName", "cloudkms.projects.locations.keyRings.cryptoKeys.cryptoKeyVersions.list", "request", internallog.HTTPRequest(req, nil))
 	return gensupport.SendRequest(c.ctx_, c.s.client, req)
 }
 
@@ -8731,9 +11235,11 @@ func (c *ProjectsLocationsKeyRingsCryptoKeysCryptoKeyVersionsListCall) Do(opts .
 		},
 	}
 	target := &ret
-	if err := gensupport.DecodeResponse(target, res); err != nil {
+	b, err := gensupport.DecodeResponseBytes(target, res)
+	if err != nil {
 		return nil, err
 	}
+	c.s.logger.DebugContext(c.ctx_, "api response", "serviceName", apiName, "rpcName", "cloudkms.projects.locations.keyRings.cryptoKeys.cryptoKeyVersions.list", "response", internallog.HTTPResponse(res, b))
 	return ret, nil
 }
 
@@ -8803,8 +11309,7 @@ func (c *ProjectsLocationsKeyRingsCryptoKeysCryptoKeyVersionsMacSignCall) Header
 
 func (c *ProjectsLocationsKeyRingsCryptoKeysCryptoKeyVersionsMacSignCall) doRequest(alt string) (*http.Response, error) {
 	reqHeaders := gensupport.SetHeaders(c.s.userAgent(), "application/json", c.header_)
-	var body io.Reader = nil
-	body, err := googleapi.WithoutDataWrapper.JSONReader(c.macsignrequest)
+	body, err := googleapi.WithoutDataWrapper.JSONBuffer(c.macsignrequest)
 	if err != nil {
 		return nil, err
 	}
@@ -8820,6 +11325,7 @@ func (c *ProjectsLocationsKeyRingsCryptoKeysCryptoKeyVersionsMacSignCall) doRequ
 	googleapi.Expand(req.URL, map[string]string{
 		"name": c.name,
 	})
+	c.s.logger.DebugContext(c.ctx_, "api request", "serviceName", apiName, "rpcName", "cloudkms.projects.locations.keyRings.cryptoKeys.cryptoKeyVersions.macSign", "request", internallog.HTTPRequest(req, body.Bytes()))
 	return gensupport.SendRequest(c.ctx_, c.s.client, req)
 }
 
@@ -8855,9 +11361,11 @@ func (c *ProjectsLocationsKeyRingsCryptoKeysCryptoKeyVersionsMacSignCall) Do(opt
 		},
 	}
 	target := &ret
-	if err := gensupport.DecodeResponse(target, res); err != nil {
+	b, err := gensupport.DecodeResponseBytes(target, res)
+	if err != nil {
 		return nil, err
 	}
+	c.s.logger.DebugContext(c.ctx_, "api response", "serviceName", apiName, "rpcName", "cloudkms.projects.locations.keyRings.cryptoKeys.cryptoKeyVersions.macSign", "response", internallog.HTTPResponse(res, b))
 	return ret, nil
 }
 
@@ -8907,8 +11415,7 @@ func (c *ProjectsLocationsKeyRingsCryptoKeysCryptoKeyVersionsMacVerifyCall) Head
 
 func (c *ProjectsLocationsKeyRingsCryptoKeysCryptoKeyVersionsMacVerifyCall) doRequest(alt string) (*http.Response, error) {
 	reqHeaders := gensupport.SetHeaders(c.s.userAgent(), "application/json", c.header_)
-	var body io.Reader = nil
-	body, err := googleapi.WithoutDataWrapper.JSONReader(c.macverifyrequest)
+	body, err := googleapi.WithoutDataWrapper.JSONBuffer(c.macverifyrequest)
 	if err != nil {
 		return nil, err
 	}
@@ -8924,6 +11431,7 @@ func (c *ProjectsLocationsKeyRingsCryptoKeysCryptoKeyVersionsMacVerifyCall) doRe
 	googleapi.Expand(req.URL, map[string]string{
 		"name": c.name,
 	})
+	c.s.logger.DebugContext(c.ctx_, "api request", "serviceName", apiName, "rpcName", "cloudkms.projects.locations.keyRings.cryptoKeys.cryptoKeyVersions.macVerify", "request", internallog.HTTPRequest(req, body.Bytes()))
 	return gensupport.SendRequest(c.ctx_, c.s.client, req)
 }
 
@@ -8959,9 +11467,11 @@ func (c *ProjectsLocationsKeyRingsCryptoKeysCryptoKeyVersionsMacVerifyCall) Do(o
 		},
 	}
 	target := &ret
-	if err := gensupport.DecodeResponse(target, res); err != nil {
+	b, err := gensupport.DecodeResponseBytes(target, res)
+	if err != nil {
 		return nil, err
 	}
+	c.s.logger.DebugContext(c.ctx_, "api response", "serviceName", apiName, "rpcName", "cloudkms.projects.locations.keyRings.cryptoKeys.cryptoKeyVersions.macVerify", "response", internallog.HTTPResponse(res, b))
 	return ret, nil
 }
 
@@ -9020,8 +11530,7 @@ func (c *ProjectsLocationsKeyRingsCryptoKeysCryptoKeyVersionsPatchCall) Header()
 
 func (c *ProjectsLocationsKeyRingsCryptoKeysCryptoKeyVersionsPatchCall) doRequest(alt string) (*http.Response, error) {
 	reqHeaders := gensupport.SetHeaders(c.s.userAgent(), "application/json", c.header_)
-	var body io.Reader = nil
-	body, err := googleapi.WithoutDataWrapper.JSONReader(c.cryptokeyversion)
+	body, err := googleapi.WithoutDataWrapper.JSONBuffer(c.cryptokeyversion)
 	if err != nil {
 		return nil, err
 	}
@@ -9037,6 +11546,7 @@ func (c *ProjectsLocationsKeyRingsCryptoKeysCryptoKeyVersionsPatchCall) doReques
 	googleapi.Expand(req.URL, map[string]string{
 		"name": c.name,
 	})
+	c.s.logger.DebugContext(c.ctx_, "api request", "serviceName", apiName, "rpcName", "cloudkms.projects.locations.keyRings.cryptoKeys.cryptoKeyVersions.patch", "request", internallog.HTTPRequest(req, body.Bytes()))
 	return gensupport.SendRequest(c.ctx_, c.s.client, req)
 }
 
@@ -9072,9 +11582,11 @@ func (c *ProjectsLocationsKeyRingsCryptoKeysCryptoKeyVersionsPatchCall) Do(opts 
 		},
 	}
 	target := &ret
-	if err := gensupport.DecodeResponse(target, res); err != nil {
+	b, err := gensupport.DecodeResponseBytes(target, res)
+	if err != nil {
 		return nil, err
 	}
+	c.s.logger.DebugContext(c.ctx_, "api response", "serviceName", apiName, "rpcName", "cloudkms.projects.locations.keyRings.cryptoKeys.cryptoKeyVersions.patch", "response", internallog.HTTPResponse(res, b))
 	return ret, nil
 }
 
@@ -9123,8 +11635,7 @@ func (c *ProjectsLocationsKeyRingsCryptoKeysCryptoKeyVersionsRawDecryptCall) Hea
 
 func (c *ProjectsLocationsKeyRingsCryptoKeysCryptoKeyVersionsRawDecryptCall) doRequest(alt string) (*http.Response, error) {
 	reqHeaders := gensupport.SetHeaders(c.s.userAgent(), "application/json", c.header_)
-	var body io.Reader = nil
-	body, err := googleapi.WithoutDataWrapper.JSONReader(c.rawdecryptrequest)
+	body, err := googleapi.WithoutDataWrapper.JSONBuffer(c.rawdecryptrequest)
 	if err != nil {
 		return nil, err
 	}
@@ -9140,6 +11651,7 @@ func (c *ProjectsLocationsKeyRingsCryptoKeysCryptoKeyVersionsRawDecryptCall) doR
 	googleapi.Expand(req.URL, map[string]string{
 		"name": c.name,
 	})
+	c.s.logger.DebugContext(c.ctx_, "api request", "serviceName", apiName, "rpcName", "cloudkms.projects.locations.keyRings.cryptoKeys.cryptoKeyVersions.rawDecrypt", "request", internallog.HTTPRequest(req, body.Bytes()))
 	return gensupport.SendRequest(c.ctx_, c.s.client, req)
 }
 
@@ -9175,9 +11687,11 @@ func (c *ProjectsLocationsKeyRingsCryptoKeysCryptoKeyVersionsRawDecryptCall) Do(
 		},
 	}
 	target := &ret
-	if err := gensupport.DecodeResponse(target, res); err != nil {
+	b, err := gensupport.DecodeResponseBytes(target, res)
+	if err != nil {
 		return nil, err
 	}
+	c.s.logger.DebugContext(c.ctx_, "api response", "serviceName", apiName, "rpcName", "cloudkms.projects.locations.keyRings.cryptoKeys.cryptoKeyVersions.rawDecrypt", "response", internallog.HTTPResponse(res, b))
 	return ret, nil
 }
 
@@ -9227,8 +11741,7 @@ func (c *ProjectsLocationsKeyRingsCryptoKeysCryptoKeyVersionsRawEncryptCall) Hea
 
 func (c *ProjectsLocationsKeyRingsCryptoKeysCryptoKeyVersionsRawEncryptCall) doRequest(alt string) (*http.Response, error) {
 	reqHeaders := gensupport.SetHeaders(c.s.userAgent(), "application/json", c.header_)
-	var body io.Reader = nil
-	body, err := googleapi.WithoutDataWrapper.JSONReader(c.rawencryptrequest)
+	body, err := googleapi.WithoutDataWrapper.JSONBuffer(c.rawencryptrequest)
 	if err != nil {
 		return nil, err
 	}
@@ -9244,6 +11757,7 @@ func (c *ProjectsLocationsKeyRingsCryptoKeysCryptoKeyVersionsRawEncryptCall) doR
 	googleapi.Expand(req.URL, map[string]string{
 		"name": c.name,
 	})
+	c.s.logger.DebugContext(c.ctx_, "api request", "serviceName", apiName, "rpcName", "cloudkms.projects.locations.keyRings.cryptoKeys.cryptoKeyVersions.rawEncrypt", "request", internallog.HTTPRequest(req, body.Bytes()))
 	return gensupport.SendRequest(c.ctx_, c.s.client, req)
 }
 
@@ -9279,9 +11793,11 @@ func (c *ProjectsLocationsKeyRingsCryptoKeysCryptoKeyVersionsRawEncryptCall) Do(
 		},
 	}
 	target := &ret
-	if err := gensupport.DecodeResponse(target, res); err != nil {
+	b, err := gensupport.DecodeResponseBytes(target, res)
+	if err != nil {
 		return nil, err
 	}
+	c.s.logger.DebugContext(c.ctx_, "api response", "serviceName", apiName, "rpcName", "cloudkms.projects.locations.keyRings.cryptoKeys.cryptoKeyVersions.rawEncrypt", "response", internallog.HTTPResponse(res, b))
 	return ret, nil
 }
 
@@ -9331,8 +11847,7 @@ func (c *ProjectsLocationsKeyRingsCryptoKeysCryptoKeyVersionsRestoreCall) Header
 
 func (c *ProjectsLocationsKeyRingsCryptoKeysCryptoKeyVersionsRestoreCall) doRequest(alt string) (*http.Response, error) {
 	reqHeaders := gensupport.SetHeaders(c.s.userAgent(), "application/json", c.header_)
-	var body io.Reader = nil
-	body, err := googleapi.WithoutDataWrapper.JSONReader(c.restorecryptokeyversionrequest)
+	body, err := googleapi.WithoutDataWrapper.JSONBuffer(c.restorecryptokeyversionrequest)
 	if err != nil {
 		return nil, err
 	}
@@ -9348,6 +11863,7 @@ func (c *ProjectsLocationsKeyRingsCryptoKeysCryptoKeyVersionsRestoreCall) doRequ
 	googleapi.Expand(req.URL, map[string]string{
 		"name": c.name,
 	})
+	c.s.logger.DebugContext(c.ctx_, "api request", "serviceName", apiName, "rpcName", "cloudkms.projects.locations.keyRings.cryptoKeys.cryptoKeyVersions.restore", "request", internallog.HTTPRequest(req, body.Bytes()))
 	return gensupport.SendRequest(c.ctx_, c.s.client, req)
 }
 
@@ -9383,9 +11899,11 @@ func (c *ProjectsLocationsKeyRingsCryptoKeysCryptoKeyVersionsRestoreCall) Do(opt
 		},
 	}
 	target := &ret
-	if err := gensupport.DecodeResponse(target, res); err != nil {
+	b, err := gensupport.DecodeResponseBytes(target, res)
+	if err != nil {
 		return nil, err
 	}
+	c.s.logger.DebugContext(c.ctx_, "api response", "serviceName", apiName, "rpcName", "cloudkms.projects.locations.keyRings.cryptoKeys.cryptoKeyVersions.restore", "response", internallog.HTTPResponse(res, b))
 	return ret, nil
 }
 
@@ -9442,8 +11960,7 @@ func (c *ProjectsLocationsKeyRingsImportJobsCreateCall) Header() http.Header {
 
 func (c *ProjectsLocationsKeyRingsImportJobsCreateCall) doRequest(alt string) (*http.Response, error) {
 	reqHeaders := gensupport.SetHeaders(c.s.userAgent(), "application/json", c.header_)
-	var body io.Reader = nil
-	body, err := googleapi.WithoutDataWrapper.JSONReader(c.importjob)
+	body, err := googleapi.WithoutDataWrapper.JSONBuffer(c.importjob)
 	if err != nil {
 		return nil, err
 	}
@@ -9459,6 +11976,7 @@ func (c *ProjectsLocationsKeyRingsImportJobsCreateCall) doRequest(alt string) (*
 	googleapi.Expand(req.URL, map[string]string{
 		"parent": c.parent,
 	})
+	c.s.logger.DebugContext(c.ctx_, "api request", "serviceName", apiName, "rpcName", "cloudkms.projects.locations.keyRings.importJobs.create", "request", internallog.HTTPRequest(req, body.Bytes()))
 	return gensupport.SendRequest(c.ctx_, c.s.client, req)
 }
 
@@ -9493,9 +12011,11 @@ func (c *ProjectsLocationsKeyRingsImportJobsCreateCall) Do(opts ...googleapi.Cal
 		},
 	}
 	target := &ret
-	if err := gensupport.DecodeResponse(target, res); err != nil {
+	b, err := gensupport.DecodeResponseBytes(target, res)
+	if err != nil {
 		return nil, err
 	}
+	c.s.logger.DebugContext(c.ctx_, "api response", "serviceName", apiName, "rpcName", "cloudkms.projects.locations.keyRings.importJobs.create", "response", internallog.HTTPResponse(res, b))
 	return ret, nil
 }
 
@@ -9553,12 +12073,11 @@ func (c *ProjectsLocationsKeyRingsImportJobsGetCall) doRequest(alt string) (*htt
 	if c.ifNoneMatch_ != "" {
 		reqHeaders.Set("If-None-Match", c.ifNoneMatch_)
 	}
-	var body io.Reader = nil
 	c.urlParams_.Set("alt", alt)
 	c.urlParams_.Set("prettyPrint", "false")
 	urls := googleapi.ResolveRelative(c.s.BasePath, "v1/{+name}")
 	urls += "?" + c.urlParams_.Encode()
-	req, err := http.NewRequest("GET", urls, body)
+	req, err := http.NewRequest("GET", urls, nil)
 	if err != nil {
 		return nil, err
 	}
@@ -9566,6 +12085,7 @@ func (c *ProjectsLocationsKeyRingsImportJobsGetCall) doRequest(alt string) (*htt
 	googleapi.Expand(req.URL, map[string]string{
 		"name": c.name,
 	})
+	c.s.logger.DebugContext(c.ctx_, "api request", "serviceName", apiName, "rpcName", "cloudkms.projects.locations.keyRings.importJobs.get", "request", internallog.HTTPRequest(req, nil))
 	return gensupport.SendRequest(c.ctx_, c.s.client, req)
 }
 
@@ -9600,9 +12120,11 @@ func (c *ProjectsLocationsKeyRingsImportJobsGetCall) Do(opts ...googleapi.CallOp
 		},
 	}
 	target := &ret
-	if err := gensupport.DecodeResponse(target, res); err != nil {
+	b, err := gensupport.DecodeResponseBytes(target, res)
+	if err != nil {
 		return nil, err
 	}
+	c.s.logger.DebugContext(c.ctx_, "api response", "serviceName", apiName, "rpcName", "cloudkms.projects.locations.keyRings.importJobs.get", "response", internallog.HTTPResponse(res, b))
 	return ret, nil
 }
 
@@ -9680,12 +12202,11 @@ func (c *ProjectsLocationsKeyRingsImportJobsGetIamPolicyCall) doRequest(alt stri
 	if c.ifNoneMatch_ != "" {
 		reqHeaders.Set("If-None-Match", c.ifNoneMatch_)
 	}
-	var body io.Reader = nil
 	c.urlParams_.Set("alt", alt)
 	c.urlParams_.Set("prettyPrint", "false")
 	urls := googleapi.ResolveRelative(c.s.BasePath, "v1/{+resource}:getIamPolicy")
 	urls += "?" + c.urlParams_.Encode()
-	req, err := http.NewRequest("GET", urls, body)
+	req, err := http.NewRequest("GET", urls, nil)
 	if err != nil {
 		return nil, err
 	}
@@ -9693,6 +12214,7 @@ func (c *ProjectsLocationsKeyRingsImportJobsGetIamPolicyCall) doRequest(alt stri
 	googleapi.Expand(req.URL, map[string]string{
 		"resource": c.resource,
 	})
+	c.s.logger.DebugContext(c.ctx_, "api request", "serviceName", apiName, "rpcName", "cloudkms.projects.locations.keyRings.importJobs.getIamPolicy", "request", internallog.HTTPRequest(req, nil))
 	return gensupport.SendRequest(c.ctx_, c.s.client, req)
 }
 
@@ -9727,9 +12249,11 @@ func (c *ProjectsLocationsKeyRingsImportJobsGetIamPolicyCall) Do(opts ...googlea
 		},
 	}
 	target := &ret
-	if err := gensupport.DecodeResponse(target, res); err != nil {
+	b, err := gensupport.DecodeResponseBytes(target, res)
+	if err != nil {
 		return nil, err
 	}
+	c.s.logger.DebugContext(c.ctx_, "api response", "serviceName", apiName, "rpcName", "cloudkms.projects.locations.keyRings.importJobs.getIamPolicy", "response", internallog.HTTPResponse(res, b))
 	return ret, nil
 }
 
@@ -9823,12 +12347,11 @@ func (c *ProjectsLocationsKeyRingsImportJobsListCall) doRequest(alt string) (*ht
 	if c.ifNoneMatch_ != "" {
 		reqHeaders.Set("If-None-Match", c.ifNoneMatch_)
 	}
-	var body io.Reader = nil
 	c.urlParams_.Set("alt", alt)
 	c.urlParams_.Set("prettyPrint", "false")
 	urls := googleapi.ResolveRelative(c.s.BasePath, "v1/{+parent}/importJobs")
 	urls += "?" + c.urlParams_.Encode()
-	req, err := http.NewRequest("GET", urls, body)
+	req, err := http.NewRequest("GET", urls, nil)
 	if err != nil {
 		return nil, err
 	}
@@ -9836,6 +12359,7 @@ func (c *ProjectsLocationsKeyRingsImportJobsListCall) doRequest(alt string) (*ht
 	googleapi.Expand(req.URL, map[string]string{
 		"parent": c.parent,
 	})
+	c.s.logger.DebugContext(c.ctx_, "api request", "serviceName", apiName, "rpcName", "cloudkms.projects.locations.keyRings.importJobs.list", "request", internallog.HTTPRequest(req, nil))
 	return gensupport.SendRequest(c.ctx_, c.s.client, req)
 }
 
@@ -9871,9 +12395,11 @@ func (c *ProjectsLocationsKeyRingsImportJobsListCall) Do(opts ...googleapi.CallO
 		},
 	}
 	target := &ret
-	if err := gensupport.DecodeResponse(target, res); err != nil {
+	b, err := gensupport.DecodeResponseBytes(target, res)
+	if err != nil {
 		return nil, err
 	}
+	c.s.logger.DebugContext(c.ctx_, "api response", "serviceName", apiName, "rpcName", "cloudkms.projects.locations.keyRings.importJobs.list", "response", internallog.HTTPResponse(res, b))
 	return ret, nil
 }
 
@@ -9946,8 +12472,7 @@ func (c *ProjectsLocationsKeyRingsImportJobsSetIamPolicyCall) Header() http.Head
 
 func (c *ProjectsLocationsKeyRingsImportJobsSetIamPolicyCall) doRequest(alt string) (*http.Response, error) {
 	reqHeaders := gensupport.SetHeaders(c.s.userAgent(), "application/json", c.header_)
-	var body io.Reader = nil
-	body, err := googleapi.WithoutDataWrapper.JSONReader(c.setiampolicyrequest)
+	body, err := googleapi.WithoutDataWrapper.JSONBuffer(c.setiampolicyrequest)
 	if err != nil {
 		return nil, err
 	}
@@ -9963,6 +12488,7 @@ func (c *ProjectsLocationsKeyRingsImportJobsSetIamPolicyCall) doRequest(alt stri
 	googleapi.Expand(req.URL, map[string]string{
 		"resource": c.resource,
 	})
+	c.s.logger.DebugContext(c.ctx_, "api request", "serviceName", apiName, "rpcName", "cloudkms.projects.locations.keyRings.importJobs.setIamPolicy", "request", internallog.HTTPRequest(req, body.Bytes()))
 	return gensupport.SendRequest(c.ctx_, c.s.client, req)
 }
 
@@ -9997,9 +12523,11 @@ func (c *ProjectsLocationsKeyRingsImportJobsSetIamPolicyCall) Do(opts ...googlea
 		},
 	}
 	target := &ret
-	if err := gensupport.DecodeResponse(target, res); err != nil {
+	b, err := gensupport.DecodeResponseBytes(target, res)
+	if err != nil {
 		return nil, err
 	}
+	c.s.logger.DebugContext(c.ctx_, "api response", "serviceName", apiName, "rpcName", "cloudkms.projects.locations.keyRings.importJobs.setIamPolicy", "response", internallog.HTTPResponse(res, b))
 	return ret, nil
 }
 
@@ -10054,8 +12582,7 @@ func (c *ProjectsLocationsKeyRingsImportJobsTestIamPermissionsCall) Header() htt
 
 func (c *ProjectsLocationsKeyRingsImportJobsTestIamPermissionsCall) doRequest(alt string) (*http.Response, error) {
 	reqHeaders := gensupport.SetHeaders(c.s.userAgent(), "application/json", c.header_)
-	var body io.Reader = nil
-	body, err := googleapi.WithoutDataWrapper.JSONReader(c.testiampermissionsrequest)
+	body, err := googleapi.WithoutDataWrapper.JSONBuffer(c.testiampermissionsrequest)
 	if err != nil {
 		return nil, err
 	}
@@ -10071,6 +12598,7 @@ func (c *ProjectsLocationsKeyRingsImportJobsTestIamPermissionsCall) doRequest(al
 	googleapi.Expand(req.URL, map[string]string{
 		"resource": c.resource,
 	})
+	c.s.logger.DebugContext(c.ctx_, "api request", "serviceName", apiName, "rpcName", "cloudkms.projects.locations.keyRings.importJobs.testIamPermissions", "request", internallog.HTTPRequest(req, body.Bytes()))
 	return gensupport.SendRequest(c.ctx_, c.s.client, req)
 }
 
@@ -10106,9 +12634,11 @@ func (c *ProjectsLocationsKeyRingsImportJobsTestIamPermissionsCall) Do(opts ...g
 		},
 	}
 	target := &ret
-	if err := gensupport.DecodeResponse(target, res); err != nil {
+	b, err := gensupport.DecodeResponseBytes(target, res)
+	if err != nil {
 		return nil, err
 	}
+	c.s.logger.DebugContext(c.ctx_, "api response", "serviceName", apiName, "rpcName", "cloudkms.projects.locations.keyRings.importJobs.testIamPermissions", "response", internallog.HTTPResponse(res, b))
 	return ret, nil
 }
 
@@ -10168,12 +12698,11 @@ func (c *ProjectsLocationsOperationsGetCall) doRequest(alt string) (*http.Respon
 	if c.ifNoneMatch_ != "" {
 		reqHeaders.Set("If-None-Match", c.ifNoneMatch_)
 	}
-	var body io.Reader = nil
 	c.urlParams_.Set("alt", alt)
 	c.urlParams_.Set("prettyPrint", "false")
 	urls := googleapi.ResolveRelative(c.s.BasePath, "v1/{+name}")
 	urls += "?" + c.urlParams_.Encode()
-	req, err := http.NewRequest("GET", urls, body)
+	req, err := http.NewRequest("GET", urls, nil)
 	if err != nil {
 		return nil, err
 	}
@@ -10181,6 +12710,7 @@ func (c *ProjectsLocationsOperationsGetCall) doRequest(alt string) (*http.Respon
 	googleapi.Expand(req.URL, map[string]string{
 		"name": c.name,
 	})
+	c.s.logger.DebugContext(c.ctx_, "api request", "serviceName", apiName, "rpcName", "cloudkms.projects.locations.operations.get", "request", internallog.HTTPRequest(req, nil))
 	return gensupport.SendRequest(c.ctx_, c.s.client, req)
 }
 
@@ -10215,8 +12745,1117 @@ func (c *ProjectsLocationsOperationsGetCall) Do(opts ...googleapi.CallOption) (*
 		},
 	}
 	target := &ret
-	if err := gensupport.DecodeResponse(target, res); err != nil {
+	b, err := gensupport.DecodeResponseBytes(target, res)
+	if err != nil {
 		return nil, err
 	}
+	c.s.logger.DebugContext(c.ctx_, "api response", "serviceName", apiName, "rpcName", "cloudkms.projects.locations.operations.get", "response", internallog.HTTPResponse(res, b))
 	return ret, nil
+}
+
+type ProjectsLocationsSingleTenantHsmInstancesCreateCall struct {
+	s                       *Service
+	parent                  string
+	singletenanthsminstance *SingleTenantHsmInstance
+	urlParams_              gensupport.URLParams
+	ctx_                    context.Context
+	header_                 http.Header
+}
+
+// Create: Creates a new SingleTenantHsmInstance in a given Project and
+// Location. User must create a RegisterTwoFactorAuthKeys proposal with this
+// single-tenant HSM instance to finish setup of the instance.
+//
+//   - parent: The resource name of the location associated with the
+//     SingleTenantHsmInstance, in the format `projects/*/locations/*`.
+func (r *ProjectsLocationsSingleTenantHsmInstancesService) Create(parent string, singletenanthsminstance *SingleTenantHsmInstance) *ProjectsLocationsSingleTenantHsmInstancesCreateCall {
+	c := &ProjectsLocationsSingleTenantHsmInstancesCreateCall{s: r.s, urlParams_: make(gensupport.URLParams)}
+	c.parent = parent
+	c.singletenanthsminstance = singletenanthsminstance
+	return c
+}
+
+// SingleTenantHsmInstanceId sets the optional parameter
+// "singleTenantHsmInstanceId": It must be unique within a location and match
+// the regular expression `[a-zA-Z0-9_-]{1,63}`.
+func (c *ProjectsLocationsSingleTenantHsmInstancesCreateCall) SingleTenantHsmInstanceId(singleTenantHsmInstanceId string) *ProjectsLocationsSingleTenantHsmInstancesCreateCall {
+	c.urlParams_.Set("singleTenantHsmInstanceId", singleTenantHsmInstanceId)
+	return c
+}
+
+// Fields allows partial responses to be retrieved. See
+// https://developers.google.com/gdata/docs/2.0/basics#PartialResponse for more
+// details.
+func (c *ProjectsLocationsSingleTenantHsmInstancesCreateCall) Fields(s ...googleapi.Field) *ProjectsLocationsSingleTenantHsmInstancesCreateCall {
+	c.urlParams_.Set("fields", googleapi.CombineFields(s))
+	return c
+}
+
+// Context sets the context to be used in this call's Do method.
+func (c *ProjectsLocationsSingleTenantHsmInstancesCreateCall) Context(ctx context.Context) *ProjectsLocationsSingleTenantHsmInstancesCreateCall {
+	c.ctx_ = ctx
+	return c
+}
+
+// Header returns a http.Header that can be modified by the caller to add
+// headers to the request.
+func (c *ProjectsLocationsSingleTenantHsmInstancesCreateCall) Header() http.Header {
+	if c.header_ == nil {
+		c.header_ = make(http.Header)
+	}
+	return c.header_
+}
+
+func (c *ProjectsLocationsSingleTenantHsmInstancesCreateCall) doRequest(alt string) (*http.Response, error) {
+	reqHeaders := gensupport.SetHeaders(c.s.userAgent(), "application/json", c.header_)
+	body, err := googleapi.WithoutDataWrapper.JSONBuffer(c.singletenanthsminstance)
+	if err != nil {
+		return nil, err
+	}
+	c.urlParams_.Set("alt", alt)
+	c.urlParams_.Set("prettyPrint", "false")
+	urls := googleapi.ResolveRelative(c.s.BasePath, "v1/{+parent}/singleTenantHsmInstances")
+	urls += "?" + c.urlParams_.Encode()
+	req, err := http.NewRequest("POST", urls, body)
+	if err != nil {
+		return nil, err
+	}
+	req.Header = reqHeaders
+	googleapi.Expand(req.URL, map[string]string{
+		"parent": c.parent,
+	})
+	c.s.logger.DebugContext(c.ctx_, "api request", "serviceName", apiName, "rpcName", "cloudkms.projects.locations.singleTenantHsmInstances.create", "request", internallog.HTTPRequest(req, body.Bytes()))
+	return gensupport.SendRequest(c.ctx_, c.s.client, req)
+}
+
+// Do executes the "cloudkms.projects.locations.singleTenantHsmInstances.create" call.
+// Any non-2xx status code is an error. Response headers are in either
+// *Operation.ServerResponse.Header or (if a response was returned at all) in
+// error.(*googleapi.Error).Header. Use googleapi.IsNotModified to check
+// whether the returned error was because http.StatusNotModified was returned.
+func (c *ProjectsLocationsSingleTenantHsmInstancesCreateCall) Do(opts ...googleapi.CallOption) (*Operation, error) {
+	gensupport.SetOptions(c.urlParams_, opts...)
+	res, err := c.doRequest("json")
+	if res != nil && res.StatusCode == http.StatusNotModified {
+		if res.Body != nil {
+			res.Body.Close()
+		}
+		return nil, gensupport.WrapError(&googleapi.Error{
+			Code:   res.StatusCode,
+			Header: res.Header,
+		})
+	}
+	if err != nil {
+		return nil, err
+	}
+	defer googleapi.CloseBody(res)
+	if err := googleapi.CheckResponse(res); err != nil {
+		return nil, gensupport.WrapError(err)
+	}
+	ret := &Operation{
+		ServerResponse: googleapi.ServerResponse{
+			Header:         res.Header,
+			HTTPStatusCode: res.StatusCode,
+		},
+	}
+	target := &ret
+	b, err := gensupport.DecodeResponseBytes(target, res)
+	if err != nil {
+		return nil, err
+	}
+	c.s.logger.DebugContext(c.ctx_, "api response", "serviceName", apiName, "rpcName", "cloudkms.projects.locations.singleTenantHsmInstances.create", "response", internallog.HTTPResponse(res, b))
+	return ret, nil
+}
+
+type ProjectsLocationsSingleTenantHsmInstancesGetCall struct {
+	s            *Service
+	name         string
+	urlParams_   gensupport.URLParams
+	ifNoneMatch_ string
+	ctx_         context.Context
+	header_      http.Header
+}
+
+// Get: Returns metadata for a given SingleTenantHsmInstance.
+//
+// - name: The name of the SingleTenantHsmInstance to get.
+func (r *ProjectsLocationsSingleTenantHsmInstancesService) Get(name string) *ProjectsLocationsSingleTenantHsmInstancesGetCall {
+	c := &ProjectsLocationsSingleTenantHsmInstancesGetCall{s: r.s, urlParams_: make(gensupport.URLParams)}
+	c.name = name
+	return c
+}
+
+// Fields allows partial responses to be retrieved. See
+// https://developers.google.com/gdata/docs/2.0/basics#PartialResponse for more
+// details.
+func (c *ProjectsLocationsSingleTenantHsmInstancesGetCall) Fields(s ...googleapi.Field) *ProjectsLocationsSingleTenantHsmInstancesGetCall {
+	c.urlParams_.Set("fields", googleapi.CombineFields(s))
+	return c
+}
+
+// IfNoneMatch sets an optional parameter which makes the operation fail if the
+// object's ETag matches the given value. This is useful for getting updates
+// only after the object has changed since the last request.
+func (c *ProjectsLocationsSingleTenantHsmInstancesGetCall) IfNoneMatch(entityTag string) *ProjectsLocationsSingleTenantHsmInstancesGetCall {
+	c.ifNoneMatch_ = entityTag
+	return c
+}
+
+// Context sets the context to be used in this call's Do method.
+func (c *ProjectsLocationsSingleTenantHsmInstancesGetCall) Context(ctx context.Context) *ProjectsLocationsSingleTenantHsmInstancesGetCall {
+	c.ctx_ = ctx
+	return c
+}
+
+// Header returns a http.Header that can be modified by the caller to add
+// headers to the request.
+func (c *ProjectsLocationsSingleTenantHsmInstancesGetCall) Header() http.Header {
+	if c.header_ == nil {
+		c.header_ = make(http.Header)
+	}
+	return c.header_
+}
+
+func (c *ProjectsLocationsSingleTenantHsmInstancesGetCall) doRequest(alt string) (*http.Response, error) {
+	reqHeaders := gensupport.SetHeaders(c.s.userAgent(), "", c.header_)
+	if c.ifNoneMatch_ != "" {
+		reqHeaders.Set("If-None-Match", c.ifNoneMatch_)
+	}
+	c.urlParams_.Set("alt", alt)
+	c.urlParams_.Set("prettyPrint", "false")
+	urls := googleapi.ResolveRelative(c.s.BasePath, "v1/{+name}")
+	urls += "?" + c.urlParams_.Encode()
+	req, err := http.NewRequest("GET", urls, nil)
+	if err != nil {
+		return nil, err
+	}
+	req.Header = reqHeaders
+	googleapi.Expand(req.URL, map[string]string{
+		"name": c.name,
+	})
+	c.s.logger.DebugContext(c.ctx_, "api request", "serviceName", apiName, "rpcName", "cloudkms.projects.locations.singleTenantHsmInstances.get", "request", internallog.HTTPRequest(req, nil))
+	return gensupport.SendRequest(c.ctx_, c.s.client, req)
+}
+
+// Do executes the "cloudkms.projects.locations.singleTenantHsmInstances.get" call.
+// Any non-2xx status code is an error. Response headers are in either
+// *SingleTenantHsmInstance.ServerResponse.Header or (if a response was
+// returned at all) in error.(*googleapi.Error).Header. Use
+// googleapi.IsNotModified to check whether the returned error was because
+// http.StatusNotModified was returned.
+func (c *ProjectsLocationsSingleTenantHsmInstancesGetCall) Do(opts ...googleapi.CallOption) (*SingleTenantHsmInstance, error) {
+	gensupport.SetOptions(c.urlParams_, opts...)
+	res, err := c.doRequest("json")
+	if res != nil && res.StatusCode == http.StatusNotModified {
+		if res.Body != nil {
+			res.Body.Close()
+		}
+		return nil, gensupport.WrapError(&googleapi.Error{
+			Code:   res.StatusCode,
+			Header: res.Header,
+		})
+	}
+	if err != nil {
+		return nil, err
+	}
+	defer googleapi.CloseBody(res)
+	if err := googleapi.CheckResponse(res); err != nil {
+		return nil, gensupport.WrapError(err)
+	}
+	ret := &SingleTenantHsmInstance{
+		ServerResponse: googleapi.ServerResponse{
+			Header:         res.Header,
+			HTTPStatusCode: res.StatusCode,
+		},
+	}
+	target := &ret
+	b, err := gensupport.DecodeResponseBytes(target, res)
+	if err != nil {
+		return nil, err
+	}
+	c.s.logger.DebugContext(c.ctx_, "api response", "serviceName", apiName, "rpcName", "cloudkms.projects.locations.singleTenantHsmInstances.get", "response", internallog.HTTPResponse(res, b))
+	return ret, nil
+}
+
+type ProjectsLocationsSingleTenantHsmInstancesListCall struct {
+	s            *Service
+	parent       string
+	urlParams_   gensupport.URLParams
+	ifNoneMatch_ string
+	ctx_         context.Context
+	header_      http.Header
+}
+
+// List: Lists SingleTenantHsmInstances.
+//
+//   - parent: The resource name of the location associated with the
+//     SingleTenantHsmInstances to list, in the format `projects/*/locations/*`.
+func (r *ProjectsLocationsSingleTenantHsmInstancesService) List(parent string) *ProjectsLocationsSingleTenantHsmInstancesListCall {
+	c := &ProjectsLocationsSingleTenantHsmInstancesListCall{s: r.s, urlParams_: make(gensupport.URLParams)}
+	c.parent = parent
+	return c
+}
+
+// Filter sets the optional parameter "filter": Only include resources that
+// match the filter in the response. For more information, see Sorting and
+// filtering list results
+// (https://cloud.google.com/kms/docs/sorting-and-filtering).
+func (c *ProjectsLocationsSingleTenantHsmInstancesListCall) Filter(filter string) *ProjectsLocationsSingleTenantHsmInstancesListCall {
+	c.urlParams_.Set("filter", filter)
+	return c
+}
+
+// OrderBy sets the optional parameter "orderBy": Specify how the results
+// should be sorted. If not specified, the results will be sorted in the
+// default order. For more information, see Sorting and filtering list results
+// (https://cloud.google.com/kms/docs/sorting-and-filtering).
+func (c *ProjectsLocationsSingleTenantHsmInstancesListCall) OrderBy(orderBy string) *ProjectsLocationsSingleTenantHsmInstancesListCall {
+	c.urlParams_.Set("orderBy", orderBy)
+	return c
+}
+
+// PageSize sets the optional parameter "pageSize": Optional limit on the
+// number of SingleTenantHsmInstances to include in the response. Further
+// SingleTenantHsmInstances can subsequently be obtained by including the
+// ListSingleTenantHsmInstancesResponse.next_page_token in a subsequent
+// request. If unspecified, the server will pick an appropriate default.
+func (c *ProjectsLocationsSingleTenantHsmInstancesListCall) PageSize(pageSize int64) *ProjectsLocationsSingleTenantHsmInstancesListCall {
+	c.urlParams_.Set("pageSize", fmt.Sprint(pageSize))
+	return c
+}
+
+// PageToken sets the optional parameter "pageToken": Optional pagination
+// token, returned earlier via
+// ListSingleTenantHsmInstancesResponse.next_page_token.
+func (c *ProjectsLocationsSingleTenantHsmInstancesListCall) PageToken(pageToken string) *ProjectsLocationsSingleTenantHsmInstancesListCall {
+	c.urlParams_.Set("pageToken", pageToken)
+	return c
+}
+
+// ShowDeleted sets the optional parameter "showDeleted": If set to true,
+// HsmManagement.ListSingleTenantHsmInstances will also return
+// SingleTenantHsmInstances in DELETED state.
+func (c *ProjectsLocationsSingleTenantHsmInstancesListCall) ShowDeleted(showDeleted bool) *ProjectsLocationsSingleTenantHsmInstancesListCall {
+	c.urlParams_.Set("showDeleted", fmt.Sprint(showDeleted))
+	return c
+}
+
+// Fields allows partial responses to be retrieved. See
+// https://developers.google.com/gdata/docs/2.0/basics#PartialResponse for more
+// details.
+func (c *ProjectsLocationsSingleTenantHsmInstancesListCall) Fields(s ...googleapi.Field) *ProjectsLocationsSingleTenantHsmInstancesListCall {
+	c.urlParams_.Set("fields", googleapi.CombineFields(s))
+	return c
+}
+
+// IfNoneMatch sets an optional parameter which makes the operation fail if the
+// object's ETag matches the given value. This is useful for getting updates
+// only after the object has changed since the last request.
+func (c *ProjectsLocationsSingleTenantHsmInstancesListCall) IfNoneMatch(entityTag string) *ProjectsLocationsSingleTenantHsmInstancesListCall {
+	c.ifNoneMatch_ = entityTag
+	return c
+}
+
+// Context sets the context to be used in this call's Do method.
+func (c *ProjectsLocationsSingleTenantHsmInstancesListCall) Context(ctx context.Context) *ProjectsLocationsSingleTenantHsmInstancesListCall {
+	c.ctx_ = ctx
+	return c
+}
+
+// Header returns a http.Header that can be modified by the caller to add
+// headers to the request.
+func (c *ProjectsLocationsSingleTenantHsmInstancesListCall) Header() http.Header {
+	if c.header_ == nil {
+		c.header_ = make(http.Header)
+	}
+	return c.header_
+}
+
+func (c *ProjectsLocationsSingleTenantHsmInstancesListCall) doRequest(alt string) (*http.Response, error) {
+	reqHeaders := gensupport.SetHeaders(c.s.userAgent(), "", c.header_)
+	if c.ifNoneMatch_ != "" {
+		reqHeaders.Set("If-None-Match", c.ifNoneMatch_)
+	}
+	c.urlParams_.Set("alt", alt)
+	c.urlParams_.Set("prettyPrint", "false")
+	urls := googleapi.ResolveRelative(c.s.BasePath, "v1/{+parent}/singleTenantHsmInstances")
+	urls += "?" + c.urlParams_.Encode()
+	req, err := http.NewRequest("GET", urls, nil)
+	if err != nil {
+		return nil, err
+	}
+	req.Header = reqHeaders
+	googleapi.Expand(req.URL, map[string]string{
+		"parent": c.parent,
+	})
+	c.s.logger.DebugContext(c.ctx_, "api request", "serviceName", apiName, "rpcName", "cloudkms.projects.locations.singleTenantHsmInstances.list", "request", internallog.HTTPRequest(req, nil))
+	return gensupport.SendRequest(c.ctx_, c.s.client, req)
+}
+
+// Do executes the "cloudkms.projects.locations.singleTenantHsmInstances.list" call.
+// Any non-2xx status code is an error. Response headers are in either
+// *ListSingleTenantHsmInstancesResponse.ServerResponse.Header or (if a
+// response was returned at all) in error.(*googleapi.Error).Header. Use
+// googleapi.IsNotModified to check whether the returned error was because
+// http.StatusNotModified was returned.
+func (c *ProjectsLocationsSingleTenantHsmInstancesListCall) Do(opts ...googleapi.CallOption) (*ListSingleTenantHsmInstancesResponse, error) {
+	gensupport.SetOptions(c.urlParams_, opts...)
+	res, err := c.doRequest("json")
+	if res != nil && res.StatusCode == http.StatusNotModified {
+		if res.Body != nil {
+			res.Body.Close()
+		}
+		return nil, gensupport.WrapError(&googleapi.Error{
+			Code:   res.StatusCode,
+			Header: res.Header,
+		})
+	}
+	if err != nil {
+		return nil, err
+	}
+	defer googleapi.CloseBody(res)
+	if err := googleapi.CheckResponse(res); err != nil {
+		return nil, gensupport.WrapError(err)
+	}
+	ret := &ListSingleTenantHsmInstancesResponse{
+		ServerResponse: googleapi.ServerResponse{
+			Header:         res.Header,
+			HTTPStatusCode: res.StatusCode,
+		},
+	}
+	target := &ret
+	b, err := gensupport.DecodeResponseBytes(target, res)
+	if err != nil {
+		return nil, err
+	}
+	c.s.logger.DebugContext(c.ctx_, "api response", "serviceName", apiName, "rpcName", "cloudkms.projects.locations.singleTenantHsmInstances.list", "response", internallog.HTTPResponse(res, b))
+	return ret, nil
+}
+
+// Pages invokes f for each page of results.
+// A non-nil error returned from f will halt the iteration.
+// The provided context supersedes any context provided to the Context method.
+func (c *ProjectsLocationsSingleTenantHsmInstancesListCall) Pages(ctx context.Context, f func(*ListSingleTenantHsmInstancesResponse) error) error {
+	c.ctx_ = ctx
+	defer c.PageToken(c.urlParams_.Get("pageToken"))
+	for {
+		x, err := c.Do()
+		if err != nil {
+			return err
+		}
+		if err := f(x); err != nil {
+			return err
+		}
+		if x.NextPageToken == "" {
+			return nil
+		}
+		c.PageToken(x.NextPageToken)
+	}
+}
+
+type ProjectsLocationsSingleTenantHsmInstancesProposalsApproveCall struct {
+	s                                             *Service
+	name                                          string
+	approvesingletenanthsminstanceproposalrequest *ApproveSingleTenantHsmInstanceProposalRequest
+	urlParams_                                    gensupport.URLParams
+	ctx_                                          context.Context
+	header_                                       http.Header
+}
+
+// Approve: Approves a SingleTenantHsmInstanceProposal for a given
+// SingleTenantHsmInstance. The proposal must be in the PENDING state.
+//
+// - name: The name of the SingleTenantHsmInstanceProposal to approve.
+func (r *ProjectsLocationsSingleTenantHsmInstancesProposalsService) Approve(name string, approvesingletenanthsminstanceproposalrequest *ApproveSingleTenantHsmInstanceProposalRequest) *ProjectsLocationsSingleTenantHsmInstancesProposalsApproveCall {
+	c := &ProjectsLocationsSingleTenantHsmInstancesProposalsApproveCall{s: r.s, urlParams_: make(gensupport.URLParams)}
+	c.name = name
+	c.approvesingletenanthsminstanceproposalrequest = approvesingletenanthsminstanceproposalrequest
+	return c
+}
+
+// Fields allows partial responses to be retrieved. See
+// https://developers.google.com/gdata/docs/2.0/basics#PartialResponse for more
+// details.
+func (c *ProjectsLocationsSingleTenantHsmInstancesProposalsApproveCall) Fields(s ...googleapi.Field) *ProjectsLocationsSingleTenantHsmInstancesProposalsApproveCall {
+	c.urlParams_.Set("fields", googleapi.CombineFields(s))
+	return c
+}
+
+// Context sets the context to be used in this call's Do method.
+func (c *ProjectsLocationsSingleTenantHsmInstancesProposalsApproveCall) Context(ctx context.Context) *ProjectsLocationsSingleTenantHsmInstancesProposalsApproveCall {
+	c.ctx_ = ctx
+	return c
+}
+
+// Header returns a http.Header that can be modified by the caller to add
+// headers to the request.
+func (c *ProjectsLocationsSingleTenantHsmInstancesProposalsApproveCall) Header() http.Header {
+	if c.header_ == nil {
+		c.header_ = make(http.Header)
+	}
+	return c.header_
+}
+
+func (c *ProjectsLocationsSingleTenantHsmInstancesProposalsApproveCall) doRequest(alt string) (*http.Response, error) {
+	reqHeaders := gensupport.SetHeaders(c.s.userAgent(), "application/json", c.header_)
+	body, err := googleapi.WithoutDataWrapper.JSONBuffer(c.approvesingletenanthsminstanceproposalrequest)
+	if err != nil {
+		return nil, err
+	}
+	c.urlParams_.Set("alt", alt)
+	c.urlParams_.Set("prettyPrint", "false")
+	urls := googleapi.ResolveRelative(c.s.BasePath, "v1/{+name}:approve")
+	urls += "?" + c.urlParams_.Encode()
+	req, err := http.NewRequest("POST", urls, body)
+	if err != nil {
+		return nil, err
+	}
+	req.Header = reqHeaders
+	googleapi.Expand(req.URL, map[string]string{
+		"name": c.name,
+	})
+	c.s.logger.DebugContext(c.ctx_, "api request", "serviceName", apiName, "rpcName", "cloudkms.projects.locations.singleTenantHsmInstances.proposals.approve", "request", internallog.HTTPRequest(req, body.Bytes()))
+	return gensupport.SendRequest(c.ctx_, c.s.client, req)
+}
+
+// Do executes the "cloudkms.projects.locations.singleTenantHsmInstances.proposals.approve" call.
+// Any non-2xx status code is an error. Response headers are in either
+// *ApproveSingleTenantHsmInstanceProposalResponse.ServerResponse.Header or (if
+// a response was returned at all) in error.(*googleapi.Error).Header. Use
+// googleapi.IsNotModified to check whether the returned error was because
+// http.StatusNotModified was returned.
+func (c *ProjectsLocationsSingleTenantHsmInstancesProposalsApproveCall) Do(opts ...googleapi.CallOption) (*ApproveSingleTenantHsmInstanceProposalResponse, error) {
+	gensupport.SetOptions(c.urlParams_, opts...)
+	res, err := c.doRequest("json")
+	if res != nil && res.StatusCode == http.StatusNotModified {
+		if res.Body != nil {
+			res.Body.Close()
+		}
+		return nil, gensupport.WrapError(&googleapi.Error{
+			Code:   res.StatusCode,
+			Header: res.Header,
+		})
+	}
+	if err != nil {
+		return nil, err
+	}
+	defer googleapi.CloseBody(res)
+	if err := googleapi.CheckResponse(res); err != nil {
+		return nil, gensupport.WrapError(err)
+	}
+	ret := &ApproveSingleTenantHsmInstanceProposalResponse{
+		ServerResponse: googleapi.ServerResponse{
+			Header:         res.Header,
+			HTTPStatusCode: res.StatusCode,
+		},
+	}
+	target := &ret
+	b, err := gensupport.DecodeResponseBytes(target, res)
+	if err != nil {
+		return nil, err
+	}
+	c.s.logger.DebugContext(c.ctx_, "api response", "serviceName", apiName, "rpcName", "cloudkms.projects.locations.singleTenantHsmInstances.proposals.approve", "response", internallog.HTTPResponse(res, b))
+	return ret, nil
+}
+
+type ProjectsLocationsSingleTenantHsmInstancesProposalsCreateCall struct {
+	s                               *Service
+	parent                          string
+	singletenanthsminstanceproposal *SingleTenantHsmInstanceProposal
+	urlParams_                      gensupport.URLParams
+	ctx_                            context.Context
+	header_                         http.Header
+}
+
+// Create: Creates a new SingleTenantHsmInstanceProposal for a given
+// SingleTenantHsmInstance.
+//
+//   - parent: The name of the SingleTenantHsmInstance associated with the
+//     SingleTenantHsmInstanceProposals.
+func (r *ProjectsLocationsSingleTenantHsmInstancesProposalsService) Create(parent string, singletenanthsminstanceproposal *SingleTenantHsmInstanceProposal) *ProjectsLocationsSingleTenantHsmInstancesProposalsCreateCall {
+	c := &ProjectsLocationsSingleTenantHsmInstancesProposalsCreateCall{s: r.s, urlParams_: make(gensupport.URLParams)}
+	c.parent = parent
+	c.singletenanthsminstanceproposal = singletenanthsminstanceproposal
+	return c
+}
+
+// SingleTenantHsmInstanceProposalId sets the optional parameter
+// "singleTenantHsmInstanceProposalId": It must be unique within a location and
+// match the regular expression `[a-zA-Z0-9_-]{1,63}`.
+func (c *ProjectsLocationsSingleTenantHsmInstancesProposalsCreateCall) SingleTenantHsmInstanceProposalId(singleTenantHsmInstanceProposalId string) *ProjectsLocationsSingleTenantHsmInstancesProposalsCreateCall {
+	c.urlParams_.Set("singleTenantHsmInstanceProposalId", singleTenantHsmInstanceProposalId)
+	return c
+}
+
+// Fields allows partial responses to be retrieved. See
+// https://developers.google.com/gdata/docs/2.0/basics#PartialResponse for more
+// details.
+func (c *ProjectsLocationsSingleTenantHsmInstancesProposalsCreateCall) Fields(s ...googleapi.Field) *ProjectsLocationsSingleTenantHsmInstancesProposalsCreateCall {
+	c.urlParams_.Set("fields", googleapi.CombineFields(s))
+	return c
+}
+
+// Context sets the context to be used in this call's Do method.
+func (c *ProjectsLocationsSingleTenantHsmInstancesProposalsCreateCall) Context(ctx context.Context) *ProjectsLocationsSingleTenantHsmInstancesProposalsCreateCall {
+	c.ctx_ = ctx
+	return c
+}
+
+// Header returns a http.Header that can be modified by the caller to add
+// headers to the request.
+func (c *ProjectsLocationsSingleTenantHsmInstancesProposalsCreateCall) Header() http.Header {
+	if c.header_ == nil {
+		c.header_ = make(http.Header)
+	}
+	return c.header_
+}
+
+func (c *ProjectsLocationsSingleTenantHsmInstancesProposalsCreateCall) doRequest(alt string) (*http.Response, error) {
+	reqHeaders := gensupport.SetHeaders(c.s.userAgent(), "application/json", c.header_)
+	body, err := googleapi.WithoutDataWrapper.JSONBuffer(c.singletenanthsminstanceproposal)
+	if err != nil {
+		return nil, err
+	}
+	c.urlParams_.Set("alt", alt)
+	c.urlParams_.Set("prettyPrint", "false")
+	urls := googleapi.ResolveRelative(c.s.BasePath, "v1/{+parent}/proposals")
+	urls += "?" + c.urlParams_.Encode()
+	req, err := http.NewRequest("POST", urls, body)
+	if err != nil {
+		return nil, err
+	}
+	req.Header = reqHeaders
+	googleapi.Expand(req.URL, map[string]string{
+		"parent": c.parent,
+	})
+	c.s.logger.DebugContext(c.ctx_, "api request", "serviceName", apiName, "rpcName", "cloudkms.projects.locations.singleTenantHsmInstances.proposals.create", "request", internallog.HTTPRequest(req, body.Bytes()))
+	return gensupport.SendRequest(c.ctx_, c.s.client, req)
+}
+
+// Do executes the "cloudkms.projects.locations.singleTenantHsmInstances.proposals.create" call.
+// Any non-2xx status code is an error. Response headers are in either
+// *Operation.ServerResponse.Header or (if a response was returned at all) in
+// error.(*googleapi.Error).Header. Use googleapi.IsNotModified to check
+// whether the returned error was because http.StatusNotModified was returned.
+func (c *ProjectsLocationsSingleTenantHsmInstancesProposalsCreateCall) Do(opts ...googleapi.CallOption) (*Operation, error) {
+	gensupport.SetOptions(c.urlParams_, opts...)
+	res, err := c.doRequest("json")
+	if res != nil && res.StatusCode == http.StatusNotModified {
+		if res.Body != nil {
+			res.Body.Close()
+		}
+		return nil, gensupport.WrapError(&googleapi.Error{
+			Code:   res.StatusCode,
+			Header: res.Header,
+		})
+	}
+	if err != nil {
+		return nil, err
+	}
+	defer googleapi.CloseBody(res)
+	if err := googleapi.CheckResponse(res); err != nil {
+		return nil, gensupport.WrapError(err)
+	}
+	ret := &Operation{
+		ServerResponse: googleapi.ServerResponse{
+			Header:         res.Header,
+			HTTPStatusCode: res.StatusCode,
+		},
+	}
+	target := &ret
+	b, err := gensupport.DecodeResponseBytes(target, res)
+	if err != nil {
+		return nil, err
+	}
+	c.s.logger.DebugContext(c.ctx_, "api response", "serviceName", apiName, "rpcName", "cloudkms.projects.locations.singleTenantHsmInstances.proposals.create", "response", internallog.HTTPResponse(res, b))
+	return ret, nil
+}
+
+type ProjectsLocationsSingleTenantHsmInstancesProposalsDeleteCall struct {
+	s          *Service
+	name       string
+	urlParams_ gensupport.URLParams
+	ctx_       context.Context
+	header_    http.Header
+}
+
+// Delete: Deletes a SingleTenantHsmInstanceProposal.
+//
+// - name: The name of the SingleTenantHsmInstanceProposal to delete.
+func (r *ProjectsLocationsSingleTenantHsmInstancesProposalsService) Delete(name string) *ProjectsLocationsSingleTenantHsmInstancesProposalsDeleteCall {
+	c := &ProjectsLocationsSingleTenantHsmInstancesProposalsDeleteCall{s: r.s, urlParams_: make(gensupport.URLParams)}
+	c.name = name
+	return c
+}
+
+// Fields allows partial responses to be retrieved. See
+// https://developers.google.com/gdata/docs/2.0/basics#PartialResponse for more
+// details.
+func (c *ProjectsLocationsSingleTenantHsmInstancesProposalsDeleteCall) Fields(s ...googleapi.Field) *ProjectsLocationsSingleTenantHsmInstancesProposalsDeleteCall {
+	c.urlParams_.Set("fields", googleapi.CombineFields(s))
+	return c
+}
+
+// Context sets the context to be used in this call's Do method.
+func (c *ProjectsLocationsSingleTenantHsmInstancesProposalsDeleteCall) Context(ctx context.Context) *ProjectsLocationsSingleTenantHsmInstancesProposalsDeleteCall {
+	c.ctx_ = ctx
+	return c
+}
+
+// Header returns a http.Header that can be modified by the caller to add
+// headers to the request.
+func (c *ProjectsLocationsSingleTenantHsmInstancesProposalsDeleteCall) Header() http.Header {
+	if c.header_ == nil {
+		c.header_ = make(http.Header)
+	}
+	return c.header_
+}
+
+func (c *ProjectsLocationsSingleTenantHsmInstancesProposalsDeleteCall) doRequest(alt string) (*http.Response, error) {
+	reqHeaders := gensupport.SetHeaders(c.s.userAgent(), "", c.header_)
+	c.urlParams_.Set("alt", alt)
+	c.urlParams_.Set("prettyPrint", "false")
+	urls := googleapi.ResolveRelative(c.s.BasePath, "v1/{+name}")
+	urls += "?" + c.urlParams_.Encode()
+	req, err := http.NewRequest("DELETE", urls, nil)
+	if err != nil {
+		return nil, err
+	}
+	req.Header = reqHeaders
+	googleapi.Expand(req.URL, map[string]string{
+		"name": c.name,
+	})
+	c.s.logger.DebugContext(c.ctx_, "api request", "serviceName", apiName, "rpcName", "cloudkms.projects.locations.singleTenantHsmInstances.proposals.delete", "request", internallog.HTTPRequest(req, nil))
+	return gensupport.SendRequest(c.ctx_, c.s.client, req)
+}
+
+// Do executes the "cloudkms.projects.locations.singleTenantHsmInstances.proposals.delete" call.
+// Any non-2xx status code is an error. Response headers are in either
+// *Empty.ServerResponse.Header or (if a response was returned at all) in
+// error.(*googleapi.Error).Header. Use googleapi.IsNotModified to check
+// whether the returned error was because http.StatusNotModified was returned.
+func (c *ProjectsLocationsSingleTenantHsmInstancesProposalsDeleteCall) Do(opts ...googleapi.CallOption) (*Empty, error) {
+	gensupport.SetOptions(c.urlParams_, opts...)
+	res, err := c.doRequest("json")
+	if res != nil && res.StatusCode == http.StatusNotModified {
+		if res.Body != nil {
+			res.Body.Close()
+		}
+		return nil, gensupport.WrapError(&googleapi.Error{
+			Code:   res.StatusCode,
+			Header: res.Header,
+		})
+	}
+	if err != nil {
+		return nil, err
+	}
+	defer googleapi.CloseBody(res)
+	if err := googleapi.CheckResponse(res); err != nil {
+		return nil, gensupport.WrapError(err)
+	}
+	ret := &Empty{
+		ServerResponse: googleapi.ServerResponse{
+			Header:         res.Header,
+			HTTPStatusCode: res.StatusCode,
+		},
+	}
+	target := &ret
+	b, err := gensupport.DecodeResponseBytes(target, res)
+	if err != nil {
+		return nil, err
+	}
+	c.s.logger.DebugContext(c.ctx_, "api response", "serviceName", apiName, "rpcName", "cloudkms.projects.locations.singleTenantHsmInstances.proposals.delete", "response", internallog.HTTPResponse(res, b))
+	return ret, nil
+}
+
+type ProjectsLocationsSingleTenantHsmInstancesProposalsExecuteCall struct {
+	s                                             *Service
+	name                                          string
+	executesingletenanthsminstanceproposalrequest *ExecuteSingleTenantHsmInstanceProposalRequest
+	urlParams_                                    gensupport.URLParams
+	ctx_                                          context.Context
+	header_                                       http.Header
+}
+
+// Execute: Executes a SingleTenantHsmInstanceProposal for a given
+// SingleTenantHsmInstance. The proposal must be in the APPROVED state.
+//
+// - name: The name of the SingleTenantHsmInstanceProposal to execute.
+func (r *ProjectsLocationsSingleTenantHsmInstancesProposalsService) Execute(name string, executesingletenanthsminstanceproposalrequest *ExecuteSingleTenantHsmInstanceProposalRequest) *ProjectsLocationsSingleTenantHsmInstancesProposalsExecuteCall {
+	c := &ProjectsLocationsSingleTenantHsmInstancesProposalsExecuteCall{s: r.s, urlParams_: make(gensupport.URLParams)}
+	c.name = name
+	c.executesingletenanthsminstanceproposalrequest = executesingletenanthsminstanceproposalrequest
+	return c
+}
+
+// Fields allows partial responses to be retrieved. See
+// https://developers.google.com/gdata/docs/2.0/basics#PartialResponse for more
+// details.
+func (c *ProjectsLocationsSingleTenantHsmInstancesProposalsExecuteCall) Fields(s ...googleapi.Field) *ProjectsLocationsSingleTenantHsmInstancesProposalsExecuteCall {
+	c.urlParams_.Set("fields", googleapi.CombineFields(s))
+	return c
+}
+
+// Context sets the context to be used in this call's Do method.
+func (c *ProjectsLocationsSingleTenantHsmInstancesProposalsExecuteCall) Context(ctx context.Context) *ProjectsLocationsSingleTenantHsmInstancesProposalsExecuteCall {
+	c.ctx_ = ctx
+	return c
+}
+
+// Header returns a http.Header that can be modified by the caller to add
+// headers to the request.
+func (c *ProjectsLocationsSingleTenantHsmInstancesProposalsExecuteCall) Header() http.Header {
+	if c.header_ == nil {
+		c.header_ = make(http.Header)
+	}
+	return c.header_
+}
+
+func (c *ProjectsLocationsSingleTenantHsmInstancesProposalsExecuteCall) doRequest(alt string) (*http.Response, error) {
+	reqHeaders := gensupport.SetHeaders(c.s.userAgent(), "application/json", c.header_)
+	body, err := googleapi.WithoutDataWrapper.JSONBuffer(c.executesingletenanthsminstanceproposalrequest)
+	if err != nil {
+		return nil, err
+	}
+	c.urlParams_.Set("alt", alt)
+	c.urlParams_.Set("prettyPrint", "false")
+	urls := googleapi.ResolveRelative(c.s.BasePath, "v1/{+name}:execute")
+	urls += "?" + c.urlParams_.Encode()
+	req, err := http.NewRequest("POST", urls, body)
+	if err != nil {
+		return nil, err
+	}
+	req.Header = reqHeaders
+	googleapi.Expand(req.URL, map[string]string{
+		"name": c.name,
+	})
+	c.s.logger.DebugContext(c.ctx_, "api request", "serviceName", apiName, "rpcName", "cloudkms.projects.locations.singleTenantHsmInstances.proposals.execute", "request", internallog.HTTPRequest(req, body.Bytes()))
+	return gensupport.SendRequest(c.ctx_, c.s.client, req)
+}
+
+// Do executes the "cloudkms.projects.locations.singleTenantHsmInstances.proposals.execute" call.
+// Any non-2xx status code is an error. Response headers are in either
+// *Operation.ServerResponse.Header or (if a response was returned at all) in
+// error.(*googleapi.Error).Header. Use googleapi.IsNotModified to check
+// whether the returned error was because http.StatusNotModified was returned.
+func (c *ProjectsLocationsSingleTenantHsmInstancesProposalsExecuteCall) Do(opts ...googleapi.CallOption) (*Operation, error) {
+	gensupport.SetOptions(c.urlParams_, opts...)
+	res, err := c.doRequest("json")
+	if res != nil && res.StatusCode == http.StatusNotModified {
+		if res.Body != nil {
+			res.Body.Close()
+		}
+		return nil, gensupport.WrapError(&googleapi.Error{
+			Code:   res.StatusCode,
+			Header: res.Header,
+		})
+	}
+	if err != nil {
+		return nil, err
+	}
+	defer googleapi.CloseBody(res)
+	if err := googleapi.CheckResponse(res); err != nil {
+		return nil, gensupport.WrapError(err)
+	}
+	ret := &Operation{
+		ServerResponse: googleapi.ServerResponse{
+			Header:         res.Header,
+			HTTPStatusCode: res.StatusCode,
+		},
+	}
+	target := &ret
+	b, err := gensupport.DecodeResponseBytes(target, res)
+	if err != nil {
+		return nil, err
+	}
+	c.s.logger.DebugContext(c.ctx_, "api response", "serviceName", apiName, "rpcName", "cloudkms.projects.locations.singleTenantHsmInstances.proposals.execute", "response", internallog.HTTPResponse(res, b))
+	return ret, nil
+}
+
+type ProjectsLocationsSingleTenantHsmInstancesProposalsGetCall struct {
+	s            *Service
+	name         string
+	urlParams_   gensupport.URLParams
+	ifNoneMatch_ string
+	ctx_         context.Context
+	header_      http.Header
+}
+
+// Get: Returns metadata for a given SingleTenantHsmInstanceProposal.
+//
+// - name: The name of the SingleTenantHsmInstanceProposal to get.
+func (r *ProjectsLocationsSingleTenantHsmInstancesProposalsService) Get(name string) *ProjectsLocationsSingleTenantHsmInstancesProposalsGetCall {
+	c := &ProjectsLocationsSingleTenantHsmInstancesProposalsGetCall{s: r.s, urlParams_: make(gensupport.URLParams)}
+	c.name = name
+	return c
+}
+
+// Fields allows partial responses to be retrieved. See
+// https://developers.google.com/gdata/docs/2.0/basics#PartialResponse for more
+// details.
+func (c *ProjectsLocationsSingleTenantHsmInstancesProposalsGetCall) Fields(s ...googleapi.Field) *ProjectsLocationsSingleTenantHsmInstancesProposalsGetCall {
+	c.urlParams_.Set("fields", googleapi.CombineFields(s))
+	return c
+}
+
+// IfNoneMatch sets an optional parameter which makes the operation fail if the
+// object's ETag matches the given value. This is useful for getting updates
+// only after the object has changed since the last request.
+func (c *ProjectsLocationsSingleTenantHsmInstancesProposalsGetCall) IfNoneMatch(entityTag string) *ProjectsLocationsSingleTenantHsmInstancesProposalsGetCall {
+	c.ifNoneMatch_ = entityTag
+	return c
+}
+
+// Context sets the context to be used in this call's Do method.
+func (c *ProjectsLocationsSingleTenantHsmInstancesProposalsGetCall) Context(ctx context.Context) *ProjectsLocationsSingleTenantHsmInstancesProposalsGetCall {
+	c.ctx_ = ctx
+	return c
+}
+
+// Header returns a http.Header that can be modified by the caller to add
+// headers to the request.
+func (c *ProjectsLocationsSingleTenantHsmInstancesProposalsGetCall) Header() http.Header {
+	if c.header_ == nil {
+		c.header_ = make(http.Header)
+	}
+	return c.header_
+}
+
+func (c *ProjectsLocationsSingleTenantHsmInstancesProposalsGetCall) doRequest(alt string) (*http.Response, error) {
+	reqHeaders := gensupport.SetHeaders(c.s.userAgent(), "", c.header_)
+	if c.ifNoneMatch_ != "" {
+		reqHeaders.Set("If-None-Match", c.ifNoneMatch_)
+	}
+	c.urlParams_.Set("alt", alt)
+	c.urlParams_.Set("prettyPrint", "false")
+	urls := googleapi.ResolveRelative(c.s.BasePath, "v1/{+name}")
+	urls += "?" + c.urlParams_.Encode()
+	req, err := http.NewRequest("GET", urls, nil)
+	if err != nil {
+		return nil, err
+	}
+	req.Header = reqHeaders
+	googleapi.Expand(req.URL, map[string]string{
+		"name": c.name,
+	})
+	c.s.logger.DebugContext(c.ctx_, "api request", "serviceName", apiName, "rpcName", "cloudkms.projects.locations.singleTenantHsmInstances.proposals.get", "request", internallog.HTTPRequest(req, nil))
+	return gensupport.SendRequest(c.ctx_, c.s.client, req)
+}
+
+// Do executes the "cloudkms.projects.locations.singleTenantHsmInstances.proposals.get" call.
+// Any non-2xx status code is an error. Response headers are in either
+// *SingleTenantHsmInstanceProposal.ServerResponse.Header or (if a response was
+// returned at all) in error.(*googleapi.Error).Header. Use
+// googleapi.IsNotModified to check whether the returned error was because
+// http.StatusNotModified was returned.
+func (c *ProjectsLocationsSingleTenantHsmInstancesProposalsGetCall) Do(opts ...googleapi.CallOption) (*SingleTenantHsmInstanceProposal, error) {
+	gensupport.SetOptions(c.urlParams_, opts...)
+	res, err := c.doRequest("json")
+	if res != nil && res.StatusCode == http.StatusNotModified {
+		if res.Body != nil {
+			res.Body.Close()
+		}
+		return nil, gensupport.WrapError(&googleapi.Error{
+			Code:   res.StatusCode,
+			Header: res.Header,
+		})
+	}
+	if err != nil {
+		return nil, err
+	}
+	defer googleapi.CloseBody(res)
+	if err := googleapi.CheckResponse(res); err != nil {
+		return nil, gensupport.WrapError(err)
+	}
+	ret := &SingleTenantHsmInstanceProposal{
+		ServerResponse: googleapi.ServerResponse{
+			Header:         res.Header,
+			HTTPStatusCode: res.StatusCode,
+		},
+	}
+	target := &ret
+	b, err := gensupport.DecodeResponseBytes(target, res)
+	if err != nil {
+		return nil, err
+	}
+	c.s.logger.DebugContext(c.ctx_, "api response", "serviceName", apiName, "rpcName", "cloudkms.projects.locations.singleTenantHsmInstances.proposals.get", "response", internallog.HTTPResponse(res, b))
+	return ret, nil
+}
+
+type ProjectsLocationsSingleTenantHsmInstancesProposalsListCall struct {
+	s            *Service
+	parent       string
+	urlParams_   gensupport.URLParams
+	ifNoneMatch_ string
+	ctx_         context.Context
+	header_      http.Header
+}
+
+// List: Lists SingleTenantHsmInstanceProposals.
+//
+//   - parent: The resource name of the single tenant HSM instance associated
+//     with the SingleTenantHsmInstanceProposals to list, in the format
+//     `projects/*/locations/*/singleTenantHsmInstances/*`.
+func (r *ProjectsLocationsSingleTenantHsmInstancesProposalsService) List(parent string) *ProjectsLocationsSingleTenantHsmInstancesProposalsListCall {
+	c := &ProjectsLocationsSingleTenantHsmInstancesProposalsListCall{s: r.s, urlParams_: make(gensupport.URLParams)}
+	c.parent = parent
+	return c
+}
+
+// Filter sets the optional parameter "filter": Only include resources that
+// match the filter in the response. For more information, see Sorting and
+// filtering list results
+// (https://cloud.google.com/kms/docs/sorting-and-filtering).
+func (c *ProjectsLocationsSingleTenantHsmInstancesProposalsListCall) Filter(filter string) *ProjectsLocationsSingleTenantHsmInstancesProposalsListCall {
+	c.urlParams_.Set("filter", filter)
+	return c
+}
+
+// OrderBy sets the optional parameter "orderBy": Specify how the results
+// should be sorted. If not specified, the results will be sorted in the
+// default order. For more information, see Sorting and filtering list results
+// (https://cloud.google.com/kms/docs/sorting-and-filtering).
+func (c *ProjectsLocationsSingleTenantHsmInstancesProposalsListCall) OrderBy(orderBy string) *ProjectsLocationsSingleTenantHsmInstancesProposalsListCall {
+	c.urlParams_.Set("orderBy", orderBy)
+	return c
+}
+
+// PageSize sets the optional parameter "pageSize": Optional limit on the
+// number of SingleTenantHsmInstanceProposals to include in the response.
+// Further SingleTenantHsmInstanceProposals can subsequently be obtained by
+// including the ListSingleTenantHsmInstanceProposalsResponse.next_page_token
+// in a subsequent request. If unspecified, the server will pick an appropriate
+// default.
+func (c *ProjectsLocationsSingleTenantHsmInstancesProposalsListCall) PageSize(pageSize int64) *ProjectsLocationsSingleTenantHsmInstancesProposalsListCall {
+	c.urlParams_.Set("pageSize", fmt.Sprint(pageSize))
+	return c
+}
+
+// PageToken sets the optional parameter "pageToken": Optional pagination
+// token, returned earlier via
+// ListSingleTenantHsmInstanceProposalsResponse.next_page_token.
+func (c *ProjectsLocationsSingleTenantHsmInstancesProposalsListCall) PageToken(pageToken string) *ProjectsLocationsSingleTenantHsmInstancesProposalsListCall {
+	c.urlParams_.Set("pageToken", pageToken)
+	return c
+}
+
+// ShowDeleted sets the optional parameter "showDeleted": If set to true,
+// HsmManagement.ListSingleTenantHsmInstanceProposals will also return
+// SingleTenantHsmInstanceProposals in DELETED state.
+func (c *ProjectsLocationsSingleTenantHsmInstancesProposalsListCall) ShowDeleted(showDeleted bool) *ProjectsLocationsSingleTenantHsmInstancesProposalsListCall {
+	c.urlParams_.Set("showDeleted", fmt.Sprint(showDeleted))
+	return c
+}
+
+// Fields allows partial responses to be retrieved. See
+// https://developers.google.com/gdata/docs/2.0/basics#PartialResponse for more
+// details.
+func (c *ProjectsLocationsSingleTenantHsmInstancesProposalsListCall) Fields(s ...googleapi.Field) *ProjectsLocationsSingleTenantHsmInstancesProposalsListCall {
+	c.urlParams_.Set("fields", googleapi.CombineFields(s))
+	return c
+}
+
+// IfNoneMatch sets an optional parameter which makes the operation fail if the
+// object's ETag matches the given value. This is useful for getting updates
+// only after the object has changed since the last request.
+func (c *ProjectsLocationsSingleTenantHsmInstancesProposalsListCall) IfNoneMatch(entityTag string) *ProjectsLocationsSingleTenantHsmInstancesProposalsListCall {
+	c.ifNoneMatch_ = entityTag
+	return c
+}
+
+// Context sets the context to be used in this call's Do method.
+func (c *ProjectsLocationsSingleTenantHsmInstancesProposalsListCall) Context(ctx context.Context) *ProjectsLocationsSingleTenantHsmInstancesProposalsListCall {
+	c.ctx_ = ctx
+	return c
+}
+
+// Header returns a http.Header that can be modified by the caller to add
+// headers to the request.
+func (c *ProjectsLocationsSingleTenantHsmInstancesProposalsListCall) Header() http.Header {
+	if c.header_ == nil {
+		c.header_ = make(http.Header)
+	}
+	return c.header_
+}
+
+func (c *ProjectsLocationsSingleTenantHsmInstancesProposalsListCall) doRequest(alt string) (*http.Response, error) {
+	reqHeaders := gensupport.SetHeaders(c.s.userAgent(), "", c.header_)
+	if c.ifNoneMatch_ != "" {
+		reqHeaders.Set("If-None-Match", c.ifNoneMatch_)
+	}
+	c.urlParams_.Set("alt", alt)
+	c.urlParams_.Set("prettyPrint", "false")
+	urls := googleapi.ResolveRelative(c.s.BasePath, "v1/{+parent}/proposals")
+	urls += "?" + c.urlParams_.Encode()
+	req, err := http.NewRequest("GET", urls, nil)
+	if err != nil {
+		return nil, err
+	}
+	req.Header = reqHeaders
+	googleapi.Expand(req.URL, map[string]string{
+		"parent": c.parent,
+	})
+	c.s.logger.DebugContext(c.ctx_, "api request", "serviceName", apiName, "rpcName", "cloudkms.projects.locations.singleTenantHsmInstances.proposals.list", "request", internallog.HTTPRequest(req, nil))
+	return gensupport.SendRequest(c.ctx_, c.s.client, req)
+}
+
+// Do executes the "cloudkms.projects.locations.singleTenantHsmInstances.proposals.list" call.
+// Any non-2xx status code is an error. Response headers are in either
+// *ListSingleTenantHsmInstanceProposalsResponse.ServerResponse.Header or (if a
+// response was returned at all) in error.(*googleapi.Error).Header. Use
+// googleapi.IsNotModified to check whether the returned error was because
+// http.StatusNotModified was returned.
+func (c *ProjectsLocationsSingleTenantHsmInstancesProposalsListCall) Do(opts ...googleapi.CallOption) (*ListSingleTenantHsmInstanceProposalsResponse, error) {
+	gensupport.SetOptions(c.urlParams_, opts...)
+	res, err := c.doRequest("json")
+	if res != nil && res.StatusCode == http.StatusNotModified {
+		if res.Body != nil {
+			res.Body.Close()
+		}
+		return nil, gensupport.WrapError(&googleapi.Error{
+			Code:   res.StatusCode,
+			Header: res.Header,
+		})
+	}
+	if err != nil {
+		return nil, err
+	}
+	defer googleapi.CloseBody(res)
+	if err := googleapi.CheckResponse(res); err != nil {
+		return nil, gensupport.WrapError(err)
+	}
+	ret := &ListSingleTenantHsmInstanceProposalsResponse{
+		ServerResponse: googleapi.ServerResponse{
+			Header:         res.Header,
+			HTTPStatusCode: res.StatusCode,
+		},
+	}
+	target := &ret
+	b, err := gensupport.DecodeResponseBytes(target, res)
+	if err != nil {
+		return nil, err
+	}
+	c.s.logger.DebugContext(c.ctx_, "api response", "serviceName", apiName, "rpcName", "cloudkms.projects.locations.singleTenantHsmInstances.proposals.list", "response", internallog.HTTPResponse(res, b))
+	return ret, nil
+}
+
+// Pages invokes f for each page of results.
+// A non-nil error returned from f will halt the iteration.
+// The provided context supersedes any context provided to the Context method.
+func (c *ProjectsLocationsSingleTenantHsmInstancesProposalsListCall) Pages(ctx context.Context, f func(*ListSingleTenantHsmInstanceProposalsResponse) error) error {
+	c.ctx_ = ctx
+	defer c.PageToken(c.urlParams_.Get("pageToken"))
+	for {
+		x, err := c.Do()
+		if err != nil {
+			return err
+		}
+		if err := f(x); err != nil {
+			return err
+		}
+		if x.NextPageToken == "" {
+			return nil
+		}
+		c.PageToken(x.NextPageToken)
+	}
 }

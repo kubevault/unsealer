@@ -26,6 +26,11 @@
     },
     {
       "description": "Regional Endpoint",
+      "endpointUrl": "https://cloudkms.europe-west8.rep.googleapis.com/",
+      "location": "europe-west8"
+    },
+    {
+      "description": "Regional Endpoint",
       "endpointUrl": "https://cloudkms.europe-west9.rep.googleapis.com/",
       "location": "europe-west9"
     },
@@ -53,6 +58,56 @@
       "description": "Regional Endpoint",
       "endpointUrl": "https://cloudkms.us-west1.rep.googleapis.com/",
       "location": "us-west1"
+    },
+    {
+      "description": "Regional Endpoint",
+      "endpointUrl": "https://cloudkms.us-east7.rep.googleapis.com/",
+      "location": "us-east7"
+    },
+    {
+      "description": "Regional Endpoint",
+      "endpointUrl": "https://cloudkms.us-central1.rep.googleapis.com/",
+      "location": "us-central1"
+    },
+    {
+      "description": "Regional Endpoint",
+      "endpointUrl": "https://cloudkms.us-west3.rep.googleapis.com/",
+      "location": "us-west3"
+    },
+    {
+      "description": "Regional Endpoint",
+      "endpointUrl": "https://cloudkms.us-central2.rep.googleapis.com/",
+      "location": "us-central2"
+    },
+    {
+      "description": "Regional Endpoint",
+      "endpointUrl": "https://cloudkms.us-west4.rep.googleapis.com/",
+      "location": "us-west4"
+    },
+    {
+      "description": "Regional Endpoint",
+      "endpointUrl": "https://cloudkms.us-west8.rep.googleapis.com/",
+      "location": "us-west8"
+    },
+    {
+      "description": "Regional Endpoint",
+      "endpointUrl": "https://cloudkms.us-east5.rep.googleapis.com/",
+      "location": "us-east5"
+    },
+    {
+      "description": "Regional Endpoint",
+      "endpointUrl": "https://cloudkms.us-south1.rep.googleapis.com/",
+      "location": "us-south1"
+    },
+    {
+      "description": "Regional Endpoint",
+      "endpointUrl": "https://cloudkms.us.rep.googleapis.com/",
+      "location": "us"
+    },
+    {
+      "description": "Regional Endpoint",
+      "endpointUrl": "https://cloudkms.in.rep.googleapis.com/",
+      "location": "in"
     }
   ],
   "fullyEncodeReservedExpansion": true,
@@ -148,7 +203,7 @@
     "folders": {
       "methods": {
         "getAutokeyConfig": {
-          "description": "Returns the AutokeyConfig for a folder.",
+          "description": "Returns the AutokeyConfig for a folder or project.",
           "flatPath": "v1/folders/{foldersId}/autokeyConfig",
           "httpMethod": "GET",
           "id": "cloudkms.folders.getAutokeyConfig",
@@ -157,7 +212,7 @@
           ],
           "parameters": {
             "name": {
-              "description": "Required. Name of the AutokeyConfig resource, e.g. `folders/{FOLDER_NUMBER}/autokeyConfig`.",
+              "description": "Required. Name of the AutokeyConfig resource, e.g. `folders/{FOLDER_NUMBER}/autokeyConfig` or `projects/{PROJECT_NUMBER}/autokeyConfig`.",
               "location": "path",
               "pattern": "^folders/[^/]+/autokeyConfig$",
               "required": true,
@@ -173,8 +228,34 @@
             "https://www.googleapis.com/auth/cloudkms"
           ]
         },
+        "getKajPolicyConfig": {
+          "description": "Gets the KeyAccessJustificationsPolicyConfig for a given organization, folder, or project.",
+          "flatPath": "v1/folders/{foldersId}/kajPolicyConfig",
+          "httpMethod": "GET",
+          "id": "cloudkms.folders.getKajPolicyConfig",
+          "parameterOrder": [
+            "name"
+          ],
+          "parameters": {
+            "name": {
+              "description": "Required. The name of the KeyAccessJustificationsPolicyConfig to get.",
+              "location": "path",
+              "pattern": "^folders/[^/]+/kajPolicyConfig$",
+              "required": true,
+              "type": "string"
+            }
+          },
+          "path": "v1/{+name}",
+          "response": {
+            "$ref": "KeyAccessJustificationsPolicyConfig"
+          },
+          "scopes": [
+            "https://www.googleapis.com/auth/cloud-platform",
+            "https://www.googleapis.com/auth/cloudkms"
+          ]
+        },
         "updateAutokeyConfig": {
-          "description": "Updates the AutokeyConfig for a folder. The caller must have both `cloudkms.autokeyConfigs.update` permission on the parent folder and `cloudkms.cryptoKeys.setIamPolicy` permission on the provided key project. A KeyHandle creation in the folder's descendant projects will use this configuration to determine where to create the resulting CryptoKey.",
+          "description": "Updates the AutokeyConfig for a folder or a project. The caller must have both `cloudkms.autokeyConfigs.update` permission on the parent folder and `cloudkms.cryptoKeys.setIamPolicy` permission on the provided key project. A KeyHandle creation in the folder's descendant projects will use this configuration to determine where to create the resulting CryptoKey.",
           "flatPath": "v1/folders/{foldersId}/autokeyConfig",
           "httpMethod": "PATCH",
           "id": "cloudkms.folders.updateAutokeyConfig",
@@ -183,7 +264,7 @@
           ],
           "parameters": {
             "name": {
-              "description": "Identifier. Name of the AutokeyConfig resource, e.g. `folders/{FOLDER_NUMBER}/autokeyConfig`.",
+              "description": "Identifier. Name of the AutokeyConfig resource, e.g. `folders/{FOLDER_NUMBER}/autokeyConfig`",
               "location": "path",
               "pattern": "^folders/[^/]+/autokeyConfig$",
               "required": true,
@@ -207,11 +288,163 @@
             "https://www.googleapis.com/auth/cloud-platform",
             "https://www.googleapis.com/auth/cloudkms"
           ]
+        },
+        "updateKajPolicyConfig": {
+          "description": "Updates the KeyAccessJustificationsPolicyConfig for a given organization, folder, or project.",
+          "flatPath": "v1/folders/{foldersId}/kajPolicyConfig",
+          "httpMethod": "PATCH",
+          "id": "cloudkms.folders.updateKajPolicyConfig",
+          "parameterOrder": [
+            "name"
+          ],
+          "parameters": {
+            "name": {
+              "description": "Identifier. The resource name for this KeyAccessJustificationsPolicyConfig in the format of \"{organizations|folders|projects}/*/kajPolicyConfig\".",
+              "location": "path",
+              "pattern": "^folders/[^/]+/kajPolicyConfig$",
+              "required": true,
+              "type": "string"
+            },
+            "updateMask": {
+              "description": "Optional. The list of fields to update.",
+              "format": "google-fieldmask",
+              "location": "query",
+              "type": "string"
+            }
+          },
+          "path": "v1/{+name}",
+          "request": {
+            "$ref": "KeyAccessJustificationsPolicyConfig"
+          },
+          "response": {
+            "$ref": "KeyAccessJustificationsPolicyConfig"
+          },
+          "scopes": [
+            "https://www.googleapis.com/auth/cloud-platform",
+            "https://www.googleapis.com/auth/cloudkms"
+          ]
+        }
+      }
+    },
+    "organizations": {
+      "methods": {
+        "getKajPolicyConfig": {
+          "description": "Gets the KeyAccessJustificationsPolicyConfig for a given organization, folder, or project.",
+          "flatPath": "v1/organizations/{organizationsId}/kajPolicyConfig",
+          "httpMethod": "GET",
+          "id": "cloudkms.organizations.getKajPolicyConfig",
+          "parameterOrder": [
+            "name"
+          ],
+          "parameters": {
+            "name": {
+              "description": "Required. The name of the KeyAccessJustificationsPolicyConfig to get.",
+              "location": "path",
+              "pattern": "^organizations/[^/]+/kajPolicyConfig$",
+              "required": true,
+              "type": "string"
+            }
+          },
+          "path": "v1/{+name}",
+          "response": {
+            "$ref": "KeyAccessJustificationsPolicyConfig"
+          },
+          "scopes": [
+            "https://www.googleapis.com/auth/cloud-platform",
+            "https://www.googleapis.com/auth/cloudkms"
+          ]
+        },
+        "updateKajPolicyConfig": {
+          "description": "Updates the KeyAccessJustificationsPolicyConfig for a given organization, folder, or project.",
+          "flatPath": "v1/organizations/{organizationsId}/kajPolicyConfig",
+          "httpMethod": "PATCH",
+          "id": "cloudkms.organizations.updateKajPolicyConfig",
+          "parameterOrder": [
+            "name"
+          ],
+          "parameters": {
+            "name": {
+              "description": "Identifier. The resource name for this KeyAccessJustificationsPolicyConfig in the format of \"{organizations|folders|projects}/*/kajPolicyConfig\".",
+              "location": "path",
+              "pattern": "^organizations/[^/]+/kajPolicyConfig$",
+              "required": true,
+              "type": "string"
+            },
+            "updateMask": {
+              "description": "Optional. The list of fields to update.",
+              "format": "google-fieldmask",
+              "location": "query",
+              "type": "string"
+            }
+          },
+          "path": "v1/{+name}",
+          "request": {
+            "$ref": "KeyAccessJustificationsPolicyConfig"
+          },
+          "response": {
+            "$ref": "KeyAccessJustificationsPolicyConfig"
+          },
+          "scopes": [
+            "https://www.googleapis.com/auth/cloud-platform",
+            "https://www.googleapis.com/auth/cloudkms"
+          ]
         }
       }
     },
     "projects": {
       "methods": {
+        "getAutokeyConfig": {
+          "description": "Returns the AutokeyConfig for a folder or project.",
+          "flatPath": "v1/projects/{projectsId}/autokeyConfig",
+          "httpMethod": "GET",
+          "id": "cloudkms.projects.getAutokeyConfig",
+          "parameterOrder": [
+            "name"
+          ],
+          "parameters": {
+            "name": {
+              "description": "Required. Name of the AutokeyConfig resource, e.g. `folders/{FOLDER_NUMBER}/autokeyConfig` or `projects/{PROJECT_NUMBER}/autokeyConfig`.",
+              "location": "path",
+              "pattern": "^projects/[^/]+/autokeyConfig$",
+              "required": true,
+              "type": "string"
+            }
+          },
+          "path": "v1/{+name}",
+          "response": {
+            "$ref": "AutokeyConfig"
+          },
+          "scopes": [
+            "https://www.googleapis.com/auth/cloud-platform",
+            "https://www.googleapis.com/auth/cloudkms"
+          ]
+        },
+        "getKajPolicyConfig": {
+          "description": "Gets the KeyAccessJustificationsPolicyConfig for a given organization, folder, or project.",
+          "flatPath": "v1/projects/{projectsId}/kajPolicyConfig",
+          "httpMethod": "GET",
+          "id": "cloudkms.projects.getKajPolicyConfig",
+          "parameterOrder": [
+            "name"
+          ],
+          "parameters": {
+            "name": {
+              "description": "Required. The name of the KeyAccessJustificationsPolicyConfig to get.",
+              "location": "path",
+              "pattern": "^projects/[^/]+/kajPolicyConfig$",
+              "required": true,
+              "type": "string"
+            }
+          },
+          "path": "v1/{+name}",
+          "response": {
+            "$ref": "KeyAccessJustificationsPolicyConfig"
+          },
+          "scopes": [
+            "https://www.googleapis.com/auth/cloud-platform",
+            "https://www.googleapis.com/auth/cloudkms"
+          ]
+        },
         "showEffectiveAutokeyConfig": {
           "description": "Returns the effective Cloud KMS Autokey configuration for a given project.",
           "flatPath": "v1/projects/{projectsId}:showEffectiveAutokeyConfig",
@@ -232,6 +465,128 @@
           "path": "v1/{+parent}:showEffectiveAutokeyConfig",
           "response": {
             "$ref": "ShowEffectiveAutokeyConfigResponse"
+          },
+          "scopes": [
+            "https://www.googleapis.com/auth/cloud-platform",
+            "https://www.googleapis.com/auth/cloudkms"
+          ]
+        },
+        "showEffectiveKeyAccessJustificationsEnrollmentConfig": {
+          "description": "Returns the KeyAccessJustificationsEnrollmentConfig of the resource closest to the given project in hierarchy.",
+          "flatPath": "v1/projects/{projectsId}:showEffectiveKeyAccessJustificationsEnrollmentConfig",
+          "httpMethod": "GET",
+          "id": "cloudkms.projects.showEffectiveKeyAccessJustificationsEnrollmentConfig",
+          "parameterOrder": [
+            "project"
+          ],
+          "parameters": {
+            "project": {
+              "description": "Required. The number or id of the project to get the effective KeyAccessJustificationsEnrollmentConfig for.",
+              "location": "path",
+              "pattern": "^projects/[^/]+$",
+              "required": true,
+              "type": "string"
+            }
+          },
+          "path": "v1/{+project}:showEffectiveKeyAccessJustificationsEnrollmentConfig",
+          "response": {
+            "$ref": "ShowEffectiveKeyAccessJustificationsEnrollmentConfigResponse"
+          },
+          "scopes": [
+            "https://www.googleapis.com/auth/cloud-platform",
+            "https://www.googleapis.com/auth/cloudkms"
+          ]
+        },
+        "showEffectiveKeyAccessJustificationsPolicyConfig": {
+          "description": "Returns the KeyAccessJustificationsPolicyConfig of the resource closest to the given project in hierarchy.",
+          "flatPath": "v1/projects/{projectsId}:showEffectiveKeyAccessJustificationsPolicyConfig",
+          "httpMethod": "GET",
+          "id": "cloudkms.projects.showEffectiveKeyAccessJustificationsPolicyConfig",
+          "parameterOrder": [
+            "project"
+          ],
+          "parameters": {
+            "project": {
+              "description": "Required. The number or id of the project to get the effective KeyAccessJustificationsPolicyConfig. In the format of \"projects/{|}\"",
+              "location": "path",
+              "pattern": "^projects/[^/]+$",
+              "required": true,
+              "type": "string"
+            }
+          },
+          "path": "v1/{+project}:showEffectiveKeyAccessJustificationsPolicyConfig",
+          "response": {
+            "$ref": "ShowEffectiveKeyAccessJustificationsPolicyConfigResponse"
+          },
+          "scopes": [
+            "https://www.googleapis.com/auth/cloud-platform",
+            "https://www.googleapis.com/auth/cloudkms"
+          ]
+        },
+        "updateAutokeyConfig": {
+          "description": "Updates the AutokeyConfig for a folder or a project. The caller must have both `cloudkms.autokeyConfigs.update` permission on the parent folder and `cloudkms.cryptoKeys.setIamPolicy` permission on the provided key project. A KeyHandle creation in the folder's descendant projects will use this configuration to determine where to create the resulting CryptoKey.",
+          "flatPath": "v1/projects/{projectsId}/autokeyConfig",
+          "httpMethod": "PATCH",
+          "id": "cloudkms.projects.updateAutokeyConfig",
+          "parameterOrder": [
+            "name"
+          ],
+          "parameters": {
+            "name": {
+              "description": "Identifier. Name of the AutokeyConfig resource, e.g. `folders/{FOLDER_NUMBER}/autokeyConfig`",
+              "location": "path",
+              "pattern": "^projects/[^/]+/autokeyConfig$",
+              "required": true,
+              "type": "string"
+            },
+            "updateMask": {
+              "description": "Required. Masks which fields of the AutokeyConfig to update, e.g. `keyProject`.",
+              "format": "google-fieldmask",
+              "location": "query",
+              "type": "string"
+            }
+          },
+          "path": "v1/{+name}",
+          "request": {
+            "$ref": "AutokeyConfig"
+          },
+          "response": {
+            "$ref": "AutokeyConfig"
+          },
+          "scopes": [
+            "https://www.googleapis.com/auth/cloud-platform",
+            "https://www.googleapis.com/auth/cloudkms"
+          ]
+        },
+        "updateKajPolicyConfig": {
+          "description": "Updates the KeyAccessJustificationsPolicyConfig for a given organization, folder, or project.",
+          "flatPath": "v1/projects/{projectsId}/kajPolicyConfig",
+          "httpMethod": "PATCH",
+          "id": "cloudkms.projects.updateKajPolicyConfig",
+          "parameterOrder": [
+            "name"
+          ],
+          "parameters": {
+            "name": {
+              "description": "Identifier. The resource name for this KeyAccessJustificationsPolicyConfig in the format of \"{organizations|folders|projects}/*/kajPolicyConfig\".",
+              "location": "path",
+              "pattern": "^projects/[^/]+/kajPolicyConfig$",
+              "required": true,
+              "type": "string"
+            },
+            "updateMask": {
+              "description": "Optional. The list of fields to update.",
+              "format": "google-fieldmask",
+              "location": "query",
+              "type": "string"
+            }
+          },
+          "path": "v1/{+name}",
+          "request": {
+            "$ref": "KeyAccessJustificationsPolicyConfig"
+          },
+          "response": {
+            "$ref": "KeyAccessJustificationsPolicyConfig"
           },
           "scopes": [
             "https://www.googleapis.com/auth/cloud-platform",
@@ -332,6 +687,12 @@
                 "name"
               ],
               "parameters": {
+                "extraLocationTypes": {
+                  "description": "Optional. Do not use this field. It is unsupported and is ignored unless explicitly documented otherwise. This is primarily for internal usage.",
+                  "location": "query",
+                  "repeated": true,
+                  "type": "string"
+                },
                 "filter": {
                   "description": "A filter to narrow down results to a preferred subset. The filtering language accepts strings like `\"displayName=tokyo\"`, and is documented in more detail in [AIP-160](https://google.aip.dev/160).",
                   "location": "query",
@@ -831,6 +1192,17 @@
                   "parameters": {
                     "filter": {
                       "description": "Optional. Filter to apply when listing KeyHandles, e.g. `resource_type_selector=\"{SERVICE}.googleapis.com/{TYPE}\"`.",
+                      "location": "query",
+                      "type": "string"
+                    },
+                    "pageSize": {
+                      "description": "Optional. Optional limit on the number of KeyHandles to include in the response. The service may return fewer than this value. Further KeyHandles can subsequently be obtained by including the ListKeyHandlesResponse.next_page_token in a subsequent request. If unspecified, at most 100 KeyHandles will be returned.",
+                      "format": "int32",
+                      "location": "query",
+                      "type": "integer"
+                    },
+                    "pageToken": {
+                      "description": "Optional. Optional pagination token, returned earlier via ListKeyHandlesResponse.next_page_token.",
                       "location": "query",
                       "type": "string"
                     },
@@ -1484,6 +1856,35 @@
                             "https://www.googleapis.com/auth/cloudkms"
                           ]
                         },
+                        "decapsulate": {
+                          "description": "Decapsulates data that was encapsulated with a public key retrieved from GetPublicKey corresponding to a CryptoKeyVersion with CryptoKey.purpose KEY_ENCAPSULATION.",
+                          "flatPath": "v1/projects/{projectsId}/locations/{locationsId}/keyRings/{keyRingsId}/cryptoKeys/{cryptoKeysId}/cryptoKeyVersions/{cryptoKeyVersionsId}:decapsulate",
+                          "httpMethod": "POST",
+                          "id": "cloudkms.projects.locations.keyRings.cryptoKeys.cryptoKeyVersions.decapsulate",
+                          "parameterOrder": [
+                            "name"
+                          ],
+                          "parameters": {
+                            "name": {
+                              "description": "Required. The resource name of the CryptoKeyVersion to use for decapsulation.",
+                              "location": "path",
+                              "pattern": "^projects/[^/]+/locations/[^/]+/keyRings/[^/]+/cryptoKeys/[^/]+/cryptoKeyVersions/[^/]+$",
+                              "required": true,
+                              "type": "string"
+                            }
+                          },
+                          "path": "v1/{+name}:decapsulate",
+                          "request": {
+                            "$ref": "DecapsulateRequest"
+                          },
+                          "response": {
+                            "$ref": "DecapsulateResponse"
+                          },
+                          "scopes": [
+                            "https://www.googleapis.com/auth/cloud-platform",
+                            "https://www.googleapis.com/auth/cloudkms"
+                          ]
+                        },
                         "destroy": {
                           "description": "Schedule a CryptoKeyVersion for destruction. Upon calling this method, CryptoKeyVersion.state will be set to DESTROY_SCHEDULED, and destroy_time will be set to the time destroy_scheduled_duration in the future. At that time, the state will automatically change to DESTROYED, and the key material will be irrevocably destroyed. Before the destroy_time is reached, RestoreCryptoKeyVersion may be called to reverse the process.",
                           "flatPath": "v1/projects/{projectsId}/locations/{locationsId}/keyRings/{keyRingsId}/cryptoKeys/{cryptoKeysId}/cryptoKeyVersions/{cryptoKeyVersionsId}:destroy",
@@ -1553,6 +1954,25 @@
                               "location": "path",
                               "pattern": "^projects/[^/]+/locations/[^/]+/keyRings/[^/]+/cryptoKeys/[^/]+/cryptoKeyVersions/[^/]+$",
                               "required": true,
+                              "type": "string"
+                            },
+                            "publicKeyFormat": {
+                              "description": "Optional. The PublicKey format specified by the user. This field is required for PQC algorithms. If specified, the public key will be exported through the public_key field in the requested format. Otherwise, the pem field will be populated for non-PQC algorithms, and an error will be returned for PQC algorithms.",
+                              "enum": [
+                                "PUBLIC_KEY_FORMAT_UNSPECIFIED",
+                                "PEM",
+                                "DER",
+                                "NIST_PQC",
+                                "XWING_RAW_BYTES"
+                              ],
+                              "enumDescriptions": [
+                                "If the public_key_format field is not specified: - For PQC algorithms, an error will be returned. - For non-PQC algorithms, the default format is PEM, and the field pem will be populated. Otherwise, the public key will be exported through the public_key field in the requested format.",
+                                "The returned public key will be encoded in PEM format. See the [RFC7468](https://tools.ietf.org/html/rfc7468) sections for [General Considerations](https://tools.ietf.org/html/rfc7468#section-2) and [Textual Encoding of Subject Public Key Info] (https://tools.ietf.org/html/rfc7468#section-13) for more information.",
+                                "The returned public key will be encoded in DER format (the PrivateKeyInfo structure from RFC 5208).",
+                                "This is supported only for PQC algorithms. The key material is returned in the format defined by NIST PQC standards (FIPS 203, FIPS 204, and FIPS 205).",
+                                "The returned public key is in raw bytes format defined in its standard https://datatracker.ietf.org/doc/draft-connolly-cfrg-xwing-kem."
+                              ],
+                              "location": "query",
                               "type": "string"
                             }
                           },
@@ -2070,15 +2490,365 @@
                   ]
                 }
               }
+            },
+            "singleTenantHsmInstances": {
+              "methods": {
+                "create": {
+                  "description": "Creates a new SingleTenantHsmInstance in a given Project and Location. User must create a RegisterTwoFactorAuthKeys proposal with this single-tenant HSM instance to finish setup of the instance.",
+                  "flatPath": "v1/projects/{projectsId}/locations/{locationsId}/singleTenantHsmInstances",
+                  "httpMethod": "POST",
+                  "id": "cloudkms.projects.locations.singleTenantHsmInstances.create",
+                  "parameterOrder": [
+                    "parent"
+                  ],
+                  "parameters": {
+                    "parent": {
+                      "description": "Required. The resource name of the location associated with the SingleTenantHsmInstance, in the format `projects/*/locations/*`.",
+                      "location": "path",
+                      "pattern": "^projects/[^/]+/locations/[^/]+$",
+                      "required": true,
+                      "type": "string"
+                    },
+                    "singleTenantHsmInstanceId": {
+                      "description": "Optional. It must be unique within a location and match the regular expression `[a-zA-Z0-9_-]{1,63}`.",
+                      "location": "query",
+                      "type": "string"
+                    }
+                  },
+                  "path": "v1/{+parent}/singleTenantHsmInstances",
+                  "request": {
+                    "$ref": "SingleTenantHsmInstance"
+                  },
+                  "response": {
+                    "$ref": "Operation"
+                  },
+                  "scopes": [
+                    "https://www.googleapis.com/auth/cloud-platform",
+                    "https://www.googleapis.com/auth/cloudkms"
+                  ]
+                },
+                "get": {
+                  "description": "Returns metadata for a given SingleTenantHsmInstance.",
+                  "flatPath": "v1/projects/{projectsId}/locations/{locationsId}/singleTenantHsmInstances/{singleTenantHsmInstancesId}",
+                  "httpMethod": "GET",
+                  "id": "cloudkms.projects.locations.singleTenantHsmInstances.get",
+                  "parameterOrder": [
+                    "name"
+                  ],
+                  "parameters": {
+                    "name": {
+                      "description": "Required. The name of the SingleTenantHsmInstance to get.",
+                      "location": "path",
+                      "pattern": "^projects/[^/]+/locations/[^/]+/singleTenantHsmInstances/[^/]+$",
+                      "required": true,
+                      "type": "string"
+                    }
+                  },
+                  "path": "v1/{+name}",
+                  "response": {
+                    "$ref": "SingleTenantHsmInstance"
+                  },
+                  "scopes": [
+                    "https://www.googleapis.com/auth/cloud-platform",
+                    "https://www.googleapis.com/auth/cloudkms"
+                  ]
+                },
+                "list": {
+                  "description": "Lists SingleTenantHsmInstances.",
+                  "flatPath": "v1/projects/{projectsId}/locations/{locationsId}/singleTenantHsmInstances",
+                  "httpMethod": "GET",
+                  "id": "cloudkms.projects.locations.singleTenantHsmInstances.list",
+                  "parameterOrder": [
+                    "parent"
+                  ],
+                  "parameters": {
+                    "filter": {
+                      "description": "Optional. Only include resources that match the filter in the response. For more information, see [Sorting and filtering list results](https://cloud.google.com/kms/docs/sorting-and-filtering).",
+                      "location": "query",
+                      "type": "string"
+                    },
+                    "orderBy": {
+                      "description": "Optional. Specify how the results should be sorted. If not specified, the results will be sorted in the default order. For more information, see [Sorting and filtering list results](https://cloud.google.com/kms/docs/sorting-and-filtering).",
+                      "location": "query",
+                      "type": "string"
+                    },
+                    "pageSize": {
+                      "description": "Optional. Optional limit on the number of SingleTenantHsmInstances to include in the response. Further SingleTenantHsmInstances can subsequently be obtained by including the ListSingleTenantHsmInstancesResponse.next_page_token in a subsequent request. If unspecified, the server will pick an appropriate default.",
+                      "format": "int32",
+                      "location": "query",
+                      "type": "integer"
+                    },
+                    "pageToken": {
+                      "description": "Optional. Optional pagination token, returned earlier via ListSingleTenantHsmInstancesResponse.next_page_token.",
+                      "location": "query",
+                      "type": "string"
+                    },
+                    "parent": {
+                      "description": "Required. The resource name of the location associated with the SingleTenantHsmInstances to list, in the format `projects/*/locations/*`.",
+                      "location": "path",
+                      "pattern": "^projects/[^/]+/locations/[^/]+$",
+                      "required": true,
+                      "type": "string"
+                    },
+                    "showDeleted": {
+                      "description": "Optional. If set to true, HsmManagement.ListSingleTenantHsmInstances will also return SingleTenantHsmInstances in DELETED state.",
+                      "location": "query",
+                      "type": "boolean"
+                    }
+                  },
+                  "path": "v1/{+parent}/singleTenantHsmInstances",
+                  "response": {
+                    "$ref": "ListSingleTenantHsmInstancesResponse"
+                  },
+                  "scopes": [
+                    "https://www.googleapis.com/auth/cloud-platform",
+                    "https://www.googleapis.com/auth/cloudkms"
+                  ]
+                }
+              },
+              "resources": {
+                "proposals": {
+                  "methods": {
+                    "approve": {
+                      "description": "Approves a SingleTenantHsmInstanceProposal for a given SingleTenantHsmInstance. The proposal must be in the PENDING state.",
+                      "flatPath": "v1/projects/{projectsId}/locations/{locationsId}/singleTenantHsmInstances/{singleTenantHsmInstancesId}/proposals/{proposalsId}:approve",
+                      "httpMethod": "POST",
+                      "id": "cloudkms.projects.locations.singleTenantHsmInstances.proposals.approve",
+                      "parameterOrder": [
+                        "name"
+                      ],
+                      "parameters": {
+                        "name": {
+                          "description": "Required. The name of the SingleTenantHsmInstanceProposal to approve.",
+                          "location": "path",
+                          "pattern": "^projects/[^/]+/locations/[^/]+/singleTenantHsmInstances/[^/]+/proposals/[^/]+$",
+                          "required": true,
+                          "type": "string"
+                        }
+                      },
+                      "path": "v1/{+name}:approve",
+                      "request": {
+                        "$ref": "ApproveSingleTenantHsmInstanceProposalRequest"
+                      },
+                      "response": {
+                        "$ref": "ApproveSingleTenantHsmInstanceProposalResponse"
+                      },
+                      "scopes": [
+                        "https://www.googleapis.com/auth/cloud-platform",
+                        "https://www.googleapis.com/auth/cloudkms"
+                      ]
+                    },
+                    "create": {
+                      "description": "Creates a new SingleTenantHsmInstanceProposal for a given SingleTenantHsmInstance.",
+                      "flatPath": "v1/projects/{projectsId}/locations/{locationsId}/singleTenantHsmInstances/{singleTenantHsmInstancesId}/proposals",
+                      "httpMethod": "POST",
+                      "id": "cloudkms.projects.locations.singleTenantHsmInstances.proposals.create",
+                      "parameterOrder": [
+                        "parent"
+                      ],
+                      "parameters": {
+                        "parent": {
+                          "description": "Required. The name of the SingleTenantHsmInstance associated with the SingleTenantHsmInstanceProposals.",
+                          "location": "path",
+                          "pattern": "^projects/[^/]+/locations/[^/]+/singleTenantHsmInstances/[^/]+$",
+                          "required": true,
+                          "type": "string"
+                        },
+                        "singleTenantHsmInstanceProposalId": {
+                          "description": "Optional. It must be unique within a location and match the regular expression `[a-zA-Z0-9_-]{1,63}`.",
+                          "location": "query",
+                          "type": "string"
+                        }
+                      },
+                      "path": "v1/{+parent}/proposals",
+                      "request": {
+                        "$ref": "SingleTenantHsmInstanceProposal"
+                      },
+                      "response": {
+                        "$ref": "Operation"
+                      },
+                      "scopes": [
+                        "https://www.googleapis.com/auth/cloud-platform",
+                        "https://www.googleapis.com/auth/cloudkms"
+                      ]
+                    },
+                    "delete": {
+                      "description": "Deletes a SingleTenantHsmInstanceProposal.",
+                      "flatPath": "v1/projects/{projectsId}/locations/{locationsId}/singleTenantHsmInstances/{singleTenantHsmInstancesId}/proposals/{proposalsId}",
+                      "httpMethod": "DELETE",
+                      "id": "cloudkms.projects.locations.singleTenantHsmInstances.proposals.delete",
+                      "parameterOrder": [
+                        "name"
+                      ],
+                      "parameters": {
+                        "name": {
+                          "description": "Required. The name of the SingleTenantHsmInstanceProposal to delete.",
+                          "location": "path",
+                          "pattern": "^projects/[^/]+/locations/[^/]+/singleTenantHsmInstances/[^/]+/proposals/[^/]+$",
+                          "required": true,
+                          "type": "string"
+                        }
+                      },
+                      "path": "v1/{+name}",
+                      "response": {
+                        "$ref": "Empty"
+                      },
+                      "scopes": [
+                        "https://www.googleapis.com/auth/cloud-platform",
+                        "https://www.googleapis.com/auth/cloudkms"
+                      ]
+                    },
+                    "execute": {
+                      "description": "Executes a SingleTenantHsmInstanceProposal for a given SingleTenantHsmInstance. The proposal must be in the APPROVED state.",
+                      "flatPath": "v1/projects/{projectsId}/locations/{locationsId}/singleTenantHsmInstances/{singleTenantHsmInstancesId}/proposals/{proposalsId}:execute",
+                      "httpMethod": "POST",
+                      "id": "cloudkms.projects.locations.singleTenantHsmInstances.proposals.execute",
+                      "parameterOrder": [
+                        "name"
+                      ],
+                      "parameters": {
+                        "name": {
+                          "description": "Required. The name of the SingleTenantHsmInstanceProposal to execute.",
+                          "location": "path",
+                          "pattern": "^projects/[^/]+/locations/[^/]+/singleTenantHsmInstances/[^/]+/proposals/[^/]+$",
+                          "required": true,
+                          "type": "string"
+                        }
+                      },
+                      "path": "v1/{+name}:execute",
+                      "request": {
+                        "$ref": "ExecuteSingleTenantHsmInstanceProposalRequest"
+                      },
+                      "response": {
+                        "$ref": "Operation"
+                      },
+                      "scopes": [
+                        "https://www.googleapis.com/auth/cloud-platform",
+                        "https://www.googleapis.com/auth/cloudkms"
+                      ]
+                    },
+                    "get": {
+                      "description": "Returns metadata for a given SingleTenantHsmInstanceProposal.",
+                      "flatPath": "v1/projects/{projectsId}/locations/{locationsId}/singleTenantHsmInstances/{singleTenantHsmInstancesId}/proposals/{proposalsId}",
+                      "httpMethod": "GET",
+                      "id": "cloudkms.projects.locations.singleTenantHsmInstances.proposals.get",
+                      "parameterOrder": [
+                        "name"
+                      ],
+                      "parameters": {
+                        "name": {
+                          "description": "Required. The name of the SingleTenantHsmInstanceProposal to get.",
+                          "location": "path",
+                          "pattern": "^projects/[^/]+/locations/[^/]+/singleTenantHsmInstances/[^/]+/proposals/[^/]+$",
+                          "required": true,
+                          "type": "string"
+                        }
+                      },
+                      "path": "v1/{+name}",
+                      "response": {
+                        "$ref": "SingleTenantHsmInstanceProposal"
+                      },
+                      "scopes": [
+                        "https://www.googleapis.com/auth/cloud-platform",
+                        "https://www.googleapis.com/auth/cloudkms"
+                      ]
+                    },
+                    "list": {
+                      "description": "Lists SingleTenantHsmInstanceProposals.",
+                      "flatPath": "v1/projects/{projectsId}/locations/{locationsId}/singleTenantHsmInstances/{singleTenantHsmInstancesId}/proposals",
+                      "httpMethod": "GET",
+                      "id": "cloudkms.projects.locations.singleTenantHsmInstances.proposals.list",
+                      "parameterOrder": [
+                        "parent"
+                      ],
+                      "parameters": {
+                        "filter": {
+                          "description": "Optional. Only include resources that match the filter in the response. For more information, see [Sorting and filtering list results](https://cloud.google.com/kms/docs/sorting-and-filtering).",
+                          "location": "query",
+                          "type": "string"
+                        },
+                        "orderBy": {
+                          "description": "Optional. Specify how the results should be sorted. If not specified, the results will be sorted in the default order. For more information, see [Sorting and filtering list results](https://cloud.google.com/kms/docs/sorting-and-filtering).",
+                          "location": "query",
+                          "type": "string"
+                        },
+                        "pageSize": {
+                          "description": "Optional. Optional limit on the number of SingleTenantHsmInstanceProposals to include in the response. Further SingleTenantHsmInstanceProposals can subsequently be obtained by including the ListSingleTenantHsmInstanceProposalsResponse.next_page_token in a subsequent request. If unspecified, the server will pick an appropriate default.",
+                          "format": "int32",
+                          "location": "query",
+                          "type": "integer"
+                        },
+                        "pageToken": {
+                          "description": "Optional. Optional pagination token, returned earlier via ListSingleTenantHsmInstanceProposalsResponse.next_page_token.",
+                          "location": "query",
+                          "type": "string"
+                        },
+                        "parent": {
+                          "description": "Required. The resource name of the single tenant HSM instance associated with the SingleTenantHsmInstanceProposals to list, in the format `projects/*/locations/*/singleTenantHsmInstances/*`.",
+                          "location": "path",
+                          "pattern": "^projects/[^/]+/locations/[^/]+/singleTenantHsmInstances/[^/]+$",
+                          "required": true,
+                          "type": "string"
+                        },
+                        "showDeleted": {
+                          "description": "Optional. If set to true, HsmManagement.ListSingleTenantHsmInstanceProposals will also return SingleTenantHsmInstanceProposals in DELETED state.",
+                          "location": "query",
+                          "type": "boolean"
+                        }
+                      },
+                      "path": "v1/{+parent}/proposals",
+                      "response": {
+                        "$ref": "ListSingleTenantHsmInstanceProposalsResponse"
+                      },
+                      "scopes": [
+                        "https://www.googleapis.com/auth/cloud-platform",
+                        "https://www.googleapis.com/auth/cloudkms"
+                      ]
+                    }
+                  }
+                }
+              }
             }
           }
         }
       }
     }
   },
-  "revision": "20240723",
+  "revision": "20260116",
   "rootUrl": "https://cloudkms.googleapis.com/",
   "schemas": {
+    "AddQuorumMember": {
+      "description": "Add a quorum member to the SingleTenantHsmInstance. This will increase the total_approver_count by 1. The SingleTenantHsmInstance must be in the ACTIVE state to perform this operation.",
+      "id": "AddQuorumMember",
+      "properties": {
+        "twoFactorPublicKeyPem": {
+          "description": "Required. The public key associated with the 2FA key for the new quorum member to add. Public keys must be associated with RSA 2048 keys.",
+          "type": "string"
+        }
+      },
+      "type": "object"
+    },
+    "ApproveSingleTenantHsmInstanceProposalRequest": {
+      "description": "Request message for HsmManagement.ApproveSingleTenantHsmInstanceProposal.",
+      "id": "ApproveSingleTenantHsmInstanceProposalRequest",
+      "properties": {
+        "quorumReply": {
+          "$ref": "QuorumReply",
+          "description": "Required. The reply to QuorumParameters for approving the proposal."
+        },
+        "requiredActionQuorumReply": {
+          "$ref": "RequiredActionQuorumReply",
+          "description": "Required. The reply to RequiredActionQuorumParameters for approving the proposal."
+        }
+      },
+      "type": "object"
+    },
+    "ApproveSingleTenantHsmInstanceProposalResponse": {
+      "description": "Response message for HsmManagement.ApproveSingleTenantHsmInstanceProposal.",
+      "id": "ApproveSingleTenantHsmInstanceProposalResponse",
+      "properties": {},
+      "type": "object"
+    },
     "AsymmetricDecryptRequest": {
       "description": "Request message for KeyManagementService.AsymmetricDecrypt.",
       "id": "AsymmetricDecryptRequest",
@@ -2117,14 +2887,16 @@
             "SOFTWARE",
             "HSM",
             "EXTERNAL",
-            "EXTERNAL_VPC"
+            "EXTERNAL_VPC",
+            "HSM_SINGLE_TENANT"
           ],
           "enumDescriptions": [
             "Not specified.",
             "Crypto operations are performed in software.",
             "Crypto operations are performed in a Hardware Security Module.",
             "Crypto operations are performed by an external key manager.",
-            "Crypto operations are performed in an EKM-over-VPC backend."
+            "Crypto operations are performed in an EKM-over-VPC backend.",
+            "Crypto operations are performed in a single-tenant HSM."
           ],
           "type": "string"
         },
@@ -2176,14 +2948,16 @@
             "SOFTWARE",
             "HSM",
             "EXTERNAL",
-            "EXTERNAL_VPC"
+            "EXTERNAL_VPC",
+            "HSM_SINGLE_TENANT"
           ],
           "enumDescriptions": [
             "Not specified.",
             "Crypto operations are performed in software.",
             "Crypto operations are performed in a Hardware Security Module.",
             "Crypto operations are performed by an external key manager.",
-            "Crypto operations are performed in an EKM-over-VPC backend."
+            "Crypto operations are performed in an EKM-over-VPC backend.",
+            "Crypto operations are performed in a single-tenant HSM."
           ],
           "type": "string"
         },
@@ -2260,12 +3034,33 @@
       "description": "Cloud KMS Autokey configuration for a folder.",
       "id": "AutokeyConfig",
       "properties": {
+        "etag": {
+          "description": "Optional. A checksum computed by the server based on the value of other fields. This may be sent on update requests to ensure that the client has an up-to-date value before proceeding. The request will be rejected with an ABORTED error on a mismatched etag.",
+          "type": "string"
+        },
         "keyProject": {
           "description": "Optional. Name of the key project, e.g. `projects/{PROJECT_ID}` or `projects/{PROJECT_NUMBER}`, where Cloud KMS Autokey will provision a new CryptoKey when a KeyHandle is created. On UpdateAutokeyConfig, the caller will require `cloudkms.cryptoKeys.setIamPolicy` permission on this key project. Once configured, for Cloud KMS Autokey to function properly, this key project must have the Cloud KMS API activated and the Cloud KMS Service Agent for this key project must be granted the `cloudkms.admin` role (or pertinent permissions). A request with an empty key project field will clear the configuration.",
           "type": "string"
         },
         "name": {
-          "description": "Identifier. Name of the AutokeyConfig resource, e.g. `folders/{FOLDER_NUMBER}/autokeyConfig`.",
+          "description": "Identifier. Name of the AutokeyConfig resource, e.g. `folders/{FOLDER_NUMBER}/autokeyConfig`",
+          "type": "string"
+        },
+        "state": {
+          "description": "Output only. The state for the AutokeyConfig.",
+          "enum": [
+            "STATE_UNSPECIFIED",
+            "ACTIVE",
+            "KEY_PROJECT_DELETED",
+            "UNINITIALIZED"
+          ],
+          "enumDescriptions": [
+            "The state of the AutokeyConfig is unspecified.",
+            "The AutokeyConfig is currently active.",
+            "A previously configured key project has been deleted and the current AutokeyConfig is unusable.",
+            "The AutokeyConfig is not yet initialized or has been reset to its default uninitialized state."
+          ],
+          "readOnly": true,
           "type": "string"
         }
       },
@@ -2378,6 +3173,57 @@
       },
       "type": "object"
     },
+    "Challenge": {
+      "description": "A challenge to be signed by a 2FA key.",
+      "id": "Challenge",
+      "properties": {
+        "challenge": {
+          "description": "Output only. The challenge to be signed by the 2FA key indicated by the public key.",
+          "format": "byte",
+          "readOnly": true,
+          "type": "string"
+        },
+        "publicKeyPem": {
+          "description": "Output only. The public key associated with the 2FA key that should sign the challenge.",
+          "readOnly": true,
+          "type": "string"
+        }
+      },
+      "type": "object"
+    },
+    "ChallengeReply": {
+      "description": "A reply to a challenge signed by a 2FA key.",
+      "id": "ChallengeReply",
+      "properties": {
+        "publicKeyPem": {
+          "description": "Required. The public key associated with the 2FA key.",
+          "type": "string"
+        },
+        "signedChallenge": {
+          "description": "Required. The signed challenge associated with the 2FA key. The signature must be RSASSA-PKCS1 v1.5 with a SHA256 digest.",
+          "format": "byte",
+          "type": "string"
+        }
+      },
+      "type": "object"
+    },
+    "ChecksummedData": {
+      "description": "Data with integrity verification field.",
+      "id": "ChecksummedData",
+      "properties": {
+        "crc32cChecksum": {
+          "description": "Integrity verification field. A CRC32C checksum of the returned ChecksummedData.data. An integrity check of ChecksummedData.data can be performed by computing the CRC32C checksum of ChecksummedData.data and comparing your results to this field. Discard the response in case of non-matching checksum values, and perform a limited number of retries. A persistent mismatch may indicate an issue in your computation of the CRC32C checksum. Note: This field is defined as int64 for reasons of compatibility across different languages. However, it is a non-negative integer, which will never exceed `2^32-1`, and can be safely downconverted to uint32 in languages that support this type.",
+          "format": "int64",
+          "type": "string"
+        },
+        "data": {
+          "description": "Raw Data.",
+          "format": "byte",
+          "type": "string"
+        }
+      },
+      "type": "object"
+    },
     "CryptoKey": {
       "description": "A CryptoKey represents a logical key that can be used for cryptographic operations. A CryptoKey is made up of zero or more versions, which represent the actual key material used in cryptographic operations.",
       "id": "CryptoKey",
@@ -2389,7 +3235,7 @@
           "type": "string"
         },
         "cryptoKeyBackend": {
-          "description": "Immutable. The resource name of the backend environment where the key material for all CryptoKeyVersions associated with this CryptoKey reside and where all related cryptographic operations are performed. Only applicable if CryptoKeyVersions have a ProtectionLevel of EXTERNAL_VPC, with the resource name in the format `projects/*/locations/*/ekmConnections/*`. Note, this list is non-exhaustive and may apply to additional ProtectionLevels in the future.",
+          "description": "Immutable. The resource name of the backend environment where the key material for all CryptoKeyVersions associated with this CryptoKey reside and where all related cryptographic operations are performed. Only applicable if CryptoKeyVersions have a ProtectionLevel of EXTERNAL_VPC, with the resource name in the format `projects/*/locations/*/ekmConnections/*`. Only applicable if CryptoKeyVersions have a ProtectionLevel of HSM_SINGLE_TENANT, with the resource name in the format `projects/*/locations/*/singleTenantHsmInstances/*`. Note, this list is non-exhaustive and may apply to additional ProtectionLevels in the future.",
           "type": "string"
         },
         "destroyScheduledDuration": {
@@ -2435,7 +3281,8 @@
             "ASYMMETRIC_SIGN",
             "ASYMMETRIC_DECRYPT",
             "RAW_ENCRYPT_DECRYPT",
-            "MAC"
+            "MAC",
+            "KEY_ENCAPSULATION"
           ],
           "enumDescriptions": [
             "Not specified.",
@@ -2443,7 +3290,8 @@
             "CryptoKeys with this purpose may be used with AsymmetricSign and GetPublicKey.",
             "CryptoKeys with this purpose may be used with AsymmetricDecrypt and GetPublicKey.",
             "CryptoKeys with this purpose may be used with RawEncrypt and RawDecrypt. This purpose is meant to be used for interoperable symmetric encryption and does not support automatic CryptoKey rotation.",
-            "CryptoKeys with this purpose may be used with MacSign."
+            "CryptoKeys with this purpose may be used with MacSign.",
+            "CryptoKeys with this purpose may be used with GetPublicKey and Decapsulate."
           ],
           "type": "string"
         },
@@ -2501,7 +3349,18 @@
             "HMAC_SHA384",
             "HMAC_SHA512",
             "HMAC_SHA224",
-            "EXTERNAL_SYMMETRIC_ENCRYPTION"
+            "EXTERNAL_SYMMETRIC_ENCRYPTION",
+            "ML_KEM_768",
+            "ML_KEM_1024",
+            "KEM_XWING",
+            "PQ_SIGN_ML_DSA_44",
+            "PQ_SIGN_ML_DSA_65",
+            "PQ_SIGN_ML_DSA_87",
+            "PQ_SIGN_SLH_DSA_SHA2_128S",
+            "PQ_SIGN_HASH_SLH_DSA_SHA2_128S_SHA256",
+            "PQ_SIGN_ML_DSA_44_EXTERNAL_MU",
+            "PQ_SIGN_ML_DSA_65_EXTERNAL_MU",
+            "PQ_SIGN_ML_DSA_87_EXTERNAL_MU"
           ],
           "enumDescriptions": [
             "Not specified.",
@@ -2539,7 +3398,18 @@
             "HMAC-SHA384 signing with a 384 bit key.",
             "HMAC-SHA512 signing with a 512 bit key.",
             "HMAC-SHA224 signing with a 224 bit key.",
-            "Algorithm representing symmetric encryption by an external key manager."
+            "Algorithm representing symmetric encryption by an external key manager.",
+            "ML-KEM-768 (FIPS 203)",
+            "ML-KEM-1024 (FIPS 203)",
+            "X-Wing hybrid KEM combining ML-KEM-768 with X25519 following datatracker.ietf.org/doc/draft-connolly-cfrg-xwing-kem/.",
+            "The post-quantum Module-Lattice-Based Digital Signature Algorithm, at security level 1. Randomized version.",
+            "The post-quantum Module-Lattice-Based Digital Signature Algorithm, at security level 3. Randomized version.",
+            "The post-quantum Module-Lattice-Based Digital Signature Algorithm, at security level 5. Randomized version.",
+            "The post-quantum stateless hash-based digital signature algorithm, at security level 1. Randomized version.",
+            "The post-quantum stateless hash-based digital signature algorithm, at security level 1. Randomized pre-hash version supporting SHA256 digests.",
+            "The post-quantum Module-Lattice-Based Digital Signature Algorithm, at security level 1. Randomized version supporting externally-computed message representatives.",
+            "The post-quantum Module-Lattice-Based Digital Signature Algorithm, at security level 3. Randomized version supporting externally-computed message representatives.",
+            "The post-quantum Module-Lattice-Based Digital Signature Algorithm, at security level 5. Randomized version supporting externally-computed message representatives."
           ],
           "readOnly": true,
           "type": "string"
@@ -2615,14 +3485,16 @@
             "SOFTWARE",
             "HSM",
             "EXTERNAL",
-            "EXTERNAL_VPC"
+            "EXTERNAL_VPC",
+            "HSM_SINGLE_TENANT"
           ],
           "enumDescriptions": [
             "Not specified.",
             "Crypto operations are performed in software.",
             "Crypto operations are performed in a Hardware Security Module.",
             "Crypto operations are performed by an external key manager.",
-            "Crypto operations are performed in an EKM-over-VPC backend."
+            "Crypto operations are performed in an EKM-over-VPC backend.",
+            "Crypto operations are performed in a single-tenant HSM."
           ],
           "readOnly": true,
           "type": "string"
@@ -2652,7 +3524,7 @@
             "This version is still being generated. It may not be used, enabled, disabled, or destroyed yet. Cloud KMS will automatically mark this version ENABLED as soon as the version is ready.",
             "This version may be used for cryptographic operations.",
             "This version may not be used, but the key material is still available, and the version can be placed back into the ENABLED state.",
-            "This version is destroyed, and the key material is no longer stored. This version may only become ENABLED again if this version is reimport_eligible and the original key material is reimported with a call to KeyManagementService.ImportCryptoKeyVersion.",
+            "The key material of this version is destroyed and no longer stored. This version may only become ENABLED again if this version is reimport_eligible and the original key material is reimported with a call to KeyManagementService.ImportCryptoKeyVersion.",
             "This version is scheduled for destruction, and will be destroyed soon. Call RestoreCryptoKeyVersion to put it back into the DISABLED state.",
             "This version is still being imported. It may not be used, enabled, disabled, or destroyed yet. Cloud KMS will automatically mark this version ENABLED as soon as the version is ready.",
             "This version was not imported successfully. It may not be used, enabled, disabled, or destroyed. The submitted key material has been discarded. Additional details can be found in CryptoKeyVersion.import_failure_reason.",
@@ -2707,7 +3579,18 @@
             "HMAC_SHA384",
             "HMAC_SHA512",
             "HMAC_SHA224",
-            "EXTERNAL_SYMMETRIC_ENCRYPTION"
+            "EXTERNAL_SYMMETRIC_ENCRYPTION",
+            "ML_KEM_768",
+            "ML_KEM_1024",
+            "KEM_XWING",
+            "PQ_SIGN_ML_DSA_44",
+            "PQ_SIGN_ML_DSA_65",
+            "PQ_SIGN_ML_DSA_87",
+            "PQ_SIGN_SLH_DSA_SHA2_128S",
+            "PQ_SIGN_HASH_SLH_DSA_SHA2_128S_SHA256",
+            "PQ_SIGN_ML_DSA_44_EXTERNAL_MU",
+            "PQ_SIGN_ML_DSA_65_EXTERNAL_MU",
+            "PQ_SIGN_ML_DSA_87_EXTERNAL_MU"
           ],
           "enumDescriptions": [
             "Not specified.",
@@ -2745,7 +3628,18 @@
             "HMAC-SHA384 signing with a 384 bit key.",
             "HMAC-SHA512 signing with a 512 bit key.",
             "HMAC-SHA224 signing with a 224 bit key.",
-            "Algorithm representing symmetric encryption by an external key manager."
+            "Algorithm representing symmetric encryption by an external key manager.",
+            "ML-KEM-768 (FIPS 203)",
+            "ML-KEM-1024 (FIPS 203)",
+            "X-Wing hybrid KEM combining ML-KEM-768 with X25519 following datatracker.ietf.org/doc/draft-connolly-cfrg-xwing-kem/.",
+            "The post-quantum Module-Lattice-Based Digital Signature Algorithm, at security level 1. Randomized version.",
+            "The post-quantum Module-Lattice-Based Digital Signature Algorithm, at security level 3. Randomized version.",
+            "The post-quantum Module-Lattice-Based Digital Signature Algorithm, at security level 5. Randomized version.",
+            "The post-quantum stateless hash-based digital signature algorithm, at security level 1. Randomized version.",
+            "The post-quantum stateless hash-based digital signature algorithm, at security level 1. Randomized pre-hash version supporting SHA256 digests.",
+            "The post-quantum Module-Lattice-Based Digital Signature Algorithm, at security level 1. Randomized version supporting externally-computed message representatives.",
+            "The post-quantum Module-Lattice-Based Digital Signature Algorithm, at security level 3. Randomized version supporting externally-computed message representatives.",
+            "The post-quantum Module-Lattice-Based Digital Signature Algorithm, at security level 5. Randomized version supporting externally-computed message representatives."
           ],
           "type": "string"
         },
@@ -2756,16 +3650,80 @@
             "SOFTWARE",
             "HSM",
             "EXTERNAL",
-            "EXTERNAL_VPC"
+            "EXTERNAL_VPC",
+            "HSM_SINGLE_TENANT"
           ],
           "enumDescriptions": [
             "Not specified.",
             "Crypto operations are performed in software.",
             "Crypto operations are performed in a Hardware Security Module.",
             "Crypto operations are performed by an external key manager.",
-            "Crypto operations are performed in an EKM-over-VPC backend."
+            "Crypto operations are performed in an EKM-over-VPC backend.",
+            "Crypto operations are performed in a single-tenant HSM."
           ],
           "type": "string"
+        }
+      },
+      "type": "object"
+    },
+    "DecapsulateRequest": {
+      "description": "Request message for KeyManagementService.Decapsulate.",
+      "id": "DecapsulateRequest",
+      "properties": {
+        "ciphertext": {
+          "description": "Required. The ciphertext produced from encapsulation with the named CryptoKeyVersion public key(s).",
+          "format": "byte",
+          "type": "string"
+        },
+        "ciphertextCrc32c": {
+          "description": "Optional. A CRC32C checksum of the DecapsulateRequest.ciphertext. If specified, KeyManagementService will verify the integrity of the received DecapsulateRequest.ciphertext using this checksum. KeyManagementService will report an error if the checksum verification fails. If you receive a checksum error, your client should verify that CRC32C(DecapsulateRequest.ciphertext) is equal to DecapsulateRequest.ciphertext_crc32c, and if so, perform a limited number of retries. A persistent mismatch may indicate an issue in your computation of the CRC32C checksum. Note: This field is defined as int64 for reasons of compatibility across different languages. However, it is a non-negative integer, which will never exceed 2^32-1, and can be safely downconverted to uint32 in languages that support this type.",
+          "format": "int64",
+          "type": "string"
+        }
+      },
+      "type": "object"
+    },
+    "DecapsulateResponse": {
+      "description": "Response message for KeyManagementService.Decapsulate.",
+      "id": "DecapsulateResponse",
+      "properties": {
+        "name": {
+          "description": "The resource name of the CryptoKeyVersion used for decapsulation. Check this field to verify that the intended resource was used for decapsulation.",
+          "type": "string"
+        },
+        "protectionLevel": {
+          "description": "The ProtectionLevel of the CryptoKeyVersion used in decapsulation.",
+          "enum": [
+            "PROTECTION_LEVEL_UNSPECIFIED",
+            "SOFTWARE",
+            "HSM",
+            "EXTERNAL",
+            "EXTERNAL_VPC",
+            "HSM_SINGLE_TENANT"
+          ],
+          "enumDescriptions": [
+            "Not specified.",
+            "Crypto operations are performed in software.",
+            "Crypto operations are performed in a Hardware Security Module.",
+            "Crypto operations are performed by an external key manager.",
+            "Crypto operations are performed in an EKM-over-VPC backend.",
+            "Crypto operations are performed in a single-tenant HSM."
+          ],
+          "type": "string"
+        },
+        "sharedSecret": {
+          "description": "The decapsulated shared_secret originally encapsulated with the matching public key.",
+          "format": "byte",
+          "type": "string"
+        },
+        "sharedSecretCrc32c": {
+          "description": "Integrity verification field. A CRC32C checksum of the returned DecapsulateResponse.shared_secret. An integrity check of DecapsulateResponse.shared_secret can be performed by computing the CRC32C checksum of DecapsulateResponse.shared_secret and comparing your results to this field. Discard the response in case of non-matching checksum values, and perform a limited number of retries. A persistent mismatch may indicate an issue in your computation of the CRC32C checksum. Note: receiving this response message indicates that KeyManagementService is able to successfully decrypt the ciphertext. Note: This field is defined as int64 for reasons of compatibility across different languages. However, it is a non-negative integer, which will never exceed 2^32-1, and can be safely downconverted to uint32 in languages that support this type.",
+          "format": "int64",
+          "type": "string"
+        },
+        "verifiedCiphertextCrc32c": {
+          "description": "Integrity verification field. A flag indicating whether DecapsulateRequest.ciphertext_crc32c was received by KeyManagementService and used for the integrity verification of the ciphertext. A false value of this field indicates either that DecapsulateRequest.ciphertext_crc32c was left unset or that it was not delivered to KeyManagementService. If you've set DecapsulateRequest.ciphertext_crc32c but this field is still false, discard the response and perform a limited number of retries.",
+          "type": "boolean"
         }
       },
       "type": "object"
@@ -2818,14 +3776,16 @@
             "SOFTWARE",
             "HSM",
             "EXTERNAL",
-            "EXTERNAL_VPC"
+            "EXTERNAL_VPC",
+            "HSM_SINGLE_TENANT"
           ],
           "enumDescriptions": [
             "Not specified.",
             "Crypto operations are performed in software.",
             "Crypto operations are performed in a Hardware Security Module.",
             "Crypto operations are performed by an external key manager.",
-            "Crypto operations are performed in an EKM-over-VPC backend."
+            "Crypto operations are performed in an EKM-over-VPC backend.",
+            "Crypto operations are performed in a single-tenant HSM."
           ],
           "type": "string"
         },
@@ -2834,6 +3794,12 @@
           "type": "boolean"
         }
       },
+      "type": "object"
+    },
+    "DeleteSingleTenantHsmInstance": {
+      "description": "Delete the SingleTenantHsmInstance. Deleting a SingleTenantHsmInstance will make all CryptoKeys attached to the SingleTenantHsmInstance unusable. The SingleTenantHsmInstance must not be in the DELETING or DELETED state to perform this operation.",
+      "id": "DeleteSingleTenantHsmInstance",
+      "properties": {},
       "type": "object"
     },
     "DestroyCryptoKeyVersionRequest": {
@@ -2862,6 +3828,12 @@
           "type": "string"
         }
       },
+      "type": "object"
+    },
+    "DisableSingleTenantHsmInstance": {
+      "description": "Disable the SingleTenantHsmInstance. The SingleTenantHsmInstance must be in the ACTIVE state to perform this operation.",
+      "id": "DisableSingleTenantHsmInstance",
+      "properties": {},
       "type": "object"
     },
     "EkmConfig": {
@@ -2918,13 +3890,25 @@
           "type": "string"
         },
         "serviceResolvers": {
-          "description": "A list of ServiceResolvers where the EKM can be reached. There should be one ServiceResolver per EKM replica. Currently, only a single ServiceResolver is supported.",
+          "description": "Optional. A list of ServiceResolvers where the EKM can be reached. There should be one ServiceResolver per EKM replica. Currently, only a single ServiceResolver is supported.",
           "items": {
             "$ref": "ServiceResolver"
           },
           "type": "array"
         }
       },
+      "type": "object"
+    },
+    "Empty": {
+      "description": "A generic empty message that you can re-use to avoid defining duplicated empty messages in your APIs. A typical example is to use it as the request or the response type of an API method. For instance: service Foo { rpc Bar(google.protobuf.Empty) returns (google.protobuf.Empty); }",
+      "id": "Empty",
+      "properties": {},
+      "type": "object"
+    },
+    "EnableSingleTenantHsmInstance": {
+      "description": "Enable the SingleTenantHsmInstance. The SingleTenantHsmInstance must be in the DISABLED state to perform this operation.",
+      "id": "EnableSingleTenantHsmInstance",
+      "properties": {},
       "type": "object"
     },
     "EncryptRequest": {
@@ -2979,14 +3963,16 @@
             "SOFTWARE",
             "HSM",
             "EXTERNAL",
-            "EXTERNAL_VPC"
+            "EXTERNAL_VPC",
+            "HSM_SINGLE_TENANT"
           ],
           "enumDescriptions": [
             "Not specified.",
             "Crypto operations are performed in software.",
             "Crypto operations are performed in a Hardware Security Module.",
             "Crypto operations are performed by an external key manager.",
-            "Crypto operations are performed in an EKM-over-VPC backend."
+            "Crypto operations are performed in an EKM-over-VPC backend.",
+            "Crypto operations are performed in a single-tenant HSM."
           ],
           "type": "string"
         },
@@ -2999,6 +3985,12 @@
           "type": "boolean"
         }
       },
+      "type": "object"
+    },
+    "ExecuteSingleTenantHsmInstanceProposalRequest": {
+      "description": "Request message for HsmManagement.ExecuteSingleTenantHsmInstanceProposal.",
+      "id": "ExecuteSingleTenantHsmInstanceProposalRequest",
+      "properties": {},
       "type": "object"
     },
     "Expr": {
@@ -3055,14 +4047,16 @@
             "SOFTWARE",
             "HSM",
             "EXTERNAL",
-            "EXTERNAL_VPC"
+            "EXTERNAL_VPC",
+            "HSM_SINGLE_TENANT"
           ],
           "enumDescriptions": [
             "Not specified.",
             "Crypto operations are performed in software.",
             "Crypto operations are performed in a Hardware Security Module.",
             "Crypto operations are performed by an external key manager.",
-            "Crypto operations are performed in an EKM-over-VPC backend."
+            "Crypto operations are performed in an EKM-over-VPC backend.",
+            "Crypto operations are performed in a single-tenant HSM."
           ],
           "type": "string"
         }
@@ -3128,7 +4122,18 @@
             "HMAC_SHA384",
             "HMAC_SHA512",
             "HMAC_SHA224",
-            "EXTERNAL_SYMMETRIC_ENCRYPTION"
+            "EXTERNAL_SYMMETRIC_ENCRYPTION",
+            "ML_KEM_768",
+            "ML_KEM_1024",
+            "KEM_XWING",
+            "PQ_SIGN_ML_DSA_44",
+            "PQ_SIGN_ML_DSA_65",
+            "PQ_SIGN_ML_DSA_87",
+            "PQ_SIGN_SLH_DSA_SHA2_128S",
+            "PQ_SIGN_HASH_SLH_DSA_SHA2_128S_SHA256",
+            "PQ_SIGN_ML_DSA_44_EXTERNAL_MU",
+            "PQ_SIGN_ML_DSA_65_EXTERNAL_MU",
+            "PQ_SIGN_ML_DSA_87_EXTERNAL_MU"
           ],
           "enumDescriptions": [
             "Not specified.",
@@ -3166,7 +4171,18 @@
             "HMAC-SHA384 signing with a 384 bit key.",
             "HMAC-SHA512 signing with a 512 bit key.",
             "HMAC-SHA224 signing with a 224 bit key.",
-            "Algorithm representing symmetric encryption by an external key manager."
+            "Algorithm representing symmetric encryption by an external key manager.",
+            "ML-KEM-768 (FIPS 203)",
+            "ML-KEM-1024 (FIPS 203)",
+            "X-Wing hybrid KEM combining ML-KEM-768 with X25519 following datatracker.ietf.org/doc/draft-connolly-cfrg-xwing-kem/.",
+            "The post-quantum Module-Lattice-Based Digital Signature Algorithm, at security level 1. Randomized version.",
+            "The post-quantum Module-Lattice-Based Digital Signature Algorithm, at security level 3. Randomized version.",
+            "The post-quantum Module-Lattice-Based Digital Signature Algorithm, at security level 5. Randomized version.",
+            "The post-quantum stateless hash-based digital signature algorithm, at security level 1. Randomized version.",
+            "The post-quantum stateless hash-based digital signature algorithm, at security level 1. Randomized pre-hash version supporting SHA256 digests.",
+            "The post-quantum Module-Lattice-Based Digital Signature Algorithm, at security level 1. Randomized version supporting externally-computed message representatives.",
+            "The post-quantum Module-Lattice-Based Digital Signature Algorithm, at security level 3. Randomized version supporting externally-computed message representatives.",
+            "The post-quantum Module-Lattice-Based Digital Signature Algorithm, at security level 5. Randomized version supporting externally-computed message representatives."
           ],
           "type": "string"
         },
@@ -3204,6 +4220,10 @@
           "description": "Output only. The time at which this ImportJob was created.",
           "format": "google-datetime",
           "readOnly": true,
+          "type": "string"
+        },
+        "cryptoKeyBackend": {
+          "description": "Immutable. The resource name of the backend environment where the key material for the wrapping key resides and where all related cryptographic operations are performed. Currently, this field is only populated for keys stored in HSM_SINGLE_TENANT. Note, this list is non-exhaustive and may apply to additional ProtectionLevels in the future.",
           "type": "string"
         },
         "expireEventTime": {
@@ -3258,14 +4278,16 @@
             "SOFTWARE",
             "HSM",
             "EXTERNAL",
-            "EXTERNAL_VPC"
+            "EXTERNAL_VPC",
+            "HSM_SINGLE_TENANT"
           ],
           "enumDescriptions": [
             "Not specified.",
             "Crypto operations are performed in software.",
             "Crypto operations are performed in a Hardware Security Module.",
             "Crypto operations are performed by an external key manager.",
-            "Crypto operations are performed in an EKM-over-VPC backend."
+            "Crypto operations are performed in an EKM-over-VPC backend.",
+            "Crypto operations are performed in a single-tenant HSM."
           ],
           "type": "string"
         },
@@ -3294,6 +4316,21 @@
       },
       "type": "object"
     },
+    "KeyAccessJustificationsEnrollmentConfig": {
+      "description": "The configuration of a protection level for a project's Key Access Justifications enrollment.",
+      "id": "KeyAccessJustificationsEnrollmentConfig",
+      "properties": {
+        "auditLogging": {
+          "description": "Whether the project has KAJ logging enabled.",
+          "type": "boolean"
+        },
+        "policyEnforcement": {
+          "description": "Whether the project is enrolled in KAJ policy enforcement.",
+          "type": "boolean"
+        }
+      },
+      "type": "object"
+    },
     "KeyAccessJustificationsPolicy": {
       "description": "A KeyAccessJustificationsPolicy specifies zero or more allowed AccessReason values for encrypt, decrypt, and sign operations on a CryptoKey.",
       "id": "KeyAccessJustificationsPolicy",
@@ -3315,6 +4352,20 @@
               "GOOGLE_RESPONSE_TO_PRODUCTION_ALERT",
               "CUSTOMER_AUTHORIZED_WORKFLOW_SERVICING"
             ],
+            "enumDeprecated": [
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              true,
+              true,
+              false,
+              false
+            ],
             "enumDescriptions": [
               "Unspecified access reason.",
               "Customer-initiated support.",
@@ -3324,14 +4375,29 @@
               "Customer uses their account to perform any access to their own data which their IAM policy authorizes.",
               "Google systems access customer data to help optimize the structure of the data or quality for future uses by the customer.",
               "No reason is expected for this key request.",
-              "Customer uses their account to perform any access to their own data which their IAM policy authorizes, and one of the following is true: * A Google administrator has reset the root-access account associated with the user's organization within the past 7 days. * A Google-initiated emergency access operation has interacted with a resource in the same project or folder as the currently accessed resource within the past 7 days.",
-              "Google systems access customer data to help optimize the structure of the data or quality for future uses by the customer, and one of the following is true: * A Google administrator has reset the root-access account associated with the user's organization within the past 7 days. * A Google-initiated emergency access operation has interacted with a resource in the same project or folder as the currently accessed resource within the past 7 days.",
+              "Deprecated: This code is no longer generated by Google Cloud. The GOOGLE_RESPONSE_TO_PRODUCTION_ALERT justification codes available in both Key Access Justifications and Access Transparency logs provide customer-visible signals of emergency access in more precise contexts. Customer uses their account to perform any access to their own data which their IAM policy authorizes, and one of the following is true: * A Google administrator has reset the root-access account associated with the user's organization within the past 7 days. * A Google-initiated emergency access operation has interacted with a resource in the same project or folder as the currently accessed resource within the past 7 days.",
+              "Deprecated: This code is no longer generated by Google Cloud. The GOOGLE_RESPONSE_TO_PRODUCTION_ALERT justification codes available in both Key Access Justifications and Access Transparency logs provide customer-visible signals of emergency access in more precise contexts. Google systems access customer data to help optimize the structure of the data or quality for future uses by the customer, and one of the following is true: * A Google administrator has reset the root-access account associated with the user's organization within the past 7 days. * A Google-initiated emergency access operation has interacted with a resource in the same project or folder as the currently accessed resource within the past 7 days.",
               "Google-initiated access to maintain system reliability.",
               "One of the following operations is being executed while simultaneously encountering an internal technical issue which prevented a more precise justification code from being generated: * Your account has been used to perform any access to your own data which your IAM policy authorizes. * An automated Google system operates on encrypted customer data which your IAM policy authorizes. * Customer-initiated Google support access. * Google-initiated support access to protect system reliability."
             ],
             "type": "string"
           },
           "type": "array"
+        }
+      },
+      "type": "object"
+    },
+    "KeyAccessJustificationsPolicyConfig": {
+      "description": "A singleton configuration for Key Access Justifications policies.",
+      "id": "KeyAccessJustificationsPolicyConfig",
+      "properties": {
+        "defaultKeyAccessJustificationPolicy": {
+          "$ref": "KeyAccessJustificationsPolicy",
+          "description": "Optional. The default key access justification policy used when a CryptoKey is created in this folder. This is only used when a Key Access Justifications policy is not provided in the CreateCryptoKeyRequest. This overrides any default policies in its ancestry."
+        },
+        "name": {
+          "description": "Identifier. The resource name for this KeyAccessJustificationsPolicyConfig in the format of \"{organizations|folders|projects}/*/kajPolicyConfig\".",
+          "type": "string"
         }
       },
       "type": "object"
@@ -3423,7 +4489,7 @@
           "type": "string"
         },
         "totalSize": {
-          "description": "The total number of CryptoKeyVersions that matched the query.",
+          "description": "The total number of CryptoKeyVersions that matched the query. This field is not populated if ListCryptoKeyVersionsRequest.filter is applied.",
           "format": "int32",
           "type": "integer"
         }
@@ -3446,7 +4512,7 @@
           "type": "string"
         },
         "totalSize": {
-          "description": "The total number of CryptoKeys that matched the query.",
+          "description": "The total number of CryptoKeys that matched the query. This field is not populated if ListCryptoKeysRequest.filter is applied.",
           "format": "int32",
           "type": "integer"
         }
@@ -3469,7 +4535,7 @@
           "type": "string"
         },
         "totalSize": {
-          "description": "The total number of EkmConnections that matched the query.",
+          "description": "The total number of EkmConnections that matched the query. This field is not populated if ListEkmConnectionsRequest.filter is applied.",
           "format": "int32",
           "type": "integer"
         }
@@ -3492,7 +4558,7 @@
           "type": "string"
         },
         "totalSize": {
-          "description": "The total number of ImportJobs that matched the query.",
+          "description": "The total number of ImportJobs that matched the query. This field is not populated if ListImportJobsRequest.filter is applied.",
           "format": "int32",
           "type": "integer"
         }
@@ -3509,6 +4575,10 @@
             "$ref": "KeyHandle"
           },
           "type": "array"
+        },
+        "nextPageToken": {
+          "description": "A token to retrieve next page of results. Pass this value in ListKeyHandlesRequest.page_token to retrieve the next page of results.",
+          "type": "string"
         }
       },
       "type": "object"
@@ -3529,7 +4599,7 @@
           "type": "string"
         },
         "totalSize": {
-          "description": "The total number of KeyRings that matched the query.",
+          "description": "The total number of KeyRings that matched the query. This field is not populated if ListKeyRingsRequest.filter is applied.",
           "format": "int32",
           "type": "integer"
         }
@@ -3550,6 +4620,52 @@
         "nextPageToken": {
           "description": "The standard List next-page token.",
           "type": "string"
+        }
+      },
+      "type": "object"
+    },
+    "ListSingleTenantHsmInstanceProposalsResponse": {
+      "description": "Response message for HsmManagement.ListSingleTenantHsmInstanceProposals.",
+      "id": "ListSingleTenantHsmInstanceProposalsResponse",
+      "properties": {
+        "nextPageToken": {
+          "description": "A token to retrieve next page of results. Pass this value in ListSingleTenantHsmInstanceProposalsRequest.page_token to retrieve the next page of results.",
+          "type": "string"
+        },
+        "singleTenantHsmInstanceProposals": {
+          "description": "The list of SingleTenantHsmInstanceProposals.",
+          "items": {
+            "$ref": "SingleTenantHsmInstanceProposal"
+          },
+          "type": "array"
+        },
+        "totalSize": {
+          "description": "The total number of SingleTenantHsmInstanceProposals that matched the query. This field is not populated if ListSingleTenantHsmInstanceProposalsRequest.filter is applied.",
+          "format": "int32",
+          "type": "integer"
+        }
+      },
+      "type": "object"
+    },
+    "ListSingleTenantHsmInstancesResponse": {
+      "description": "Response message for HsmManagement.ListSingleTenantHsmInstances.",
+      "id": "ListSingleTenantHsmInstancesResponse",
+      "properties": {
+        "nextPageToken": {
+          "description": "A token to retrieve next page of results. Pass this value in ListSingleTenantHsmInstancesRequest.page_token to retrieve the next page of results.",
+          "type": "string"
+        },
+        "singleTenantHsmInstances": {
+          "description": "The list of SingleTenantHsmInstances.",
+          "items": {
+            "$ref": "SingleTenantHsmInstance"
+          },
+          "type": "array"
+        },
+        "totalSize": {
+          "description": "The total number of SingleTenantHsmInstances that matched the query. This field is not populated if ListSingleTenantHsmInstancesRequest.filter is applied.",
+          "format": "int32",
+          "type": "integer"
         }
       },
       "type": "object"
@@ -3599,6 +4715,10 @@
         "hsmAvailable": {
           "description": "Indicates whether CryptoKeys with protection_level HSM can be created in this location.",
           "type": "boolean"
+        },
+        "hsmSingleTenantAvailable": {
+          "description": "Indicates whether CryptoKeys with protection_level HSM_SINGLE_TENANT can be created in this location.",
+          "type": "boolean"
         }
       },
       "type": "object"
@@ -3645,14 +4765,16 @@
             "SOFTWARE",
             "HSM",
             "EXTERNAL",
-            "EXTERNAL_VPC"
+            "EXTERNAL_VPC",
+            "HSM_SINGLE_TENANT"
           ],
           "enumDescriptions": [
             "Not specified.",
             "Crypto operations are performed in software.",
             "Crypto operations are performed in a Hardware Security Module.",
             "Crypto operations are performed by an external key manager.",
-            "Crypto operations are performed in an EKM-over-VPC backend."
+            "Crypto operations are performed in an EKM-over-VPC backend.",
+            "Crypto operations are performed in a single-tenant HSM."
           ],
           "type": "string"
         },
@@ -3683,7 +4805,7 @@
           "type": "string"
         },
         "macCrc32c": {
-          "description": "Optional. An optional CRC32C checksum of the MacVerifyRequest.mac. If specified, KeyManagementService will verify the integrity of the received MacVerifyRequest.mac using this checksum. KeyManagementService will report an error if the checksum verification fails. If you receive a checksum error, your client should verify that CRC32C(MacVerifyRequest.tag) is equal to MacVerifyRequest.mac_crc32c, and if so, perform a limited number of retries. A persistent mismatch may indicate an issue in your computation of the CRC32C checksum. Note: This field is defined as int64 for reasons of compatibility across different languages. However, it is a non-negative integer, which will never exceed 2^32-1, and can be safely downconverted to uint32 in languages that support this type.",
+          "description": "Optional. An optional CRC32C checksum of the MacVerifyRequest.mac. If specified, KeyManagementService will verify the integrity of the received MacVerifyRequest.mac using this checksum. KeyManagementService will report an error if the checksum verification fails. If you receive a checksum error, your client should verify that CRC32C(MacVerifyRequest.mac) is equal to MacVerifyRequest.mac_crc32c, and if so, perform a limited number of retries. A persistent mismatch may indicate an issue in your computation of the CRC32C checksum. Note: This field is defined as int64 for reasons of compatibility across different languages. However, it is a non-negative integer, which will never exceed 2^32-1, and can be safely downconverted to uint32 in languages that support this type.",
           "format": "int64",
           "type": "string"
         }
@@ -3705,14 +4827,16 @@
             "SOFTWARE",
             "HSM",
             "EXTERNAL",
-            "EXTERNAL_VPC"
+            "EXTERNAL_VPC",
+            "HSM_SINGLE_TENANT"
           ],
           "enumDescriptions": [
             "Not specified.",
             "Crypto operations are performed in software.",
             "Crypto operations are performed in a Hardware Security Module.",
             "Crypto operations are performed by an external key manager.",
-            "Crypto operations are performed in an EKM-over-VPC backend."
+            "Crypto operations are performed in an EKM-over-VPC backend.",
+            "Crypto operations are performed in a single-tenant HSM."
           ],
           "type": "string"
         },
@@ -3843,7 +4967,18 @@
             "HMAC_SHA384",
             "HMAC_SHA512",
             "HMAC_SHA224",
-            "EXTERNAL_SYMMETRIC_ENCRYPTION"
+            "EXTERNAL_SYMMETRIC_ENCRYPTION",
+            "ML_KEM_768",
+            "ML_KEM_1024",
+            "KEM_XWING",
+            "PQ_SIGN_ML_DSA_44",
+            "PQ_SIGN_ML_DSA_65",
+            "PQ_SIGN_ML_DSA_87",
+            "PQ_SIGN_SLH_DSA_SHA2_128S",
+            "PQ_SIGN_HASH_SLH_DSA_SHA2_128S_SHA256",
+            "PQ_SIGN_ML_DSA_44_EXTERNAL_MU",
+            "PQ_SIGN_ML_DSA_65_EXTERNAL_MU",
+            "PQ_SIGN_ML_DSA_87_EXTERNAL_MU"
           ],
           "enumDescriptions": [
             "Not specified.",
@@ -3881,7 +5016,18 @@
             "HMAC-SHA384 signing with a 384 bit key.",
             "HMAC-SHA512 signing with a 512 bit key.",
             "HMAC-SHA224 signing with a 224 bit key.",
-            "Algorithm representing symmetric encryption by an external key manager."
+            "Algorithm representing symmetric encryption by an external key manager.",
+            "ML-KEM-768 (FIPS 203)",
+            "ML-KEM-1024 (FIPS 203)",
+            "X-Wing hybrid KEM combining ML-KEM-768 with X25519 following datatracker.ietf.org/doc/draft-connolly-cfrg-xwing-kem/.",
+            "The post-quantum Module-Lattice-Based Digital Signature Algorithm, at security level 1. Randomized version.",
+            "The post-quantum Module-Lattice-Based Digital Signature Algorithm, at security level 3. Randomized version.",
+            "The post-quantum Module-Lattice-Based Digital Signature Algorithm, at security level 5. Randomized version.",
+            "The post-quantum stateless hash-based digital signature algorithm, at security level 1. Randomized version.",
+            "The post-quantum stateless hash-based digital signature algorithm, at security level 1. Randomized pre-hash version supporting SHA256 digests.",
+            "The post-quantum Module-Lattice-Based Digital Signature Algorithm, at security level 1. Randomized version supporting externally-computed message representatives.",
+            "The post-quantum Module-Lattice-Based Digital Signature Algorithm, at security level 3. Randomized version supporting externally-computed message representatives.",
+            "The post-quantum Module-Lattice-Based Digital Signature Algorithm, at security level 5. Randomized version supporting externally-computed message representatives."
           ],
           "type": "string"
         },
@@ -3894,7 +5040,7 @@
           "type": "string"
         },
         "pemCrc32c": {
-          "description": "Integrity verification field. A CRC32C checksum of the returned PublicKey.pem. An integrity check of PublicKey.pem can be performed by computing the CRC32C checksum of PublicKey.pem and comparing your results to this field. Discard the response in case of non-matching checksum values, and perform a limited number of retries. A persistent mismatch may indicate an issue in your computation of the CRC32C checksum. Note: This field is defined as int64 for reasons of compatibility across different languages. However, it is a non-negative integer, which will never exceed 2^32-1, and can be safely downconverted to uint32 in languages that support this type. NOTE: This field is in Beta.",
+          "description": "Integrity verification field. A CRC32C checksum of the returned PublicKey.pem. An integrity check of PublicKey.pem can be performed by computing the CRC32C checksum of PublicKey.pem and comparing your results to this field. Discard the response in case of non-matching checksum values, and perform a limited number of retries. A persistent mismatch may indicate an issue in your computation of the CRC32C checksum. Note: This field is defined as int64 for reasons of compatibility across different languages. However, it is a non-negative integer, which will never exceed `2^32-1`, and can be safely downconverted to uint32 in languages that support this type. NOTE: This field is in Beta.",
           "format": "int64",
           "type": "string"
         },
@@ -3905,16 +5051,109 @@
             "SOFTWARE",
             "HSM",
             "EXTERNAL",
-            "EXTERNAL_VPC"
+            "EXTERNAL_VPC",
+            "HSM_SINGLE_TENANT"
           ],
           "enumDescriptions": [
             "Not specified.",
             "Crypto operations are performed in software.",
             "Crypto operations are performed in a Hardware Security Module.",
             "Crypto operations are performed by an external key manager.",
-            "Crypto operations are performed in an EKM-over-VPC backend."
+            "Crypto operations are performed in an EKM-over-VPC backend.",
+            "Crypto operations are performed in a single-tenant HSM."
           ],
           "type": "string"
+        },
+        "publicKey": {
+          "$ref": "ChecksummedData",
+          "description": "This field contains the public key (with integrity verification), formatted according to the public_key_format field."
+        },
+        "publicKeyFormat": {
+          "description": "The PublicKey format specified by the customer through the public_key_format field.",
+          "enum": [
+            "PUBLIC_KEY_FORMAT_UNSPECIFIED",
+            "PEM",
+            "DER",
+            "NIST_PQC",
+            "XWING_RAW_BYTES"
+          ],
+          "enumDescriptions": [
+            "If the public_key_format field is not specified: - For PQC algorithms, an error will be returned. - For non-PQC algorithms, the default format is PEM, and the field pem will be populated. Otherwise, the public key will be exported through the public_key field in the requested format.",
+            "The returned public key will be encoded in PEM format. See the [RFC7468](https://tools.ietf.org/html/rfc7468) sections for [General Considerations](https://tools.ietf.org/html/rfc7468#section-2) and [Textual Encoding of Subject Public Key Info] (https://tools.ietf.org/html/rfc7468#section-13) for more information.",
+            "The returned public key will be encoded in DER format (the PrivateKeyInfo structure from RFC 5208).",
+            "This is supported only for PQC algorithms. The key material is returned in the format defined by NIST PQC standards (FIPS 203, FIPS 204, and FIPS 205).",
+            "The returned public key is in raw bytes format defined in its standard https://datatracker.ietf.org/doc/draft-connolly-cfrg-xwing-kem."
+          ],
+          "type": "string"
+        }
+      },
+      "type": "object"
+    },
+    "QuorumAuth": {
+      "description": "Configuration for M of N quorum auth.",
+      "id": "QuorumAuth",
+      "properties": {
+        "requiredApproverCount": {
+          "description": "Output only. The required numbers of approvers. The M value used for M of N quorum auth. Must be greater than or equal to 2 and less than or equal to total_approver_count - 1.",
+          "format": "int32",
+          "readOnly": true,
+          "type": "integer"
+        },
+        "totalApproverCount": {
+          "description": "Required. The total number of approvers. This is the N value used for M of N quorum auth. Must be greater than or equal to 3 and less than or equal to 16.",
+          "format": "int32",
+          "type": "integer"
+        },
+        "twoFactorPublicKeyPems": {
+          "description": "Output only. The public keys associated with the 2FA keys for M of N quorum auth.",
+          "items": {
+            "type": "string"
+          },
+          "readOnly": true,
+          "type": "array"
+        }
+      },
+      "type": "object"
+    },
+    "QuorumParameters": {
+      "description": "Parameters of quorum approval for the SingleTenantHsmInstanceProposal.",
+      "id": "QuorumParameters",
+      "properties": {
+        "approvedTwoFactorPublicKeyPems": {
+          "description": "Output only. The public keys associated with the 2FA keys that have already approved the SingleTenantHsmInstanceProposal by signing the challenge.",
+          "items": {
+            "type": "string"
+          },
+          "readOnly": true,
+          "type": "array"
+        },
+        "challenges": {
+          "description": "Output only. The challenges to be signed by 2FA keys for quorum auth. M of N of these challenges are required to be signed to approve the operation.",
+          "items": {
+            "$ref": "Challenge"
+          },
+          "readOnly": true,
+          "type": "array"
+        },
+        "requiredApproverCount": {
+          "description": "Output only. The required numbers of approvers. This is the M value used for M of N quorum auth. It is less than the number of public keys.",
+          "format": "int32",
+          "readOnly": true,
+          "type": "integer"
+        }
+      },
+      "type": "object"
+    },
+    "QuorumReply": {
+      "description": "The reply to QuorumParameters for approving the proposal.",
+      "id": "QuorumReply",
+      "properties": {
+        "challengeReplies": {
+          "description": "Required. The challenge replies to approve the proposal. Challenge replies can be sent across multiple requests. The proposal will be approved when required_approver_count challenge replies are provided.",
+          "items": {
+            "$ref": "ChallengeReply"
+          },
+          "type": "array"
         }
       },
       "type": "object"
@@ -3982,14 +5221,16 @@
             "SOFTWARE",
             "HSM",
             "EXTERNAL",
-            "EXTERNAL_VPC"
+            "EXTERNAL_VPC",
+            "HSM_SINGLE_TENANT"
           ],
           "enumDescriptions": [
             "Not specified.",
             "Crypto operations are performed in software.",
             "Crypto operations are performed in a Hardware Security Module.",
             "Crypto operations are performed by an external key manager.",
-            "Crypto operations are performed in an EKM-over-VPC backend."
+            "Crypto operations are performed in an EKM-over-VPC backend.",
+            "Crypto operations are performed in a single-tenant HSM."
           ],
           "type": "string"
         },
@@ -4080,14 +5321,16 @@
             "SOFTWARE",
             "HSM",
             "EXTERNAL",
-            "EXTERNAL_VPC"
+            "EXTERNAL_VPC",
+            "HSM_SINGLE_TENANT"
           ],
           "enumDescriptions": [
             "Not specified.",
             "Crypto operations are performed in software.",
             "Crypto operations are performed in a Hardware Security Module.",
             "Crypto operations are performed by an external key manager.",
-            "Crypto operations are performed in an EKM-over-VPC backend."
+            "Crypto operations are performed in an EKM-over-VPC backend.",
+            "Crypto operations are performed in a single-tenant HSM."
           ],
           "type": "string"
         },
@@ -4107,6 +5350,100 @@
         "verifiedPlaintextCrc32c": {
           "description": "Integrity verification field. A flag indicating whether RawEncryptRequest.plaintext_crc32c was received by KeyManagementService and used for the integrity verification of the plaintext. A false value of this field indicates either that RawEncryptRequest.plaintext_crc32c was left unset or that it was not delivered to KeyManagementService. If you've set RawEncryptRequest.plaintext_crc32c but this field is still false, discard the response and perform a limited number of retries.",
           "type": "boolean"
+        }
+      },
+      "type": "object"
+    },
+    "RefreshSingleTenantHsmInstance": {
+      "description": "Refreshes the SingleTenantHsmInstance. This operation must be performed periodically to keep the SingleTenantHsmInstance active. This operation must be performed before unrefreshed_duration_until_disable has passed. The SingleTenantHsmInstance must be in the ACTIVE state to perform this operation.",
+      "id": "RefreshSingleTenantHsmInstance",
+      "properties": {},
+      "type": "object"
+    },
+    "RegisterTwoFactorAuthKeys": {
+      "description": "Register 2FA keys for the SingleTenantHsmInstance. This operation requires all Challenges to be signed by 2FA keys. The SingleTenantHsmInstance must be in the PENDING_TWO_FACTOR_AUTH_REGISTRATION state to perform this operation.",
+      "id": "RegisterTwoFactorAuthKeys",
+      "properties": {
+        "requiredApproverCount": {
+          "description": "Required. The required numbers of approvers to set for the SingleTenantHsmInstance. This is the M value used for M of N quorum auth. Must be greater than or equal to 2 and less than or equal to total_approver_count - 1.",
+          "format": "int32",
+          "type": "integer"
+        },
+        "twoFactorPublicKeyPems": {
+          "description": "Required. The public keys associated with the 2FA keys for M of N quorum auth. Public keys must be associated with RSA 2048 keys.",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        }
+      },
+      "type": "object"
+    },
+    "RemoveQuorumMember": {
+      "description": "Remove a quorum member from the SingleTenantHsmInstance. This will reduce total_approver_count by 1. The SingleTenantHsmInstance must be in the ACTIVE state to perform this operation.",
+      "id": "RemoveQuorumMember",
+      "properties": {
+        "twoFactorPublicKeyPem": {
+          "description": "Required. The public key associated with the 2FA key for the quorum member to remove. Public keys must be associated with RSA 2048 keys.",
+          "type": "string"
+        }
+      },
+      "type": "object"
+    },
+    "RequiredActionQuorumParameters": {
+      "description": "Parameters for an approval that has both required challenges and a quorum.",
+      "id": "RequiredActionQuorumParameters",
+      "properties": {
+        "approvedTwoFactorPublicKeyPems": {
+          "description": "Output only. The public keys associated with the 2FA keys that have already approved the SingleTenantHsmInstanceProposal by signing the challenge.",
+          "items": {
+            "type": "string"
+          },
+          "readOnly": true,
+          "type": "array"
+        },
+        "quorumChallenges": {
+          "description": "Output only. The challenges to be signed by 2FA keys for quorum auth. M of N of these challenges are required to be signed to approve the operation.",
+          "items": {
+            "$ref": "Challenge"
+          },
+          "readOnly": true,
+          "type": "array"
+        },
+        "requiredApproverCount": {
+          "description": "Output only. The required number of quorum approvers. This is the M value used for M of N quorum auth. It is less than the number of public keys.",
+          "format": "int32",
+          "readOnly": true,
+          "type": "integer"
+        },
+        "requiredChallenges": {
+          "description": "Output only. A list of specific challenges that must be signed. For some operations, this will contain a single challenge.",
+          "items": {
+            "$ref": "Challenge"
+          },
+          "readOnly": true,
+          "type": "array"
+        }
+      },
+      "type": "object"
+    },
+    "RequiredActionQuorumReply": {
+      "description": "The reply to RequiredActionQuorumParameters for approving the proposal.",
+      "id": "RequiredActionQuorumReply",
+      "properties": {
+        "quorumChallengeReplies": {
+          "description": "Required. Quorum members' signed challenge replies. These can be provided across multiple requests. The proposal will be approved when required_approver_count quorum_challenge_replies are provided and when all required_challenge_replies are provided.",
+          "items": {
+            "$ref": "ChallengeReply"
+          },
+          "type": "array"
+        },
+        "requiredChallengeReplies": {
+          "description": "Required. All required challenges must be signed for the proposal to be approved. These can be sent across multiple requests.",
+          "items": {
+            "$ref": "ChallengeReply"
+          },
+          "type": "array"
         }
       },
       "type": "object"
@@ -4165,6 +5502,209 @@
       "properties": {
         "keyProject": {
           "description": "Name of the key project configured in the resource project's folder ancestry.",
+          "type": "string"
+        }
+      },
+      "type": "object"
+    },
+    "ShowEffectiveKeyAccessJustificationsEnrollmentConfigResponse": {
+      "description": "Response message for KeyAccessJustificationsConfig.ShowEffectiveKeyAccessJustificationsEnrollmentConfig",
+      "id": "ShowEffectiveKeyAccessJustificationsEnrollmentConfigResponse",
+      "properties": {
+        "externalConfig": {
+          "$ref": "KeyAccessJustificationsEnrollmentConfig",
+          "description": "The effective KeyAccessJustificationsEnrollmentConfig for external keys."
+        },
+        "hardwareConfig": {
+          "$ref": "KeyAccessJustificationsEnrollmentConfig",
+          "description": "The effective KeyAccessJustificationsEnrollmentConfig for hardware keys."
+        },
+        "softwareConfig": {
+          "$ref": "KeyAccessJustificationsEnrollmentConfig",
+          "description": "The effective KeyAccessJustificationsEnrollmentConfig for software keys."
+        }
+      },
+      "type": "object"
+    },
+    "ShowEffectiveKeyAccessJustificationsPolicyConfigResponse": {
+      "description": "Response message for KeyAccessJustificationsConfig.ShowEffectiveKeyAccessJustificationsPolicyConfig.",
+      "id": "ShowEffectiveKeyAccessJustificationsPolicyConfigResponse",
+      "properties": {
+        "effectiveKajPolicy": {
+          "$ref": "KeyAccessJustificationsPolicyConfig",
+          "description": "The effective KeyAccessJustificationsPolicyConfig."
+        }
+      },
+      "type": "object"
+    },
+    "SingleTenantHsmInstance": {
+      "description": "A SingleTenantHsmInstance represents a single-tenant HSM instance. It can be used for creating CryptoKeys with a ProtectionLevel of HSM_SINGLE_TENANT, as well as performing cryptographic operations using keys created within the SingleTenantHsmInstance.",
+      "id": "SingleTenantHsmInstance",
+      "properties": {
+        "createTime": {
+          "description": "Output only. The time at which the SingleTenantHsmInstance was created.",
+          "format": "google-datetime",
+          "readOnly": true,
+          "type": "string"
+        },
+        "deleteTime": {
+          "description": "Output only. The time at which the SingleTenantHsmInstance was deleted.",
+          "format": "google-datetime",
+          "readOnly": true,
+          "type": "string"
+        },
+        "disableTime": {
+          "description": "Output only. The time at which the instance will be automatically disabled if not refreshed. This field is updated upon creation and after each successful refresh operation and enable. A RefreshSingleTenantHsmInstance operation must be made via a SingleTenantHsmInstanceProposal before this time otherwise the SingleTenantHsmInstance will become disabled.",
+          "format": "google-datetime",
+          "readOnly": true,
+          "type": "string"
+        },
+        "name": {
+          "description": "Identifier. The resource name for this SingleTenantHsmInstance in the format `projects/*/locations/*/singleTenantHsmInstances/*`.",
+          "type": "string"
+        },
+        "quorumAuth": {
+          "$ref": "QuorumAuth",
+          "description": "Required. The quorum auth configuration for the SingleTenantHsmInstance."
+        },
+        "state": {
+          "description": "Output only. The state of the SingleTenantHsmInstance.",
+          "enum": [
+            "STATE_UNSPECIFIED",
+            "CREATING",
+            "PENDING_TWO_FACTOR_AUTH_REGISTRATION",
+            "ACTIVE",
+            "DISABLING",
+            "DISABLED",
+            "DELETING",
+            "DELETED",
+            "FAILED"
+          ],
+          "enumDescriptions": [
+            "Not specified.",
+            "The SingleTenantHsmInstance is being created.",
+            "The SingleTenantHsmInstance is waiting for 2FA keys to be registered. This can be done by calling CreateSingleTenantHsmInstanceProposal with the RegisterTwoFactorAuthKeys operation.",
+            "The SingleTenantHsmInstance is ready to use. A SingleTenantHsmInstance must be in the ACTIVE state for all CryptoKeys created within the SingleTenantHsmInstance to be usable.",
+            "The SingleTenantHsmInstance is being disabled.",
+            "The SingleTenantHsmInstance is disabled.",
+            "The SingleTenantHsmInstance is being deleted. Requests to the instance will be rejected in this state.",
+            "The SingleTenantHsmInstance has been deleted.",
+            "The SingleTenantHsmInstance has failed and can not be recovered or used."
+          ],
+          "readOnly": true,
+          "type": "string"
+        },
+        "unrefreshedDurationUntilDisable": {
+          "description": "Output only. The system-defined duration that an instance can remain unrefreshed until it is automatically disabled. This will have a value of 120 days.",
+          "format": "google-duration",
+          "readOnly": true,
+          "type": "string"
+        }
+      },
+      "type": "object"
+    },
+    "SingleTenantHsmInstanceProposal": {
+      "description": "A SingleTenantHsmInstanceProposal represents a proposal to perform an operation on a SingleTenantHsmInstance.",
+      "id": "SingleTenantHsmInstanceProposal",
+      "properties": {
+        "addQuorumMember": {
+          "$ref": "AddQuorumMember",
+          "description": "Add a quorum member to the SingleTenantHsmInstance. This will increase the total_approver_count by 1. The SingleTenantHsmInstance must be in the ACTIVE state to perform this operation."
+        },
+        "createTime": {
+          "description": "Output only. The time at which the SingleTenantHsmInstanceProposal was created.",
+          "format": "google-datetime",
+          "readOnly": true,
+          "type": "string"
+        },
+        "deleteSingleTenantHsmInstance": {
+          "$ref": "DeleteSingleTenantHsmInstance",
+          "description": "Delete the SingleTenantHsmInstance. Deleting a SingleTenantHsmInstance will make all CryptoKeys attached to the SingleTenantHsmInstance unusable. The SingleTenantHsmInstance must be in the DISABLED or PENDING_TWO_FACTOR_AUTH_REGISTRATION state to perform this operation."
+        },
+        "deleteTime": {
+          "description": "Output only. The time at which the SingleTenantHsmInstanceProposal was deleted.",
+          "format": "google-datetime",
+          "readOnly": true,
+          "type": "string"
+        },
+        "disableSingleTenantHsmInstance": {
+          "$ref": "DisableSingleTenantHsmInstance",
+          "description": "Disable the SingleTenantHsmInstance. The SingleTenantHsmInstance must be in the ACTIVE state to perform this operation."
+        },
+        "enableSingleTenantHsmInstance": {
+          "$ref": "EnableSingleTenantHsmInstance",
+          "description": "Enable the SingleTenantHsmInstance. The SingleTenantHsmInstance must be in the DISABLED state to perform this operation."
+        },
+        "expireTime": {
+          "description": "The time at which the SingleTenantHsmInstanceProposal will expire if not approved and executed.",
+          "format": "google-datetime",
+          "type": "string"
+        },
+        "failureReason": {
+          "description": "Output only. The root cause of the most recent failure. Only present if state is FAILED.",
+          "readOnly": true,
+          "type": "string"
+        },
+        "name": {
+          "description": "Identifier. The resource name for this SingleTenantHsmInstance in the format `projects/*/locations/*/singleTenantHsmInstances/*/proposals/*`.",
+          "type": "string"
+        },
+        "purgeTime": {
+          "description": "Output only. The time at which the soft-deleted SingleTenantHsmInstanceProposal will be permanently purged. This field is only populated when the state is DELETED and will be set a time after expiration of the proposal, i.e. \u003e= expire_time or (create_time + ttl).",
+          "format": "google-datetime",
+          "readOnly": true,
+          "type": "string"
+        },
+        "quorumParameters": {
+          "$ref": "QuorumParameters",
+          "description": "Output only. The quorum approval parameters for the SingleTenantHsmInstanceProposal.",
+          "readOnly": true
+        },
+        "refreshSingleTenantHsmInstance": {
+          "$ref": "RefreshSingleTenantHsmInstance",
+          "description": "Refreshes the SingleTenantHsmInstance. This operation must be performed periodically to keep the SingleTenantHsmInstance active. This operation must be performed before unrefreshed_duration_until_disable has passed. The SingleTenantHsmInstance must be in the ACTIVE state to perform this operation."
+        },
+        "registerTwoFactorAuthKeys": {
+          "$ref": "RegisterTwoFactorAuthKeys",
+          "description": "Register 2FA keys for the SingleTenantHsmInstance. This operation requires all N Challenges to be signed by 2FA keys. The SingleTenantHsmInstance must be in the PENDING_TWO_FACTOR_AUTH_REGISTRATION state to perform this operation."
+        },
+        "removeQuorumMember": {
+          "$ref": "RemoveQuorumMember",
+          "description": "Remove a quorum member from the SingleTenantHsmInstance. This will reduce total_approver_count by 1. The SingleTenantHsmInstance must be in the ACTIVE state to perform this operation."
+        },
+        "requiredActionQuorumParameters": {
+          "$ref": "RequiredActionQuorumParameters",
+          "description": "Output only. Parameters for an approval of a SingleTenantHsmInstanceProposal that has both required challenges and a quorum.",
+          "readOnly": true
+        },
+        "state": {
+          "description": "Output only. The state of the SingleTenantHsmInstanceProposal.",
+          "enum": [
+            "STATE_UNSPECIFIED",
+            "CREATING",
+            "PENDING",
+            "APPROVED",
+            "RUNNING",
+            "SUCCEEDED",
+            "FAILED",
+            "DELETED"
+          ],
+          "enumDescriptions": [
+            "Not specified.",
+            "The SingleTenantHsmInstanceProposal is being created.",
+            "The SingleTenantHsmInstanceProposal is pending approval.",
+            "The SingleTenantHsmInstanceProposal has been approved.",
+            "The SingleTenantHsmInstanceProposal is being executed.",
+            "The SingleTenantHsmInstanceProposal has been executed successfully.",
+            "The SingleTenantHsmInstanceProposal has failed.",
+            "The SingleTenantHsmInstanceProposal has been deleted and will be purged after the purge_time."
+          ],
+          "readOnly": true,
+          "type": "string"
+        },
+        "ttl": {
+          "description": "Input only. The TTL for the SingleTenantHsmInstanceProposal. Proposals will expire after this duration.",
+          "format": "google-duration",
           "type": "string"
         }
       },
