@@ -21,6 +21,7 @@ import (
 	"crypto/hmac"
 	"crypto/sha256"
 	"encoding/base64"
+	"encoding/json"
 	"fmt"
 )
 
@@ -84,6 +85,26 @@ type ClusterMetadata struct {
 	HubClusterID         string          `json:"hubClusterID,omitempty" protobuf:"bytes,10,opt,name=hubClusterID"`
 	CloudServiceAuthMode string          `json:"cloudServiceAuthMode,omitempty" protobuf:"bytes,11,opt,name=cloudServiceAuthMode"`
 	Mode                 ClusterMode     `json:"mode,omitempty" protobuf:"bytes,12,opt,name=mode,casttype=ClusterMode"`
+	License              *LicenseInfo    `json:"license,omitempty" protobuf:"bytes,13,opt,name=license"`
+}
+
+// +kubebuilder:validation:Enum=appscode;selfhosted
+type LicenseDistributor string
+
+const (
+	LicenseDistributorAppsCode   LicenseDistributor = "appscode"
+	LicenseDistributorSelfHosted LicenseDistributor = "selfhosted"
+)
+
+type LicenseInfo struct {
+	Distributor LicenseDistributor `json:"distributor,omitempty" protobuf:"bytes,1,opt,name=distributor,casttype=LicenseDistributor"`
+	// Endpoint is the platform-api to acquire licenses from, when Distributor is selfhosted.
+	Endpoint string `json:"endpoint,omitempty" protobuf:"bytes,2,opt,name=endpoint"`
+	OrgID    string `json:"orgID,omitempty" protobuf:"bytes,3,opt,name=orgID"`
+}
+
+func (l *LicenseInfo) IsEmpty() bool {
+	return l == nil || (l.Distributor == "" && l.Endpoint == "" && l.OrgID == "")
 }
 
 func (md ClusterMetadata) Manager() string {
@@ -143,7 +164,43 @@ type ClusterClaimInfo struct {
 }
 
 type ClusterClaimFeatures struct {
-	EnabledFeatures           []string `json:"enabledFeatures,omitempty" protobuf:"bytes,1,rep,name=enabledFeatures"`
-	ExternallyManagedFeatures []string `json:"externallyManagedFeatures,omitempty" protobuf:"bytes,2,rep,name=externallyManagedFeatures"`
-	DisabledFeatures          []string `json:"disabledFeatures,omitempty" protobuf:"bytes,3,rep,name=disabledFeatures"`
+	EnabledFeatures           map[string]string `json:"enabledFeatures,omitempty" protobuf:"bytes,1,opt,name=enabledFeatures"`
+	ExternallyManagedFeatures []string          `json:"externallyManagedFeatures,omitempty" protobuf:"bytes,2,opt,name=externallyManagedFeatures"`
+	DisabledFeatures          []string          `json:"disabledFeatures,omitempty" protobuf:"bytes,3,opt,name=disabledFeatures"`
+}
+
+func (f *ClusterClaimFeatures) UnmarshalJSON(data []byte) error {
+	aux := &struct {
+		EnabledFeatures           any      `json:"enabledFeatures,omitempty"`
+		ExternallyManagedFeatures []string `json:"externallyManagedFeatures,omitempty"`
+		DisabledFeatures          []string `json:"disabledFeatures,omitempty"`
+	}{}
+
+	if err := json.Unmarshal(data, aux); err != nil {
+		return err
+	}
+
+	f.EnabledFeatures = toStringMap(aux.EnabledFeatures)
+	f.ExternallyManagedFeatures = aux.ExternallyManagedFeatures
+	f.DisabledFeatures = aux.DisabledFeatures
+	return nil
+}
+
+func toStringMap(v any) map[string]string {
+	result := make(map[string]string)
+	switch val := v.(type) {
+	case []any:
+		for _, item := range val {
+			if str, ok := item.(string); ok {
+				result[str] = ""
+			}
+		}
+	case map[string]any:
+		for k, item := range val {
+			if str, ok := item.(string); ok {
+				result[k] = str
+			}
+		}
+	}
+	return result
 }
