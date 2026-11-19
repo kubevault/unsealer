@@ -438,6 +438,12 @@ github.com/json-iterator/go
 # github.com/klauspost/cpuid/v2 v2.0.9
 ## explicit; go 1.13
 github.com/klauspost/cpuid/v2
+# github.com/kubeslice/apis v0.4.0
+## explicit; go 1.24.0
+github.com/kubeslice/apis/pkg/controller/v1alpha1
+# github.com/kubeslice/worker-operator v1.6.4
+## explicit; go 1.24.0
+github.com/kubeslice/worker-operator/api/v1beta1
 # github.com/liggitt/tabwriter v0.0.0-20181228230101-89fcab3d43de
 ## explicit
 github.com/liggitt/tabwriter
@@ -1308,6 +1314,10 @@ kmodules.xyz/client-go/tools/clientcmd
 sigs.k8s.io/controller-runtime/pkg/client
 sigs.k8s.io/controller-runtime/pkg/client/apiutil
 sigs.k8s.io/controller-runtime/pkg/log
+sigs.k8s.io/controller-runtime/pkg/scheme
+# sigs.k8s.io/gateway-api v1.0.0
+## explicit; go 1.21
+sigs.k8s.io/gateway-api/apis/v1
 # sigs.k8s.io/json v0.0.0-20250730193827-2d320260d730
 ## explicit; go 1.23
 sigs.k8s.io/json

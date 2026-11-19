@@ -26,6 +26,7 @@ import (
 	"kubevault.dev/unsealer/pkg/vault/auth"
 	"kubevault.dev/unsealer/pkg/vault/policy"
 	"kubevault.dev/unsealer/pkg/vault/unseal"
+	"kubevault.dev/unsealer/pkg/worker/dcdr"
 
 	"github.com/pkg/errors"
 	"github.com/spf13/pflag"
@@ -56,6 +57,12 @@ type WorkerOptions struct {
 	// retry period to try initializing and unsealing
 	ReTryPeriod time.Duration
 
+	// KubeSlice slice name for the per-pod ServiceExport (distributed mode)
+	SliceName string
+
+	// File holding the token the dc-dr guard uses for sys/step-down (distributed mode)
+	DCDRGuardTokenFile string
+
 	// Select the mode to use
 	// 	- 'google-cloud-kms-gcs' => Google Cloud Storage with encryption using Google KMS
 	// 	- 'aws-kms-ssm' => AWS SSM parameter store using AWS KMS encryption
@@ -76,6 +83,7 @@ func NewWorkerOptions() *WorkerOptions {
 	return &WorkerOptions{
 		Address:              VaultAddressDefault,
 		ReTryPeriod:          RetryPeriod,
+		DCDRGuardTokenFile:   dcdr.DCDRGuardTokenFileDefault,
 		UnsealerOptions:      unseal.NewUnsealOptions(),
 		AuthenticatorOptions: auth.NewK8sAuthOptions(),
 		PolicyManagerOptions: policy.NewPolicyOptions(),
@@ -92,6 +100,8 @@ func (o *WorkerOptions) AddFlags(fs *pflag.FlagSet) {
 	fs.BoolVar(&o.InsecureSkipTLSVerify, "vault.insecure-skip-tls-verify", o.InsecureSkipTLSVerify, "To skip tls verification when communicating with vault server")
 	fs.StringVar(&o.Mode, "mode", o.Mode, "Select the mode to use 'google-cloud-kms-gcs' => Google Cloud Storage with encryption using Google KMS; 'aws-kms-ssm' => AWS SSM parameter store using AWS KMS; 'azure-key-vault' => Azure Key Vault Secret store; 'kubernetes-secret' => Kubernetes secret to store unseal keys")
 	fs.DurationVar(&o.ReTryPeriod, "retry-period", o.ReTryPeriod, "How often to attempt to unseal the vault instance")
+	fs.StringVar(&o.SliceName, "slice-name", o.SliceName, "KubeSlice slice name for the per-pod ServiceExport. Used in cross data center mode (env DC_NAME set)")
+	fs.StringVar(&o.DCDRGuardTokenFile, "dc-dr-guard-token-file", o.DCDRGuardTokenFile, "File holding the Vault token the cross data center guard uses to step down its own node")
 
 	o.UnsealerOptions.AddFlags(fs)
 	o.AuthenticatorOptions.AddFlags(fs)
@@ -112,8 +122,12 @@ func (o *WorkerOptions) Validate() []error {
 	}
 
 	errs = append(errs, o.UnsealerOptions.Validate()...)
-	errs = append(errs, o.AuthenticatorOptions.Validate()...)
-	errs = append(errs, o.PolicyManagerOptions.Validate()...)
+	// Kubernetes auth is configured by the unsealer only when the operator
+	// passes --auth.k8s-host (older operators); newer operators configure it.
+	if o.configureEnabled() {
+		errs = append(errs, o.AuthenticatorOptions.Validate()...)
+		errs = append(errs, o.PolicyManagerOptions.Validate()...)
+	}
 
 	if o.Mode == ModeGoogleCloudKmsGCS {
 		errs = append(errs, o.GoogleOptions.Validate()...)
@@ -129,6 +143,12 @@ func (o *WorkerOptions) Validate() []error {
 	}
 
 	return errs
+}
+
+// configureEnabled reports whether the unsealer configures Kubernetes auth and
+// the policy controller's policy and role after unsealing.
+func (o *WorkerOptions) configureEnabled() bool {
+	return o.AuthenticatorOptions.Host != ""
 }
 
 func (o *WorkerOptions) Apply() error {
