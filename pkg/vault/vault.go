@@ -27,6 +27,25 @@ import (
 
 // if caCert is empty, then TLS verification will be skipped
 func NewVaultClient(addr string, insecureSkipVerify bool, caCert []byte) (*vaultapi.Client, error) {
+	cfg, err := newConfig(addr, insecureSkipVerify, caCert)
+	if err != nil {
+		return nil, err
+	}
+	return vaultapi.NewClient(cfg)
+}
+
+// NewVaultClientWithoutRedirects is NewVaultClient, but the client returns
+// redirect responses to the caller instead of following them.
+func NewVaultClientWithoutRedirects(addr string, insecureSkipVerify bool, caCert []byte) (*vaultapi.Client, error) {
+	cfg, err := newConfig(addr, insecureSkipVerify, caCert)
+	if err != nil {
+		return nil, err
+	}
+	cfg.DisableRedirects = true
+	return vaultapi.NewClient(cfg)
+}
+
+func newConfig(addr string, insecureSkipVerify bool, caCert []byte) (*vaultapi.Config, error) {
 	cfg := vaultapi.DefaultConfig()
 	cfg.Address = addr
 
@@ -52,7 +71,7 @@ func NewVaultClient(addr string, insecureSkipVerify bool, caCert []byte) (*vault
 		return nil, errors.Wrapf(err, "failed to get hostname from url %s", cfg.Address)
 	}
 
-	return vaultapi.NewClient(cfg)
+	return cfg, nil
 }
 
 func getHostName(addr string) (string, error) {

@@ -17,6 +17,7 @@ limitations under the License.
 package worker
 
 import (
+	"context"
 	"time"
 
 	"kubevault.dev/unsealer/pkg/kv"
@@ -28,9 +29,11 @@ import (
 	"kubevault.dev/unsealer/pkg/kv/kubernetes"
 	"kubevault.dev/unsealer/pkg/vault"
 	"kubevault.dev/unsealer/pkg/vault/auth"
+	"kubevault.dev/unsealer/pkg/vault/guard"
 	"kubevault.dev/unsealer/pkg/vault/policy"
 	"kubevault.dev/unsealer/pkg/vault/unseal"
 	"kubevault.dev/unsealer/pkg/vault/util"
+	"kubevault.dev/unsealer/pkg/worker/dcdr"
 
 	vaultapi "github.com/hashicorp/vault/api"
 	"github.com/pkg/errors"
@@ -48,18 +51,48 @@ func (o *WorkerOptions) Run() error {
 		return errors.Wrap(err, "failed to create vault api client")
 	}
 
-	o.unsealAndConfigureVault(vc, keyStore, o.ReTryPeriod)
+	var reg *dcdr.Registrar
+	env := dcdr.EnvFromOS()
+	if env.Distributed() {
+		klog.Infof("cross data center mode is on, data center %q", env.DCName)
+
+		kc, err := dcdr.NewKubeClient()
+		if err != nil {
+			return errors.Wrap(err, "failed to create kubernetes client")
+		}
+
+		gc, err := guard.New(o.Address, o.InsecureSkipTLSVerify, []byte(o.CaCert))
+		if err != nil {
+			return errors.Wrap(err, "failed to create vault api client for the dc-dr guard")
+		}
+		g := &dcdr.Guard{
+			Env:       env,
+			TokenFile: o.DCDRGuardTokenFile,
+			KC:        kc,
+			VC:        gc,
+		}
+		go g.Run()
+
+		reg = &dcdr.Registrar{
+			Env:       env,
+			SliceName: o.SliceName,
+			KC:        kc,
+		}
+	}
+
+	o.unsealAndConfigureVault(vc, keyStore, o.ReTryPeriod, reg)
 
 	return nil
 }
 
 // It will do:
 //   - If vault is not initialized, then initialize vault
-//   - If vault is not unsealed, then unseal it
-//   - configure vault
+//   - If vault is not unsealed, then unseal it (in cross data center mode, only
+//     after the pod is self-registered and listed by its ServiceExport)
+//   - configure vault, if --auth.k8s-host is set (older operators)
 //
 // it will periodically check for infinite time
-func (o *WorkerOptions) unsealAndConfigureVault(vc *vaultapi.Client, keyStore kv.Service, retryPeriod time.Duration) {
+func (o *WorkerOptions) unsealAndConfigureVault(vc *vaultapi.Client, keyStore kv.Service, retryPeriod time.Duration, reg *dcdr.Registrar) {
 	rootTokenID := util.RootTokenID(o.UnsealerOptions.KeyPrefix)
 
 	unsealer, err := unseal.New(keyStore, vc, *o.UnsealerOptions)
@@ -68,6 +101,11 @@ func (o *WorkerOptions) unsealAndConfigureVault(vc *vaultapi.Client, keyStore kv
 	}
 
 	period := time.Second
+
+	// configure is retried with a backoff from the outer loop, so sealed checks
+	// keep running while it fails
+	needConfigure := false
+	configBackoff := time.Second
 
 	for {
 		time.Sleep(period)
@@ -90,8 +128,24 @@ func (o *WorkerOptions) unsealAndConfigureVault(vc *vaultapi.Client, keyStore kv
 				continue
 			}
 
+			// distributed: one pod, in the active data center, initializes
+			if reg != nil {
+				ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+				err := reg.MayInitialize(ctx)
+				cancel()
+				if err != nil {
+					klog.Infof("not initializing the vault from this pod: %s", err.Error())
+					continue
+				}
+			}
+
 			// try to Initialize the vault
 			if err = unsealer.Init(); err != nil {
+				if reg != nil {
+					ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+					reg.ReleaseInitLease(ctx)
+					cancel()
+				}
 				klog.Errorf("failed to initialize the vault with %s", err.Error())
 				continue
 			}
@@ -109,27 +163,40 @@ func (o *WorkerOptions) unsealAndConfigureVault(vc *vaultapi.Client, keyStore kv
 
 		if !sealed {
 			klog.Infoln("vault is unsealed")
-			continue
-		}
-
-		klog.Infoln("making the unseal vault request")
-
-		if err := unsealer.Unseal(); err != nil {
-			klog.Errorf("failed to unseal the vault with %s", err.Error())
-			continue
-		}
-
-		for {
-			klog.Infoln("trying to configure the vault")
-
-			err := o.configureVault(vc, keyStore, rootTokenID)
-			if err == nil {
-				klog.Infoln("vault is configured")
-				break
+		} else {
+			if reg != nil {
+				if err := reg.ReadyToUnseal(); err != nil {
+					klog.Errorf("waiting before unsealing the vault: %s", err.Error())
+					continue
+				}
 			}
 
-			klog.Errorf("failed to configure the vault with %s", err.Error())
+			klog.Infoln("making the unseal vault request")
+
+			if err := unsealer.Unseal(); err != nil {
+				klog.Errorf("failed to unseal the vault with %s", err.Error())
+				continue
+			}
+
+			needConfigure = o.configureEnabled()
+			configBackoff = time.Second
 		}
+
+		if !needConfigure {
+			continue
+		}
+
+		klog.Infoln("trying to configure the vault")
+
+		if err := o.configureVault(vc, keyStore, rootTokenID); err != nil {
+			klog.Errorf("failed to configure the vault with %s", err.Error())
+			period = configBackoff
+			configBackoff = min(2*configBackoff, retryPeriod)
+			continue
+		}
+
+		klog.Infoln("vault is configured")
+		needConfigure = false
 	}
 }
 
