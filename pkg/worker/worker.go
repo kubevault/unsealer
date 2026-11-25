@@ -178,6 +178,15 @@ func (o *WorkerOptions) unsealAndConfigureVault(vc *vaultapi.Client, keyStore kv
 
 		if !sealed {
 			klog.Infoln("vault is unsealed")
+			// Keep the per-pod Service and ServiceExport, which carry this node's
+			// advertised address: nothing else re-creates them while the pod runs.
+			if reg != nil {
+				ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+				if err := reg.Register(ctx); err != nil {
+					klog.Errorf("failed to keep the pod registered: %s", err.Error())
+				}
+				cancel()
+			}
 		} else {
 			if reg != nil {
 				if err := reg.ReadyToUnseal(); err != nil {
