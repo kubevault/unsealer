@@ -52,6 +52,7 @@ func (o *WorkerOptions) Run() error {
 	}
 
 	var reg *dcdr.Registrar
+	var k8sAuth *dcdr.K8sAuthBootstrap
 	env := dcdr.EnvFromOS()
 	if env.Distributed() {
 		klog.Infof("cross data center mode is on, data center %q", env.DCName)
@@ -78,9 +79,21 @@ func (o *WorkerOptions) Run() error {
 			SliceName: o.SliceName,
 			KC:        kc,
 		}
+
+		if o.DCDRK8sAuthDir != "" {
+			rootTokenID := util.RootTokenID(o.UnsealerOptions.KeyPrefix)
+			k8sAuth = &dcdr.K8sAuthBootstrap{
+				Dir: o.DCDRK8sAuthDir,
+				VC:  vc,
+				RootToken: func() (string, error) {
+					token, err := keyStore.Get(rootTokenID)
+					return string(token), err
+				},
+			}
+		}
 	}
 
-	o.unsealAndConfigureVault(vc, keyStore, o.ReTryPeriod, reg)
+	o.unsealAndConfigureVault(vc, keyStore, o.ReTryPeriod, reg, k8sAuth)
 
 	return nil
 }
@@ -89,10 +102,12 @@ func (o *WorkerOptions) Run() error {
 //   - If vault is not initialized, then initialize vault
 //   - If vault is not unsealed, then unseal it (in cross data center mode, only
 //     after the pod is self-registered and listed by its ServiceExport)
-//   - configure vault, if --auth.k8s-host is set (older operators)
+//   - configure vault, if --auth.k8s-host is set (non-distributed)
+//   - in cross data center mode with a cloud KMS unseal mode, bootstrap
+//     Kubernetes auth from the active node (k8sAuth)
 //
 // it will periodically check for infinite time
-func (o *WorkerOptions) unsealAndConfigureVault(vc *vaultapi.Client, keyStore kv.Service, retryPeriod time.Duration, reg *dcdr.Registrar) {
+func (o *WorkerOptions) unsealAndConfigureVault(vc *vaultapi.Client, keyStore kv.Service, retryPeriod time.Duration, reg *dcdr.Registrar, k8sAuth *dcdr.K8sAuthBootstrap) {
 	rootTokenID := util.RootTokenID(o.UnsealerOptions.KeyPrefix)
 
 	unsealer, err := unseal.New(keyStore, vc, *o.UnsealerOptions)
@@ -180,6 +195,10 @@ func (o *WorkerOptions) unsealAndConfigureVault(vc *vaultapi.Client, keyStore kv
 
 			needConfigure = o.configureEnabled()
 			configBackoff = time.Second
+		}
+
+		if k8sAuth != nil {
+			k8sAuth.Ensure()
 		}
 
 		if !needConfigure {

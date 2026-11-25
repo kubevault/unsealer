@@ -63,6 +63,10 @@ type WorkerOptions struct {
 	// File holding the token the dc-dr guard uses for sys/step-down (distributed mode)
 	DCDRGuardTokenFile string
 
+	// Directory of the mounted ConfigMap the active node bootstraps Kubernetes
+	// auth from (distributed mode, cloud KMS unseal modes)
+	DCDRK8sAuthDir string
+
 	// Select the mode to use
 	// 	- 'google-cloud-kms-gcs' => Google Cloud Storage with encryption using Google KMS
 	// 	- 'aws-kms-ssm' => AWS SSM parameter store using AWS KMS encryption
@@ -102,6 +106,7 @@ func (o *WorkerOptions) AddFlags(fs *pflag.FlagSet) {
 	fs.DurationVar(&o.ReTryPeriod, "retry-period", o.ReTryPeriod, "How often to attempt to unseal the vault instance")
 	fs.StringVar(&o.SliceName, "slice-name", o.SliceName, "KubeSlice slice name for the per-pod ServiceExport. Used in cross data center mode (env DC_NAME set)")
 	fs.StringVar(&o.DCDRGuardTokenFile, "dc-dr-guard-token-file", o.DCDRGuardTokenFile, "File holding the Vault token the cross data center guard uses to step down its own node")
+	fs.StringVar(&o.DCDRK8sAuthDir, "dc-dr-k8s-auth-dir", o.DCDRK8sAuthDir, "Directory of the mounted ConfigMap the active node bootstraps Vault's Kubernetes auth from, in cross data center mode with a cloud KMS unseal mode")
 
 	o.UnsealerOptions.AddFlags(fs)
 	o.AuthenticatorOptions.AddFlags(fs)
